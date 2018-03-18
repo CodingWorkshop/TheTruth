@@ -1,48 +1,29 @@
 var videoLearningPlaySystem = () => {
+    var webServer = 'http://172.20.10.2:5000/';
+    var defaultPoster = 'http://media.w3.org/2010/05/sintel/poster.png';
+    var defaultType = 'video/mp4';
+
     var player = videojs('video-learning-player');
 
     function getVideoList() {
-        var fakeList = [{
-            sources: [{
-                src: 'http://media.w3.org/2010/05/sintel/trailer.mp4',
-                type: 'video/mp4'
-            }],
-            poster: 'http://media.w3.org/2010/05/sintel/poster.png'
-        }, {
-            sources: [{
-                src: 'http://media.w3.org/2010/05/bunny/trailer.mp4',
-                type: 'video/mp4'
-            }],
-            poster: 'http://media.w3.org/2010/05/bunny/poster.png'
-        }, {
-            sources: [{
-                src: 'http://vjs.zencdn.net/v/oceans.mp4',
-                type: 'video/mp4'
-            }],
-            poster: 'http://www.videojs.com/img/poster.jpg'
-        }, {
-            sources: [{
-                src: 'http://media.w3.org/2010/05/bunny/movie.mp4',
-                type: 'video/mp4'
-            }],
-            poster: 'http://media.w3.org/2010/05/bunny/poster.png'
-        }, {
-            sources: [{
-                src: 'http://media.w3.org/2010/05/video/movie_300.mp4',
-                type: 'video/mp4'
-            }],
-            poster: 'http://media.w3.org/2010/05/video/poster.png'
-        }];
-        return fetch('/GetVideoList', {
-            method: 'get'
-        }).then(function (response) {
-            return response.json();
+        return fetch(webServer + 'GetVideoList', { method: 'get' })
+            .then(function (res) { return res.json(); })
+    }
+
+    function covertToPlayList(res) {
+        return res.map(function(video) {
+            return {
+                sources: [{
+                    src: webServer + 'PlayVideo?category=' + video.Category + '&date=' + video.Date,
+                    type: defaultType
+                }],
+                poster: defaultPoster
+            }
         });
     }
 
-    function getVideo(category){}
-
     getVideoList()
+        .then(covertToPlayList(res))
         .then(function (result) {
             player.playlist(result);
             player.playlistUi();
