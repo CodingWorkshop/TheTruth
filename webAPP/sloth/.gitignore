@@ -2,3 +2,5 @@ server
 server/*
 node_modules
 package-lock.json
+dist
+.cache

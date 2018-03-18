@@ -1,5 +1,6 @@
-var videoLearningPlaySystem = function () {
-    var player = videojs('video-learning-player');
+import videojs from 'videojs';
+const videoLearningPlaySystem =  () =>{
+    const player = videojs('video-learning-player');
 
     function getVideoList() {
         return [{
@@ -34,9 +35,9 @@ var videoLearningPlaySystem = function () {
             poster: 'http://media.w3.org/2010/05/video/poster.png'
         }];
     }
-    player.playlist(getVideoList());
-    player.playlistUi();
-    player.playlist.autoadvance(0);
+    player['playlist'](getVideoList());
+    player['playlistUi']();
+    player['playlist'].autoadvance(0);
 }
 
 videoLearningPlaySystem();
