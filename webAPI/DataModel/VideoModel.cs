@@ -2,7 +2,7 @@
 
 namespace DataModel
 {
-    public class VedioModel
+    public class VideoModel
     {
     }
 }

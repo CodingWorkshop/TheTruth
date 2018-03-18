@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "Repository\Re
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoService.Test", "VideoService.Test\VideoService.Test.csproj", "{471B2F80-4F34-4DC3-99E0-878A6B446634}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VedioService", "VedioService\VedioService.csproj", "{E89553F5-835F-409F-BD53-E6C35A8289CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoService", "VedioService\VideoService.csproj", "{E89553F5-835F-409F-BD53-E6C35A8289CA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "DataAccess\DataAccess.csproj", "{43EADF6B-D3CE-454C-B1F3-F10513F5B7E6}"
 EndProject
