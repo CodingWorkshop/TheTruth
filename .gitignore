@@ -1,2 +1,4 @@
 .vs/
 nginx/logs/*.log
+.vscode/launch.json
+.vscode/tasks.json
