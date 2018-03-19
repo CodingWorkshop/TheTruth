@@ -4,7 +4,8 @@ using System.Text;
 
 namespace Repository.Interface
 {
-    public interface IRepository
+    public interface IRepository<TEntity>
     {
+        List<TEntity> GetAll();
     }
 }
