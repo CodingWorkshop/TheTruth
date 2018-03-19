@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using System.Security.Cryptography;
 using Repository.Repository;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -53,24 +54,26 @@ namespace TheTruth.Controllers
 
         [HttpGet("GetVideoList")]
         public IActionResult GetVideoList()
-
         {
             var result = new GenericFileRepository(_videoPath)
-                .GetAll().Select(s => new { s.Category, s.Date });
+                .GetAll().Select(s => new { s.Category, s.Date, s.Code });
 
             return new JsonResult(result);
         }
 
         [HttpGet("PlayVideo")]
-        public IActionResult PlayVideo(string category, string date)
+        public IActionResult PlayVideo(string code)
         {
+            var param = code.Split("_").Select(s => s).ToList();
+
             var result = new GenericFileRepository(_videoPath)
                 .GetAll()
-                .Where(w => w.Category == category && w.Date == date)
+                .Where(w => w.Category == param[0] && w.Date == param[1])
                 .Select(s => s.Url)
-                .FirstOrDefault();
+                .First()
+                .Replace(_videoPath, "~/VideoRootPath");
 
-            return Redirect("~/VideoRootPath/Ch/20180318/Kingsman.mp4");
+            return Redirect(result);
         }
     }
 }
