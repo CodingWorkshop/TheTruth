@@ -17,9 +17,12 @@ namespace TheTruth.Hubs {
         /// Client 端 來取Video
         /// </summary>
         /// <returns></returns>
+        [HubMethodName("requestVideo")]
         public Task RequestVideo () {
             string ip = GetRemoteIpAddress ();
-            var videos = Utility.GetIpVideoDic () [ip]?.Select (r => new VideoViewModel {
+            //Console.WriteLine(ip);
+            var videos = Utility.GetIpVideoDic().GetValueOrDefault(ip)?
+            .Select (r => new VideoViewModel {
                 Category = r.Category,
                     Name = r.Name,
                     Code = r.Code,
@@ -51,7 +54,7 @@ namespace TheTruth.Hubs {
         /// </summary>
         /// <returns></returns>
         private string GetRemoteIpAddress () {
-            return Context.Connection.RemoteIpAddress.MapToIPv4 ().ToString ();
+            return Context?.Connection.RemoteIpAddress.MapToIPv4 ().ToString () ?? "127.0.0.1";
         }
     }
 }
