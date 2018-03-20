@@ -21,7 +21,7 @@ namespace Repository.Repository
             _rootPath = rootPath;
         }
 
-        public List<Video> GetAll()
+        public IEnumerable<Video> GetAll()
         {
             var dirInfo = new DirectoryInfo(_rootPath);
 
@@ -43,7 +43,8 @@ namespace Repository.Repository
             {
                 var files = GetVideosWithDate(d, d.Name).Select(s =>
                 {
-                    s.Category = category; return s;
+                    s.Category = category;
+                    return s;
                 });
 
                 result.AddRange(files);
@@ -60,6 +61,7 @@ namespace Repository.Repository
             {
                 Date = date,
                 Url = f.FullName,
+                Name = f.Name
             }).ToList();
         }
     }
