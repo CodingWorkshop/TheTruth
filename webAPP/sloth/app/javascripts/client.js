@@ -1,13 +1,17 @@
-var videoLearningPlaySystem = () => {
-    var webServer = '/';
-    var defaultPoster = 'http://media.w3.org/2010/05/sintel/poster.png';
-    var defaultType = 'video/mp4';
+var videoLearningPlaySystem = function() {
+    var config = {};
 
     var player = videojs('video-learning-player');
 
-    function getVideoList() {
+    function getAppConfig() {
+        return fetch('/app/app.config.json')
+            .then(function (res) {
+                return res.json();
+            });
+    }
 
-        return fetch(webServer + 'api/Video/GetVideoList', {
+    function getVideoList() {
+        return fetch(config.webServer + 'api/Video/GetVideoList', {
                 method: 'get'
             })
             .then(function (res) {
@@ -28,21 +32,36 @@ var videoLearningPlaySystem = () => {
     function covertToPlayList(res) {
         return res.map(function (video) {
             return {
-                name: '影片名稱',
-                description: '影片描述',
+                name: video.name || '影片名稱',
+                description: video.description || '影片描述',
                 sources: [{
-                    src: webServer + 'api/Video/PlayVideo?category=' + video.category + '&date=' + video.date,
-                    type: defaultType
+                    src: generateVideoParams(video),
+                    type: video.type || config.defaultType
                 }],
-                poster: defaultPoster,
+                poster: video.poster || config.defaultPoster,
                 thumbnail: [{
-                    src: 'http://via.placeholder.com/121x68'
+                    src: video.thumbnail || 'http://via.placeholder.com/121x68'
                 }]
             };
         });;
     }
 
-    getVideoList()
+    function generateVideoParams(video) {
+        var path = config.webServer + 'api/Video/PlayVideo?' +
+            'category=' +
+            video.category +
+            '&date=' +
+            video.date +
+            '&code=' +
+            video.code;
+        return path;
+    }
+
+    getAppConfig()
+        .then(function (_config) {
+            config = _config;
+            return getVideoList();
+        })
         .then(covertToPlayList)
         .then(function (result) {
             player.playlist(result);
