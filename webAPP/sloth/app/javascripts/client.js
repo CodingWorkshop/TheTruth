@@ -1,4 +1,4 @@
-var videoLearningPlaySystem = function() {
+var videoLearningPlaySystem = function () {
     var config = {};
 
     var player = videojs('video-learning-player');
@@ -57,9 +57,29 @@ var videoLearningPlaySystem = function() {
         return path;
     }
 
+    function signalrInitail() {
+        try {
+            var connection = new signalR.HubConnection(config.webServer + '/api/signalr', {
+                protocol: new signalR.protocol.msgpack.MessagePackHubProtocol()
+            });
+        } catch (error) {
+            console.log(error);
+            return;
+        }
+
+        connection.on('send', function (data) {
+            console.log(data);
+        });
+
+        connection.start()
+            .then(function () {
+                connection.invoke('send', 'Hello');
+            });
+    }
     getAppConfig()
         .then(function (_config) {
             config = _config;
+            signalrInitail();
             return getVideoList();
         })
         .then(covertToPlayList)
