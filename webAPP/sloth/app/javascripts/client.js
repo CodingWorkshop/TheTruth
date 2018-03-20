@@ -2,6 +2,19 @@ var videoLearningPlaySystem = function () {
     var config = {};
 
     var player = videojs('video-learning-player');
+    
+    getAppConfig()
+        .then(function (_config) {
+            config = _config;
+            signalrInitail();
+            return getVideoList();
+        })
+        .then(covertToPlayList)
+        .then(function (result) {
+            player.playlist(result);
+            player.playlistUi();
+            player.playlist.autoadvance(0);
+        });
 
     function getAppConfig() {
         return fetch('/app/app.config.json')
@@ -76,18 +89,6 @@ var videoLearningPlaySystem = function () {
                 connection.invoke('send', 'Hello');
             });
     }
-    getAppConfig()
-        .then(function (_config) {
-            config = _config;
-            signalrInitail();
-            return getVideoList();
-        })
-        .then(covertToPlayList)
-        .then(function (result) {
-            player.playlist(result);
-            player.playlistUi();
-            player.playlist.autoadvance(0);
-        });
 }
 
 videoLearningPlaySystem();
