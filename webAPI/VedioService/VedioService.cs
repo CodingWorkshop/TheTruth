@@ -8,6 +8,13 @@ namespace VedioService
 {
     public class VedioService
     {
+        private static Dictionary<string, List<Video>> _videos = new Dictionary<string, List<Video>>();
+
+        public List<Video> GetVideoListByIp(string ip)
+        {
+            return _videos[ip];
+        }
+
         public List<Video> GetVideoList(string rootPath)
         {
             return new GenericFileRepository(rootPath)
@@ -47,6 +54,23 @@ namespace VedioService
                 query = query.Where(w => w.DateTime <= DateTime.Now);
 
             return query.ToList();
+        }
+
+        public void SetVideos(List<string> codes, string ip, string rootPath)
+        {
+            var allVideo = new GenericFileRepository(rootPath).GetAll();
+
+            var videos = new List<Video>();
+
+            foreach (var code in codes)
+            {
+                var param = code.Split('_').Select(s => s).ToList();
+                var video = allVideo.Where(w => w.Category == param[0] && w.Date == param[1]);
+                if (video.Any())
+                    videos.Add(video.First());
+            }
+
+            _videos.Add(ip, videos);
         }
     }
 }
