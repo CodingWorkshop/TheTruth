@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using Repository.Repository;
+using TheTruth.ViewModels;
 using VedioService;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -27,12 +28,12 @@ namespace TheTruth.Controllers
         public IActionResult GetVideoList()
         {
             return new JsonResult(_service.GetVideoList(_videoPath)
-                .Select(s => new
+                .Select(s => new VideoViewModel
                 {
-                    s.Name,
-                    s.Date,
-                    s.Category,
-                    s.Code
+                    Name = s.Name,
+                    Date = s.Date,
+                    Category = s.Category,
+                    Code = s.Code
                 }));
         }
 
@@ -48,12 +49,12 @@ namespace TheTruth.Controllers
         {
             return new JsonResult(_service.GetAllVideo(
                 category, beginTime, endTime, _videoPath)
-                .Select(s => new
+                .Select(s => new VideoViewModel
                 {
-                    s.Name,
-                    s.Date,
-                    s.Category,
-                    s.Code
+                    Name = s.Name,
+                    Date = s.Date,
+                    Category = s.Category,
+                    Code = s.Code
                 }));
         }
     }
