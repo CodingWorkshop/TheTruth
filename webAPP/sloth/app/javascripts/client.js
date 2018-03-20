@@ -2,11 +2,11 @@ var videoLearningPlaySystem = function () {
     var config = {};
 
     var player = videojs('video-learning-player');
-    
+
     getAppConfig()
         .then(function (_config) {
             config = _config;
-            signalrInitail();
+            webSocketInitail();
             return getVideoList();
         })
         .then(covertToPlayList)
@@ -70,24 +70,21 @@ var videoLearningPlaySystem = function () {
         return path;
     }
 
-    function signalrInitail() {
-        try {
-            var connection = new signalR.HubConnection(config.webServer + '/api/signalr', {
-                protocol: new signalR.protocol.msgpack.MessagePackHubProtocol()
-            });
-        } catch (error) {
-            console.log(error);
-            return;
+    function webSocketInitail() {
+        var connectUrl = 'ws://'+config.webServer+'/signalr';
+        var webSocket = new WebSocket(connectUrl);
+        webSocket.onopen = event => {
+            console.log('Connected', 'green');
+        };
+        webSocket.onerror = event => {
+            console.log('Error occurred', 'green');
+        };
+        webSocket.onmessage = event => {
+            console.log(JSON.parse(event.data));
         }
-
-        connection.on('send', function (data) {
-            console.log(data);
-        });
-
-        connection.start()
-            .then(function () {
-                connection.invoke('send', 'Hello');
-            });
+        webSocket.onclose = event => {
+            console.log('WebSocket closed. Reason: ' + event.code, event.wasClean ? 'green' : 'red')
+        }       
     }
 }
 
