@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Repository.Repository;
 using TheTruth.ViewModels;
@@ -20,6 +21,7 @@ namespace TheTruth.Controllers
         public VideoController(IHostingEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
+            Console.WriteLine(_hostingEnvironment.WebRootPath);
             _videoPath = $"{_hostingEnvironment.WebRootPath}\\VideoRootPath";
             _service = new VedioService.VedioService();
         }
@@ -27,7 +29,9 @@ namespace TheTruth.Controllers
         [HttpGet("GetVideoList")]
         public IActionResult GetVideoList()
         {
-            return new JsonResult(_service.GetVideoList(_videoPath)
+            var ip = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+
+            return new JsonResult(_service.GetVideoListByIp(ip)
                 .Select(s => new VideoViewModel
                 {
                     Name = s.Name,
@@ -56,6 +60,13 @@ namespace TheTruth.Controllers
                     Category = s.Category,
                     Code = s.Code
                 }));
+        }
+
+        [HttpGet("SetVideo")]
+        public void SetVideo(List<string> codes)
+        {
+            var ip = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            _service.SetVideos(codes, ip, _videoPath);
         }
     }
 }
