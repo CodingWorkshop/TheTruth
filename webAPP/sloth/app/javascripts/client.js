@@ -71,21 +71,37 @@ var videoLearningPlaySystem = function () {
     }
 
     function webSocketInitail() {
-        var connectUrl = 'ws://localhost:40510/';
-        var webSocket = new WebSocket(connectUrl);
-        webSocket.onopen = event => {
-            console.log('Connected', 'green');
-            webSocket.send('connected');
-        };
-        webSocket.onerror = event => {
-            console.log('Error occurred', 'green');
-        };
-        webSocket.onmessage = event => {
-            window.document.getElementById('server-time').innerHTML = event.data;
+        var connection = new signalR.HubConnection(config.webServer);
+
+        connection.on('send', function (data) {
+            var DisplayMessagesDiv = document.getElementById("DisplayMessages");
+            DisplayMessagesDiv.innerHTML += "<br/>" + data;
+        });
+
+        connection.start().then(function () {
+            return connection.invoke('send', 'Hello');
+        });
+
+        function SendMessage() {
+            var msg = document.getElementById("txtMessage").value;
+            connection.invoke('send', msg);
         }
-        webSocket.onclose = event => {
-            console.log('WebSocket closed. Reason: ' + event.code, event.wasClean ? 'green' : 'red')
-        }
+
+        // var connectUrl = 'ws://localhost:40510/';
+        // var webSocket = new WebSocket(connectUrl);
+        // webSocket.onopen = event => {
+        //     console.log('Connected', 'green');
+        //     webSocket.send('connected');
+        // };
+        // webSocket.onerror = event => {
+        //     console.log('Error occurred', 'green');
+        // };
+        // webSocket.onmessage = event => {
+        //     window.document.getElementById('server-time').innerHTML = event.data;
+        // }
+        // webSocket.onclose = event => {
+        //     console.log('WebSocket closed. Reason: ' + event.code, event.wasClean ? 'green' : 'red')
+        // }
     }
 }
 
