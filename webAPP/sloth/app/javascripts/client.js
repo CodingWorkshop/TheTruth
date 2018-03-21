@@ -71,20 +71,21 @@ var videoLearningPlaySystem = function () {
     }
 
     function webSocketInitail() {
-        var connectUrl = 'ws://'+config.webServer+'/signalr';
+        var connectUrl = 'ws://localhost:40510/';
         var webSocket = new WebSocket(connectUrl);
         webSocket.onopen = event => {
             console.log('Connected', 'green');
+            webSocket.send('connected');
         };
         webSocket.onerror = event => {
             console.log('Error occurred', 'green');
         };
         webSocket.onmessage = event => {
-            console.log(JSON.parse(event.data));
+            window.document.getElementById('server-time').innerHTML = event.data;
         }
         webSocket.onclose = event => {
             console.log('WebSocket closed. Reason: ' + event.code, event.wasClean ? 'green' : 'red')
-        }       
+        }
     }
 }
 

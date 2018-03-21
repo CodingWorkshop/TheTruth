@@ -3,6 +3,8 @@ const url = require('url');
 const fs = require('fs');
 const path = require('path');
 const port = process.argv[2] || 3000;
+const WebSocketServer = require('ws').Server;
+
 http.createServer(function (req, res) {
     console.log(`${req.method} ${req.url}`);
     const parsedUrl = url.parse(req.url);
@@ -46,4 +48,26 @@ http.createServer(function (req, res) {
         });
     });
 }).listen(parseInt(port));
+
+const wss = new WebSocketServer({
+    port: 40510
+});
+
+wss.on('connection', function (socket) {
+    socket.on('message', function (message) {
+        console.log('received: %s', message)
+    });
+
+    const loopMessage = setInterval(
+        () => {
+            try {
+                socket.send(`${new Date()}`);
+            } catch (error) {
+                clearInterval(loopMessage);
+            }
+        },
+        1000
+    );
+});
+
 console.log(`Server listening on port ${port}`);
