@@ -1,18 +1,20 @@
-﻿using DataAccess;
+﻿using BLL.VideoService.Interface;
+using DataAccess;
 using Repository.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace VedioService
+namespace BLL.VideoService
 {
-    public class VedioService
+    public class VideoService : IVideoService
     {
-        private static Dictionary<string, List<Video>> _videos = new Dictionary<string, List<Video>>();
+        private static readonly Dictionary<string, List<DataAccess.Video>> Videos =
+            new Dictionary<string, List<DataAccess.Video>>();
 
         public List<Video> GetVideoListByIp(string ip)
         {
-            return _videos[ip];
+            return Videos[ip];
         }
 
         public List<Video> GetVideoList(string rootPath)
@@ -21,16 +23,23 @@ namespace VedioService
                 .GetAll().ToList();
         }
 
-        public string GetVideo(string code, string rootPath)
+        public string GetVideo(string code, string rootPath, string ip)
         {
-            var param = code.Split('_').Select(s => s).ToList();
+            if (Videos[ip].Any(v => v.Code == code))
+                return Videos[ip]
+                    .First(v => v.Code == code)
+                    .Url
+                    .Replace(rootPath, "~/VideoRootPath");
 
-            return new GenericFileRepository(rootPath)
-                .GetAll()
-                .Where(w => w.Category == param[0] && w.Date == param[1])
-                .Select(s => s.Url)
-                .First()
-                .Replace(rootPath, "~/VideoRootPath");
+            return string.Empty;
+
+            //var param = code.Split('_').Select(s => s).ToList();
+            //return new GenericFileRepository(rootPath)
+            //    .GetAll()
+            //    .Where(w => w.Category == param[0] && w.Date == param[1])
+            //    .Select(s => s.Url)
+            //    .First()
+            //    .Replace(rootPath, "~/VideoRootPath");
         }
 
         public List<Video> GetAllVideo(string category, DateTime? beginTime,
@@ -60,7 +69,7 @@ namespace VedioService
         {
             var allVideo = new GenericFileRepository(rootPath).GetAll();
 
-            var videos = new List<Video>();
+            var videos = new List<DataAccess.Video>();
 
             foreach (var code in codes)
             {
@@ -69,8 +78,10 @@ namespace VedioService
                 if (video.Any())
                     videos.Add(video.First());
             }
-
-            _videos.Add(ip, videos);
+            if (Videos.ContainsKey(ip))
+                Videos[ip] = videos;
+            else
+                Videos.Add(ip, videos);
         }
     }
 }
