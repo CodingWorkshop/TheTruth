@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Repository.Repository;
 using TheTruth.ViewModels;
-using VedioService;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -21,7 +19,6 @@ namespace TheTruth.Controllers
         public VideoController(IHostingEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
-            Console.WriteLine(_hostingEnvironment.WebRootPath);
             _videoPath = $"{_hostingEnvironment.WebRootPath}\\VideoRootPath";
             _service = new VedioService.VedioService();
         }
@@ -29,9 +26,7 @@ namespace TheTruth.Controllers
         [HttpGet("GetVideoList")]
         public IActionResult GetVideoList()
         {
-            var ip = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-
-            return new JsonResult(_service.GetVideoListByIp(ip)
+            return new JsonResult(_service.GetVideoListByIp(GetCallerIp())
                 .Select(s => new VideoViewModel
                 {
                     Name = s.Name,
@@ -41,10 +36,10 @@ namespace TheTruth.Controllers
                 }));
         }
 
-        [HttpGet("GetVideo")]
+        [HttpGet("PlayVideo")]
         public IActionResult PlayVideo(string code)
         {
-            return Redirect(_service.GetVideo(code, _videoPath));
+            return Redirect(_service.GetVideo(code, _videoPath, GetCallerIp()));
         }
 
         [HttpGet("GetAllVideo")]
@@ -63,10 +58,14 @@ namespace TheTruth.Controllers
         }
 
         [HttpGet("SetVideo")]
-        public void SetVideo(List<string> codes)
+        public void SetVideo(string ip, List<string> codes)
         {
-            var ip = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
             _service.SetVideos(codes, ip, _videoPath);
+        }
+
+        private string GetCallerIp()
+        {
+            return Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
         }
     }
 }

@@ -21,16 +21,23 @@ namespace VedioService
                 .GetAll().ToList();
         }
 
-        public string GetVideo(string code, string rootPath)
+        public string GetVideo(string code, string rootPath, string ip)
         {
-            var param = code.Split('_').Select(s => s).ToList();
+            if (_videos[ip].Any(v => v.Code == code))
+                return _videos[ip]
+                    .First(v => v.Code == code)
+                    .Url
+                    .Replace(rootPath, "~/VideoRootPath");
 
-            return new GenericFileRepository(rootPath)
-                .GetAll()
-                .Where(w => w.Category == param[0] && w.Date == param[1])
-                .Select(s => s.Url)
-                .First()
-                .Replace(rootPath, "~/VideoRootPath");
+            return string.Empty;
+
+            //var param = code.Split('_').Select(s => s).ToList();
+            //return new GenericFileRepository(rootPath)
+            //    .GetAll()
+            //    .Where(w => w.Category == param[0] && w.Date == param[1])
+            //    .Select(s => s.Url)
+            //    .First()
+            //    .Replace(rootPath, "~/VideoRootPath");
         }
 
         public List<Video> GetAllVideo(string category, DateTime? beginTime,
@@ -69,8 +76,10 @@ namespace VedioService
                 if (video.Any())
                     videos.Add(video.First());
             }
-
-            _videos.Add(ip, videos);
+            if (_videos.ContainsKey(ip))
+                _videos[ip] = videos;
+            else
+                _videos.Add(ip, videos);
         }
     }
 }
