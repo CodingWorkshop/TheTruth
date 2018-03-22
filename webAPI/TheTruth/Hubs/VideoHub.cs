@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.SignalR;
 using TheTruth.ViewModels;
 
 namespace TheTruth.Hubs {
+
     public class VideoHub : Hub {
 
         public VideoHub () {

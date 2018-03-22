@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +17,6 @@ namespace TheTruth
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-<<<<<<< HEAD
         public void ConfigureServices (IServiceCollection services) {
             services.AddSignalR(options =>
             {
@@ -29,19 +29,6 @@ namespace TheTruth
                         .AllowAnyHeader ()
                         .AllowAnyMethod ()
                         .AllowCredentials ();
-=======
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddSignalR();
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy", policy =>
-                {
-                    policy.AllowAnyOrigin()
-                        .AllowAnyHeader()
-                        .AllowAnyMethod()
-                        .AllowCredentials();
->>>>>>> 12423e10212c474fb86ed5f5225779bb6b8b2d6c
                 });
             });
             services.AddMvc();
