@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TheTruth.ViewModels;
+using BLL.VideoService.Interface;
+using VideoService = BLL.VideoService.VideoService;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,13 +16,13 @@ namespace TheTruth.Controllers
     {
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly string _videoPath;
-        private readonly VedioService.VedioService _service;
+        private readonly IVideoService _service;
 
-        public VideoController(IHostingEnvironment hostingEnvironment)
+        public VideoController(IHostingEnvironment hostingEnvironment/*, IVideoService service*/)
         {
             _hostingEnvironment = hostingEnvironment;
             _videoPath = $"{_hostingEnvironment.WebRootPath}\\VideoRootPath";
-            _service = new VedioService.VedioService();
+            _service = new VideoService();
         }
 
         [HttpGet("GetVideoList")]

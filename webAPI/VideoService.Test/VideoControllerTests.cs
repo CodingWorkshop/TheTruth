@@ -1,9 +1,9 @@
 using System;
 using Xunit;
 
-namespace VideoService.Test
+namespace BLL.VideoService.Test
 {
-    public class UnitTest1
+    public class VideoControllerTests
     {
         [Fact]
         public void Test1()
