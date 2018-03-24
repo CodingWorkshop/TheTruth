@@ -19,9 +19,13 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
+        "../node_modules/normalize.css/normalize.css",
+        "../node_modules/material-design-icons/iconfont/material-icons.css",
         "styles.css"
       ],
-      "scripts": [],
+      "scripts": [
+        "../node_modules/@aspnet/signalr/dist/browser/signalr.js"
+      ],
       "environmentSource": "environments/environment.ts",
       "environments": {
         "dev": "environments/environment.ts",

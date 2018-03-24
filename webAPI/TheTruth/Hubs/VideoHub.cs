@@ -9,34 +9,33 @@ namespace TheTruth.Hubs {
 
     public class VideoHub : Hub {
 
-        private NLog.Logger _logger;
-        public VideoHub (NLog.Logger logger) {
-            _logger = logger;
-        }
+        public VideoHub() { }
         /// <summary>
         /// Client 端 來取Video
         /// </summary>
         /// <returns></returns>
         [HubMethodName("requestVideo")]
-        public Task RequestVideo () {
-            string ip = GetRemoteIpAddress ();
+        public Task RequestVideo() {
+            Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} come to get Videos");
+            string ip = GetRemoteIpAddress();
             //Console.WriteLine(ip);
-            var videos = Utility.GetIpVideoDic().GetValueOrDefault(ip)?
-            .Select (r => new VideoViewModel {
-                Category = r.Category,
-                    Name = r.Name,
-                    Code = r.Code,
-                    Date = r.Date,
-            }).ToList ();
-            return Clients.Caller.SendAsync ("PlayVideo", videos);
+            var videos = Utility.GetIpVideoDic().GetValueOrDefault(ip) ?
+                .Select(r => new VideoViewModel {
+                    Category = r.Category,
+                        Name = r.Name,
+                        Code = r.Code,
+                        Date = r.Date,
+                }).ToList();
+            return Clients.Client(Context.ConnectionId).SendAsync("playVideo", $" give videos to {Context.ConnectionId}");
         }
         /// <summary>
         /// 連線進來
         /// </summary>
         /// <returns></returns>
-        public override Task OnConnectedAsync () {
-            Utility.GetIpConnetionIdDic ().TryAdd (GetRemoteIpAddress (), Context.ConnectionId);
-            return Clients.Caller.SendAsync ("PointMe", "Ok");
+        public override Task OnConnectedAsync() {
+            Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} Login");
+            Utility.GetIpConnetionIdDic().TryAdd(GetRemoteIpAddress(), Context.ConnectionId);
+            return Clients.Caller.SendAsync("playVideo", "Login Ok");
         }
 
         /// <summary>
@@ -44,17 +43,18 @@ namespace TheTruth.Hubs {
         /// </summary>
         /// <param name="exception"></param>
         /// <returns></returns>
-        public override Task OnDisconnectedAsync (Exception exception) {
-            Utility.GetIpConnetionIdDic ().Remove (GetRemoteIpAddress ());
-            return Clients.Caller.SendAsync ("PointMe", "Bye");
+        public override Task OnDisconnectedAsync(Exception exception) {
+            Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} Log Out");
+            Utility.GetIpConnetionIdDic().Remove(GetRemoteIpAddress());
+            return Clients.All.SendAsync("playVideo", "Bye");
         }
 
         /// <summary>
         /// Get IP
         /// </summary>
         /// <returns></returns>
-        private string GetRemoteIpAddress () {
-            return Context?.Connection.RemoteIpAddress.MapToIPv4 ().ToString () ?? "127.0.0.1";
+        private string GetRemoteIpAddress() {
+            return Context?.Connection.RemoteIpAddress.ToString() ?? "127.0.0.1";
         }
     }
 }

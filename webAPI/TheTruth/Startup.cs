@@ -1,29 +1,27 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TheTruth.Hubs;
 using VideoService.Interface;
 
-namespace TheTruth
-{
-    public class Startup
-    {
-        public Startup(IConfiguration configuration)
-        {
+namespace TheTruth {
+    public class Startup {
+        public Startup(IConfiguration configuration) {
             Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddSignalR();
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy", policy =>
-                {
+        public void ConfigureServices(IServiceCollection services) {
+            services.AddSignalR(options => {
+                // Faster pings for testing
+                options.KeepAliveInterval = TimeSpan.FromSeconds(5);
+            });
+            services.AddCors(options => {
+                options.AddPolicy("CorsPolicy", policy => {
                     policy.AllowAnyOrigin()
                         .AllowAnyHeader()
                         .AllowAnyMethod()
@@ -37,25 +35,19 @@ namespace TheTruth
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
+            if(env.IsDevelopment()) {
                 app.UseBrowserLink();
                 app.UseDeveloperExceptionPage();
-            }
-            else
-            {
+            } else {
                 app.UseExceptionHandler("/Home/Error");
             }
             app.UseCors("CorsPolicy");
             app.UseStaticFiles();
-            app.UseSignalR(routes =>
-            {
+            app.UseSignalR(routes => {
                 routes.MapHub<VideoHub>("/hubs");
             });
-            app.UseMvc(routes =>
-            {
+            app.UseMvc(routes => {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");

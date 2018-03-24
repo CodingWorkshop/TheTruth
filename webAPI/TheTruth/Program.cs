@@ -9,24 +9,20 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NLog.Web;
 
-namespace TheTruth
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
+namespace TheTruth {
+    public class Program {
+        public static void Main(string[] args) {
             var logger = NLog.LogManager.LoadConfiguration("nlog.config").GetCurrentClassLogger();
             //logger.Debug("init main");
             BuildWebHost(args).Run();
         }
 
-        public static IWebHost BuildWebHost(string[] args)
-        {
+        public static IWebHost BuildWebHost(string[] args) {
             return WebHost.CreateDefaultBuilder(args)
-                 .UseUrls("http://:::5000")
-                 .UseStartup<Startup>()
-                 .UseNLog()
-                 .Build();
+                .UseUrls("http://:::5000")
+                .UseStartup<Startup>()
+                .UseNLog()
+                .Build();
         }
     }
 }
