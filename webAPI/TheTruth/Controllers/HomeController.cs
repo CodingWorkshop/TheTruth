@@ -23,7 +23,7 @@ namespace TheTruth.Controllers
         public async Task< IActionResult> Count() {
             
            await  _hubcontext.Clients.All.SendAsync("getonlineusers",Utility.GetClientConnetionIdDic().Count);
-            return Json(count);
+            return Json("");
         }
 
         public IActionResult Index() {
