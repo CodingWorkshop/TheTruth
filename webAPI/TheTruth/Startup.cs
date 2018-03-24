@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TheTruth.Hubs;
+using VideoService.Interface;
 
 namespace TheTruth
 {
@@ -32,6 +33,7 @@ namespace TheTruth
             services.AddMvc();
             services.AddOptions();
             services.Configure<VideoSetting>(Configuration.GetSection("VideoSetting"));
+            services.AddSingleton<IVideoService, VideoService.Service.VideoService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
