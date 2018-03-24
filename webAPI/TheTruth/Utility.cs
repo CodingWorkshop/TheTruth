@@ -1,16 +1,17 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using DataAccess;
 using TheTruth.ViewModels;
 
 namespace TheTruth {
     public static class Utility {
-        private static Dictionary<string, string> IpConnetionIdDic = new Dictionary<string, string>();
+        private static ConcurrentDictionary<string, string> IpConnetionIdDic = new ConcurrentDictionary<string, string>();
         private static Dictionary<string, List<Video>> IpVideoDic = new Dictionary<string, List<Video>>();
 
-        public static Dictionary<string, string> GetIpConnetionIdDic() {
+        public static ConcurrentDictionary<string, string> GetClientConnetionIdDic() {
             return IpConnetionIdDic;
         }
-        public static void SetIpConnetionIdDic(Dictionary<string, string> ipConnetionIdDic) {
+        public static void SetIpConnetionIdDic(ConcurrentDictionary<string, string> ipConnetionIdDic) {
             IpConnetionIdDic = ipConnetionIdDic;
         }
 
