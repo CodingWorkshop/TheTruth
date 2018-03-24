@@ -4,6 +4,6 @@
  flex: 1 1 auto;
 }
 
-img {
+img, i{
   vertical-align: text-top;
 }
