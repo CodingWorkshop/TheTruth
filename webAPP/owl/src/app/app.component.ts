@@ -9,7 +9,7 @@ export class AppComponent {
   title = 'app';
 
   constructor() {
-    const connection = new signalR.HubConnection('/videohub');
+    const connection = new signalR.HubConnection('http://localhost:5000/videohub');
 
     connection.on('getonlineusers', data => {
       alert(data);
