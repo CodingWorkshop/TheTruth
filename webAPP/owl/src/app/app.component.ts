@@ -6,10 +6,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'app';
 
   constructor() {
-    const connection = new signalR.HubConnection('http://localhost:5000/videohub');
+    const connection = new signalR.HubConnection('http://192.168.43.114:5000/managementhub');
 
     connection.on('getonlineusers', data => {
       alert(data);

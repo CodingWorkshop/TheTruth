@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -11,8 +9,10 @@ using Newtonsoft.Json;
 using TheTruth.Hubs;
 using TheTruth.Models;
 
-namespace TheTruth.Controllers {
-    public class HomeController : Controller {
+namespace TheTruth.Controllers
+{
+    public class HomeController : Controller
+    {
         private static HubConnectionBuilder _hub;
         private IHubContext<ManagementHub> _hubcontext;
         public HomeController(IHubContext<ManagementHub> hubContext) {
@@ -22,7 +22,7 @@ namespace TheTruth.Controllers {
         private static int count;
         public async Task< IActionResult> Count() {
             
-           await  _hubcontext.Clients.All.SendAsync("getonlineusers",Utility.GetClientConnetionIdDic().Count());
+           await  _hubcontext.Clients.All.SendAsync("getonlineusers",Utility.GetClientConnetionIdDic().Count);
             return Json(count);
         }
 
@@ -53,13 +53,15 @@ namespace TheTruth.Controllers {
             return View();
         }
 
-        public IActionResult Contact() {
+        public IActionResult Contact()
+        {
             ViewData["Message"] = "Your contact page.";
 
             return View();
         }
 
-        public IActionResult Error() {
+        public IActionResult Error()
+        {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }

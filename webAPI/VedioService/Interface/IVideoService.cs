@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using DataAccess;
 
-namespace BLL.VideoService.Interface
+namespace VideoService.Interface
 {
     public interface IVideoService
     {
