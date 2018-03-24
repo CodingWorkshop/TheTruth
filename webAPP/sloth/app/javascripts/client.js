@@ -1,5 +1,10 @@
 var videoLearningPlaySystem = function () {
     var config = {};
+    var defaultConfig = {
+        "webServer": "/",
+        "defaultPoster": "http://via.placeholder.com/121x68",
+        "defaultType": "video/mp4"
+    };
 
     var player = videojs('video-learning-player');
 
@@ -17,10 +22,21 @@ var videoLearningPlaySystem = function () {
         });
 
     function getAppConfig() {
-        return fetch('app/app.config.json')
-            .then(function (res) {
-                return res.json();
-            });
+        var configPromise = new Promise((resolve, reject) => {            
+            if (window.location.search) {
+                const query = window.location.search.substring(1).split('&');
+                const configFromUrl = Object.assign({}, defaultConfig);
+                query.forEach(q => {
+                    let keyValuePair = q.split('=');
+                    configFromUrl[keyValuePair[0]] = keyValuePair[1];
+                });
+                console.log(configFromUrl);
+                resolve(configFromUrl);
+            }else{
+                resolve(defaultConfig);
+            }
+        });
+        return configPromise;
     }
 
     function getVideoList() {
@@ -86,22 +102,6 @@ var videoLearningPlaySystem = function () {
             var msg = document.getElementById("txtMessage").value;
             connection.invoke('send', msg);
         }
-
-        // var connectUrl = 'ws://localhost:40510/';
-        // var webSocket = new WebSocket(connectUrl);
-        // webSocket.onopen = event => {
-        //     console.log('Connected', 'green');
-        //     webSocket.send('connected');
-        // };
-        // webSocket.onerror = event => {
-        //     console.log('Error occurred', 'green');
-        // };
-        // webSocket.onmessage = event => {
-        //     window.document.getElementById('server-time').innerHTML = event.data;
-        // }
-        // webSocket.onclose = event => {
-        //     console.log('WebSocket closed. Reason: ' + event.code, event.wasClean ? 'green' : 'red')
-        // }
     }
 }
 
