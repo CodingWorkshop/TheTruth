@@ -1,7 +1,7 @@
 var videoLearningPlaySystem = function () {
     var config = {};
     var defaultConfig = {
-        "webServer": "/",
+        "webServer": "127.0.0.1:3000",
         "defaultPoster": "http://via.placeholder.com/121x68",
         "defaultType": "video/mp4"
     };
@@ -40,7 +40,7 @@ var videoLearningPlaySystem = function () {
     }
 
     function getVideoList() {
-        return fetch(config.webServer + 'api/Video/GetVideoList', {
+        return fetch(config.webServer + '/api/Video/GetVideoList', {
                 method: 'get'
             })
             .then(function (res) {
