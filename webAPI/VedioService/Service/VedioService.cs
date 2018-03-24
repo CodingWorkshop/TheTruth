@@ -1,20 +1,20 @@
-﻿using BLL.VideoService.Interface;
-using DataAccess;
-using Repository.Repository;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using DataAccess;
+using Repository.Repository;
+using VideoService.Interface;
 
-namespace BLL.VideoService
+namespace VideoService.Service
 {
     public class VideoService : IVideoService
     {
-        private static readonly Dictionary<string, List<DataAccess.Video>> Videos =
-            new Dictionary<string, List<DataAccess.Video>>();
+        private readonly Dictionary<string, List<Video>> _videos =
+            new Dictionary<string, List<Video>>();
 
         public List<Video> GetVideoListByIp(string ip)
         {
-            return Videos[ip];
+            return _videos[ip];
         }
 
         public List<Video> GetVideoList(string rootPath)
@@ -25,8 +25,8 @@ namespace BLL.VideoService
 
         public string GetVideo(string code, string rootPath, string ip)
         {
-            if (Videos[ip].Any(v => v.Code == code))
-                return Videos[ip]
+            if (_videos[ip].Any(v => v.Code == code))
+                return _videos[ip]
                     .First(v => v.Code == code)
                     .Url
                     .Replace(rootPath, "~/VideoRootPath");
@@ -78,10 +78,10 @@ namespace BLL.VideoService
                 if (video.Any())
                     videos.Add(video.First());
             }
-            if (Videos.ContainsKey(ip))
-                Videos[ip] = videos;
+            if (_videos.ContainsKey(ip))
+                _videos[ip] = videos;
             else
-                Videos.Add(ip, videos);
+                _videos.Add(ip, videos);
         }
     }
 }
