@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TheTruth.Hubs;
@@ -15,10 +16,12 @@ namespace TheTruth {
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
+            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSignalR(options => {
                 // Faster pings for testing
                 options.KeepAliveInterval = TimeSpan.FromSeconds(5);
             });
+
             services.AddCors(options => {
                 options.AddPolicy("CorsPolicy", policy => {
                     policy.AllowAnyOrigin()
@@ -43,7 +46,8 @@ namespace TheTruth {
             app.UseCors("CorsPolicy");
             app.UseStaticFiles();
             app.UseSignalR(routes => {
-                routes.MapHub<VideoHub>("/hubs");
+                routes.MapHub<VideoHub>("/videohub");
+                routes.MapHub<ManagementHub>("/managementhub");
             });
             app.UseMvc(routes => {
                 routes.MapRoute(
