@@ -17,7 +17,7 @@ var videoLearningPlaySystem = function () {
         });
 
     function getAppConfig() {
-        return fetch('/app/app.config.json')
+        return fetch('app/app.config.json')
             .then(function (res) {
                 return res.json();
             });
