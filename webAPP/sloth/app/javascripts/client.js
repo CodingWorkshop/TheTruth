@@ -2,6 +2,7 @@ var videoLearningPlaySystem = function () {
     var config = {};
     var defaultConfig = {
         "webServer": "127.0.0.1:3000",
+        "signalrApi": "/hubs",
         "defaultPoster": "http://via.placeholder.com/121x68",
         "defaultType": "video/mp4"
     };
@@ -22,7 +23,7 @@ var videoLearningPlaySystem = function () {
         });
 
     function getAppConfig() {
-        var configPromise = new Promise((resolve, reject) => {            
+        var configPromise = new Promise((resolve, reject) => {
             if (window.location.search) {
                 const query = window.location.search.substring(1).split('&');
                 const configFromUrl = Object.assign({}, defaultConfig);
@@ -32,7 +33,7 @@ var videoLearningPlaySystem = function () {
                 });
                 console.log(configFromUrl);
                 resolve(configFromUrl);
-            }else{
+            } else {
                 resolve(defaultConfig);
             }
         });
@@ -87,7 +88,7 @@ var videoLearningPlaySystem = function () {
     }
 
     function webSocketInitail() {
-        var connection = new signalR.HubConnection(config.webServer);
+        var connection = new signalR.HubConnection(config.webServer + config.signalrApi);
 
         connection.on('send', function (data) {
             var DisplayMessagesDiv = document.getElementById("DisplayMessages");
