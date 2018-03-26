@@ -11,25 +11,24 @@ namespace TheTruth.Hubs
 {
     public class VideoHub : Hub
     {
-        public VideoHub()
-        {
-        }
-
-    public class VideoHub : Hub {
         private IHttpContextAccessor _accessor;
-        public VideoHub(IHttpContextAccessor accessor) {
+
+        public VideoHub(IHttpContextAccessor accessor)
+        {
             this._accessor = accessor;
         }
+
         /// <summary>
         /// Client 端 來取Video
         /// </summary>
         /// <returns></returns>
         [HubMethodName("requestVideo")]
-        public Task RequestVideo() {
+        public Task RequestVideo()
+        {
             Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} come to get Videos");
             string ip = GetRemoteIpAddress();
             //Console.WriteLine(ip);
-            var videos = VideoUtility.GetIpVideoDic().GetValueOrDefault(ip)?
+            var videos = Utility.GetIpVideoDic().GetValueOrDefault(ip)?
                 .Select(r => new VideoViewModel
                 {
                     Category = r.Category,
@@ -59,7 +58,7 @@ namespace TheTruth.Hubs
         public override Task OnDisconnectedAsync(Exception exception)
         {
             Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} Log Out");
-            Utility.GetClientConnetionIdDic().TryRemove(GetRemoteIpAddress(),out var newDic);
+            Utility.GetClientConnetionIdDic().TryRemove(GetRemoteIpAddress(), out var newDic);
             return Clients.All.SendAsync("playVideo", "Bye");
         }
 
@@ -67,7 +66,8 @@ namespace TheTruth.Hubs
         /// Get IP
         /// </summary>
         /// <returns></returns>
-        private string GetRemoteIpAddress() {
+        private string GetRemoteIpAddress()
+        {
             return _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
             //return Context?.Connection.RemoteIpAddress.ToString();
         }

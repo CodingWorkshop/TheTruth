@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DataAccess;
 using Repository.Repository;
-using Utility;
+using TheTruth;
 using VideoService.Interface;
 
 namespace VideoService.Service
@@ -36,7 +36,7 @@ namespace VideoService.Service
                     .Url
                     .Replace(rootPath, "~/VideoRootPath");
 
-            VideoUtility.SetIpVideoDic(_videos);
+            Utility.SetIpVideoDic(_videos);
 
             return string.Empty;
         }
