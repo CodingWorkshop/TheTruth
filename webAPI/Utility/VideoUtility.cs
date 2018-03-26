@@ -1,20 +1,17 @@
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using DataAccess;
 using System.Collections.Generic;
 
-namespace Utility
-{
-    public static class VideoUtility
-    {
-        private static Dictionary<string, string> IpConnetionIdDic = new Dictionary<string, string>();
+namespace TheTruth {
+    public static class Utility {
+        private static ConcurrentDictionary<string, string> IpConnetionIdDic = new ConcurrentDictionary<string, string>();
         private static Dictionary<string, List<Video>> IpVideoDic = new Dictionary<string, List<Video>>();
 
-        public static Dictionary<string, string> GetIpConnetionIdDic()
-        {
+        public static ConcurrentDictionary<string, string> GetClientConnetionIdDic() {
             return IpConnetionIdDic;
         }
-
-        public static void SetIpConnetionIdDic(Dictionary<string, string> ipConnetionIdDic)
-        {
+        public static void SetIpConnetionIdDic(ConcurrentDictionary<string, string> ipConnetionIdDic) {
             IpConnetionIdDic = ipConnetionIdDic;
         }
 
