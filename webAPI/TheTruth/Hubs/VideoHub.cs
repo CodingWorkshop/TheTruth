@@ -28,7 +28,7 @@ namespace TheTruth.Hubs
             Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} come to get Videos");
             string ip = GetRemoteIpAddress();
             //Console.WriteLine(ip);
-            var videos = Utility.GetIpVideoDic().GetValueOrDefault(ip)?
+            var videos = Utility.VideoUtility.GetIpVideoDic().GetValueOrDefault(ip)?
                 .Select(r => new VideoViewModel
                 {
                     Category = r.Category,
@@ -46,7 +46,7 @@ namespace TheTruth.Hubs
         public override Task OnConnectedAsync()
         {
             Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} Login");
-            Utility.GetClientConnetionIdDic().TryAdd(GetRemoteIpAddress(), Context.ConnectionId);
+            Utility.VideoUtility.GetClientConnetionIdDic().TryAdd(GetRemoteIpAddress(), Context.ConnectionId);
             return Clients.Caller.SendAsync("playVideo", "Login Ok");
         }
 
@@ -58,7 +58,7 @@ namespace TheTruth.Hubs
         public override Task OnDisconnectedAsync(Exception exception)
         {
             Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} Log Out");
-            Utility.GetClientConnetionIdDic().TryRemove(GetRemoteIpAddress(), out var newDic);
+            Utility.VideoUtility.GetClientConnetionIdDic().TryRemove(GetRemoteIpAddress(), out var newDic);
             return Clients.All.SendAsync("playVideo", "Bye");
         }
 

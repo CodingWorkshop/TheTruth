@@ -8,7 +8,7 @@ namespace VideoService.Interface
     {
         List<Video> GetVideoListByIp(string ip);
 
-        List<Video> GetVideoList(string rootPath);
+        //List<Video> GetVideoList(string rootPath);
 
         string GetVideo(string code, string rootPath, string ip);
 

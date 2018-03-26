@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DataAccess;
 using Repository.Repository;
-using TheTruth;
+using Utility;
 using VideoService.Interface;
 
 namespace VideoService.Service
@@ -22,11 +22,11 @@ namespace VideoService.Service
             return _videos[ip];
         }
 
-        public List<Video> GetVideoList(string rootPath)
-        {
-            return new GenericFileRepository(rootPath)
-                .GetAll().ToList();
-        }
+        //public List<Video> GetVideoList(string rootPath)
+        //{
+        //    return new GenericFileRepository(rootPath)
+        //        .GetAll().ToList();
+        //}
 
         public string GetVideo(string code, string rootPath, string ip)
         {
@@ -35,8 +35,6 @@ namespace VideoService.Service
                     .First(v => v.Code == code)
                     .Url
                     .Replace(rootPath, "~/VideoRootPath");
-
-            Utility.SetIpVideoDic(_videos);
 
             return string.Empty;
         }
@@ -55,7 +53,6 @@ namespace VideoService.Service
             else
                 query = query.Where(w => w.DateTime >= DateTime.Today.AddMonths(-1));
 
-            Console.WriteLine(endTime);
             if (endTime != null && endTime != DateTime.MinValue)
                 query = query.Where(w => w.DateTime <= endTime);
             else
@@ -81,6 +78,8 @@ namespace VideoService.Service
                 _videos[ip] = videos;
             else
                 _videos.Add(ip, videos);
+
+            VideoUtility.SetIpVideoDic(_videos);
         }
     }
 }
