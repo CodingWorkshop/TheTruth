@@ -1,8 +1,8 @@
 var videoLearningPlaySystem = function () {
     var config = {};
     var defaultConfig = {
-        "webServer": "127.0.0.1:3000",
-        "signalrApi": "/hubs",
+        "webServer": "http://127.0.0.1:5000",
+        "signalrApi": "/VideoHub",
         "defaultPoster": "http://via.placeholder.com/121x68",
         "defaultType": "video/mp4"
     };
