@@ -27,14 +27,17 @@ namespace TheTruth.Controllers
         [HttpGet("GetVideoList")]
         public IActionResult GetVideoList()
         {
-            return new JsonResult(_service.GetVideoListByIp(GetCallerIp())
+            var videos = _service.GetVideoListByIp(GetCallerIp());
+            var result = videos
                 .Select(s => new VideoViewModel
                 {
                     Name = s.Name,
                     Date = s.Date,
                     Category = s.Category,
                     Code = s.Code
-                }));
+                });
+
+            return new JsonResult(result);
         }
 
         [HttpGet("PlayVideo")]
@@ -64,7 +67,7 @@ namespace TheTruth.Controllers
             _service.SetVideos(codes, ip, _videoPath);
         }
 
-        private string GetCallerIp()
+        protected virtual string GetCallerIp()
         {
             return Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DataAccess;
 using Repository.Repository;
+using Utility;
 using VideoService.Interface;
 
 namespace VideoService.Service
@@ -11,6 +12,10 @@ namespace VideoService.Service
     {
         private readonly Dictionary<string, List<Video>> _videos =
             new Dictionary<string, List<Video>>();
+
+        public VideoService()
+        {
+        }
 
         public List<Video> GetVideoListByIp(string ip)
         {
@@ -31,15 +36,9 @@ namespace VideoService.Service
                     .Url
                     .Replace(rootPath, "~/VideoRootPath");
 
-            return string.Empty;
+            VideoUtility.SetIpVideoDic(_videos);
 
-            //var param = code.Split('_').Select(s => s).ToList();
-            //return new GenericFileRepository(rootPath)
-            //    .GetAll()
-            //    .Where(w => w.Category == param[0] && w.Date == param[1])
-            //    .Select(s => s.Url)
-            //    .First()
-            //    .Replace(rootPath, "~/VideoRootPath");
+            return string.Empty;
         }
 
         public List<Video> GetAllVideo(string category, DateTime? beginTime,
