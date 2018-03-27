@@ -13,20 +13,10 @@ namespace VideoService.Service
         private readonly Dictionary<string, List<Video>> _videos =
             new Dictionary<string, List<Video>>();
 
-        public VideoService()
-        {
-        }
-
         public List<Video> GetVideoListByIp(string ip)
         {
             return _videos[ip];
         }
-
-        //public List<Video> GetVideoList(string rootPath)
-        //{
-        //    return new GenericFileRepository(rootPath)
-        //        .GetAll().ToList();
-        //}
 
         public string GetVideo(string code, string rootPath, string ip)
         {
@@ -42,8 +32,7 @@ namespace VideoService.Service
         public List<Video> GetAllVideo(string category, DateTime? beginTime,
             DateTime? endTime, string rootPath)
         {
-            var query = new GenericFileRepository(rootPath)
-                .GetAll();
+            var query = new GenericFileRepository(rootPath).GetAll();
 
             if (!string.IsNullOrWhiteSpace(category))
                 query = query.Where(w => category.Contains(w.Category));
@@ -65,7 +54,7 @@ namespace VideoService.Service
         {
             var allVideo = new GenericFileRepository(rootPath).GetAll();
 
-            var videos = new List<DataAccess.Video>();
+            var videos = new List<Video>();
 
             foreach (var code in codes)
             {
@@ -80,6 +69,35 @@ namespace VideoService.Service
                 _videos.Add(ip, videos);
 
             VideoUtility.SetIpVideoDic(_videos);
+        }
+
+        public List<string> GetCategories(string rootPath)
+        {
+            var query = new GenericFileRepository(rootPath).GetAll();
+
+            return query
+                .Select(s => s.Category)
+                .Distinct()
+                .ToList();
+        }
+
+        public List<ClientIdentity> GetClientIdentities()
+        {
+            var clients = new List<ClientIdentity>();
+
+            for (var i = 1; i <= 30; i++)
+            {
+                clients.Add(new ClientIdentity
+                {
+                    Id = i,
+                    Ip = $"192.168.0.{i}",
+                    IsActive = false,
+                });
+            }
+
+            return clients
+                .Where(w => _videos.ContainsKey(w.Ip))
+                .ToList();
         }
     }
 }
