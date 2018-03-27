@@ -27,14 +27,17 @@ namespace TheTruth.Controllers
         [HttpGet("GetVideoList")]
         public IActionResult GetVideoList()
         {
-            return new JsonResult(_service.GetVideoListByIp(GetCallerIp())
+            var videos = _service.GetVideoListByIp(GetCallerIp());
+            var result = videos
                 .Select(s => new VideoViewModel
                 {
                     Name = s.Name,
                     Date = s.Date,
                     Category = s.Category,
                     Code = s.Code
-                }));
+                });
+
+            return new JsonResult(result);
         }
 
         [HttpGet("PlayVideo")]
@@ -59,12 +62,31 @@ namespace TheTruth.Controllers
         }
 
         [HttpGet("SetVideo")]
-        public void SetVideo(string ip, List<string> codes)
+        public IActionResult SetVideo(string ip, List<string> codes)
         {
             _service.SetVideos(codes, ip, _videoPath);
+            return new JsonResult("Ok");
         }
 
-        private string GetCallerIp()
+        [HttpGet("GetCategories")]
+        public IActionResult GetCategories()
+        {
+            return new JsonResult(_service.GetCategories(_videoPath));
+        }
+
+        [HttpGet("GetClientIdentities")]
+        public IActionResult GetClientIdentities()
+        {
+            return new JsonResult(_service
+                .GetClientIdentities()
+                .Select(s => new ClientIdentityViewModel
+                {
+                    Id = s.Id,
+                    IsActive = s.IsActive,
+                }));
+        }
+
+        protected virtual string GetCallerIp()
         {
             return Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
         }
