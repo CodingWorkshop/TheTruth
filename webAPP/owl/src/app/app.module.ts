@@ -6,7 +6,10 @@ import {
   MatToolbarModule,
   MatSidenavModule,
   MatButtonModule,
-  MatIconModule
+  MatIconModule,
+  MatDatepickerModule,
+  MatNativeDateModule,
+  MatInputModule
 } from '@angular/material';
 
 import { SignalrService } from './signalr.service';
@@ -27,7 +30,10 @@ import { SideContentComponent } from './side-content/side-content.component';
     MatToolbarModule,
     MatSidenavModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatInputModule
   ],
   providers: [
     SignalrService
