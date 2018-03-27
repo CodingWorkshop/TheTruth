@@ -10,9 +10,24 @@ var videoLearningPlaySystem = function () {
         "defaultType": "video/mp4"
     };
 
-    var player = videojs('video-learning-player');
+    var player = {};
 
-    getAppConfig()
+    fetch('app/i18n/zh-TW.json')
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (langJson) {
+            videojs.addLanguage('zh-tw', langJson);
+            player = videojs('video-learning-player', {
+                language: 'zh-tw'
+            });
+
+            return getAppConfig();
+        })
+        .then(function (_config) {
+
+            return _config;
+        })
         .then(function (_config) {
             config = _config;
             webSocketInitail();
