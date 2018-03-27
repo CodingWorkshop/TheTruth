@@ -4,8 +4,9 @@
   </mat-drawer>
 
   <div class="example-sidenav-content">
-    <button type="button" mat-button (click)="drawer.toggle()">
-      Toggle sidenav
+    <button mat-icon-button (click)="drawer.toggle()">
+      <mat-icon *ngIf="drawer.opened">navigate_before</mat-icon>
+      <mat-icon *ngIf="!drawer.opened">navigate_next</mat-icon>
     </button>
   </div>
 

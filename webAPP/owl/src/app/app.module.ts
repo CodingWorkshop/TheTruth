@@ -2,8 +2,12 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { MatToolbarModule } from '@angular/material';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import {
+  MatToolbarModule,
+  MatSidenavModule,
+  MatButtonModule,
+  MatIconModule
+} from '@angular/material';
 
 import { SignalrService } from './signalr.service';
 
@@ -21,7 +25,9 @@ import { SideContentComponent } from './side-content/side-content.component';
     BrowserModule,
     BrowserAnimationsModule,
     MatToolbarModule,
-    MatSidenavModule
+    MatSidenavModule,
+    MatButtonModule,
+    MatIconModule
   ],
   providers: [
     SignalrService
