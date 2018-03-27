@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DataAccess;
 using Repository.Repository;
+using Utility;
 using VideoService.Interface;
 
 namespace VideoService.Service
@@ -17,12 +18,6 @@ namespace VideoService.Service
             return _videos[ip];
         }
 
-        public List<Video> GetVideoList(string rootPath)
-        {
-            return new GenericFileRepository(rootPath)
-                .GetAll().ToList();
-        }
-
         public string GetVideo(string code, string rootPath, string ip)
         {
             if (_videos[ip].Any(v => v.Code == code))
@@ -32,21 +27,12 @@ namespace VideoService.Service
                     .Replace(rootPath, "~/VideoRootPath");
 
             return string.Empty;
-
-            //var param = code.Split('_').Select(s => s).ToList();
-            //return new GenericFileRepository(rootPath)
-            //    .GetAll()
-            //    .Where(w => w.Category == param[0] && w.Date == param[1])
-            //    .Select(s => s.Url)
-            //    .First()
-            //    .Replace(rootPath, "~/VideoRootPath");
         }
 
         public List<Video> GetAllVideo(string category, DateTime? beginTime,
             DateTime? endTime, string rootPath)
         {
-            var query = new GenericFileRepository(rootPath)
-                .GetAll();
+            var query = new GenericFileRepository(rootPath).GetAll();
 
             if (!string.IsNullOrWhiteSpace(category))
                 query = query.Where(w => category.Contains(w.Category));
@@ -56,7 +42,6 @@ namespace VideoService.Service
             else
                 query = query.Where(w => w.DateTime >= DateTime.Today.AddMonths(-1));
 
-            Console.WriteLine(endTime);
             if (endTime != null && endTime != DateTime.MinValue)
                 query = query.Where(w => w.DateTime <= endTime);
             else
@@ -69,7 +54,7 @@ namespace VideoService.Service
         {
             var allVideo = new GenericFileRepository(rootPath).GetAll();
 
-            var videos = new List<DataAccess.Video>();
+            var videos = new List<Video>();
 
             foreach (var code in codes)
             {
@@ -82,6 +67,37 @@ namespace VideoService.Service
                 _videos[ip] = videos;
             else
                 _videos.Add(ip, videos);
+
+            VideoUtility.SetIpVideoDic(_videos);
+        }
+
+        public List<string> GetCategories(string rootPath)
+        {
+            var query = new GenericFileRepository(rootPath).GetAll();
+
+            return query
+                .Select(s => s.Category)
+                .Distinct()
+                .ToList();
+        }
+
+        public List<ClientIdentity> GetClientIdentities()
+        {
+            var clients = new List<ClientIdentity>();
+
+            for (var i = 1; i <= 30; i++)
+            {
+                clients.Add(new ClientIdentity
+                {
+                    Id = i,
+                    Ip = $"192.168.0.{i}",
+                    IsActive = false,
+                });
+            }
+
+            return clients
+                .Where(w => _videos.ContainsKey(w.Ip))
+                .ToList();
         }
     }
 }

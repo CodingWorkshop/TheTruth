@@ -56,7 +56,7 @@
     font-style: normal;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap
+    white-space: nowrap;
 }
 
 .vjs-playlist .vjs-playlist-description {
@@ -107,8 +107,12 @@
     line-height: 26px;
 }
 
-.vjs-mouse.vjs-playlist .vjs-playlist-item:hover .vjs-playlist-thumbnail::before,
-.vjs-mouse.vjs-playlist .vjs-playlist-item:focus .vjs-playlist-thumbnail::before {
+.vjs-mouse.vjs-playlist
+    .vjs-playlist-item:hover
+    .vjs-playlist-thumbnail::before,
+.vjs-mouse.vjs-playlist
+    .vjs-playlist-item:focus
+    .vjs-playlist-thumbnail::before {
     border-radius: 5px;
     font-family: 'VideoJS';
     height: 34px;
