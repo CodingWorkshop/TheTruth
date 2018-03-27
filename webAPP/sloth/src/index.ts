@@ -1,6 +1,10 @@
 import lang from './i18n/zh-TW';
 import signalr from './modules/signalr';
 import convertor from './modules/convertor';
+import http from './modules/http';
+import loadingMask from './modules/loadingMask';
+
+loadingMask.showLoading();
 
 let config: sloth.Config = {};
 const defaultConfig: sloth.Config = {
@@ -20,14 +24,12 @@ player = videojs('video-learning-player', {
     language: 'zh-tw'
 });
 
-getAppConfig()
-    .then(function(_config) {
-        return _config;
-    })
+http
+    .getAppConfig(defaultConfig)
     .then(function(_config) {
         config = _config;
         signalr(config);
-        return getVideoList();
+        return http.getVideoList(config.webApiRoot + config.webApiGetVideoList);
     })
     .then((res: any) => {
         return convertor.covertToPlayList(res, config);
@@ -36,40 +38,5 @@ getAppConfig()
         player.playlist(result);
         player.playlistUi();
         player.playlist.autoadvance(0);
+        loadingMask.hideLoading();
     });
-
-function getAppConfig() {
-    return new Promise((resolve, reject) => {
-        if (window.location.search) {
-            const query = window.location.search.substring(1).split('&');
-            const configFromUrl: any = Object.assign({}, defaultConfig);
-            query.forEach(q => {
-                let keyValuePair = q.split('=');
-                configFromUrl[keyValuePair[0]] = keyValuePair[1];
-            });
-            resolve(configFromUrl);
-        } else {
-            resolve(defaultConfig);
-        }
-    });
-}
-
-function getVideoList() {
-    return fetch(config.webApiRoot + config.webApiGetVideoList, {
-        method: 'get'
-    })
-        .then(function(res) {
-            return res.json();
-        })
-        .catch(function(res) {
-            console.log(res);
-            var fakeList = [];
-            for (let index = 0; index < 10; index++) {
-                fakeList[index] = {
-                    category: 'video-' + index,
-                    date: new Date()
-                };
-            }
-            return fakeList;
-        });
-}
