@@ -13,8 +13,8 @@
 .main-preview-player .playlist-container {
     position: relative;
     min-width: 300px;
-    min-height: 300px;
-    height: 0;
+    min-height: 100vh;
+    height: 100vh;
 }
 
 .main-preview-player .video-js {
@@ -74,6 +74,7 @@
 }
 
 .vjs-mouse.vjs-playlist .vjs-playlist-item {
+    padding-left: 8px;
     height: 68px;
     margin-bottom: 17px;
 }

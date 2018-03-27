@@ -1,15 +1,33 @@
 var videoLearningPlaySystem = function () {
     var config = {};
     var defaultConfig = {
-        "webServer": "http://127.0.0.1:5000",
+        "webApiRoot": "http://127.0.0.1:5000",
+        "webApiGetVideoList": "/api/Video/GetVideoList",
+        "webApiPlayVideo": "/api/Video/PlayVideo",
         "signalrApi": "/VideoHub",
+        "signalrChannelPlay": "play",
         "defaultPoster": "http://via.placeholder.com/121x68",
         "defaultType": "video/mp4"
     };
 
-    var player = videojs('video-learning-player');
+    var player = {};
 
-    getAppConfig()
+    fetch('app/i18n/zh-TW.json')
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (langJson) {
+            videojs.addLanguage('zh-tw', langJson);
+            player = videojs('video-learning-player', {
+                language: 'zh-tw'
+            });
+
+            return getAppConfig();
+        })
+        .then(function (_config) {
+
+            return _config;
+        })
         .then(function (_config) {
             config = _config;
             webSocketInitail();
@@ -41,7 +59,7 @@ var videoLearningPlaySystem = function () {
     }
 
     function getVideoList() {
-        return fetch(config.webServer + '/api/Video/GetVideoList', {
+        return fetch(config.webApiRoot + config.webApiGetVideoList, {
                 method: 'get'
             })
             .then(function (res) {
@@ -77,7 +95,7 @@ var videoLearningPlaySystem = function () {
     }
 
     function generateVideoParams(video) {
-        var path = config.webServer + 'api/Video/PlayVideo?' +
+        var path = config.webApiRoot + config.webApiPlayVideo + '?' +
             'category=' +
             video.category +
             '&date=' +
@@ -88,21 +106,12 @@ var videoLearningPlaySystem = function () {
     }
 
     function webSocketInitail() {
-        var connection = new signalR.HubConnection(config.webServer + config.signalrApi);
+        var connection = new signalR.HubConnection(config.webApiRoot + config.signalrApi);
 
-        connection.on('send', function (data) {
+        connection.on('play', function (data) {
             var DisplayMessagesDiv = document.getElementById("DisplayMessages");
             DisplayMessagesDiv.innerHTML += "<br/>" + data;
         });
-
-        connection.start().then(function () {
-            return connection.invoke('send', 'Hello');
-        });
-
-        function SendMessage() {
-            var msg = document.getElementById("txtMessage").value;
-            connection.invoke('send', msg);
-        }
     }
 }
 

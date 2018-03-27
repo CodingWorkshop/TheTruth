@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../environments/environment';
 
 @Injectable()
 export class SignalrService {
@@ -7,7 +8,7 @@ export class SignalrService {
 
   constructor(
   ) {
-    this.connection = new signalR.HubConnection('http://192.168.43.114:5000/managementhub');
+    this.connection = new signalR.HubConnection(`${environment.apiUrl}managementhub`);
     this.connection.start();
   }
 

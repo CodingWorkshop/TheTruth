@@ -1,0 +1,13 @@
+<mat-drawer-container class="example-container" autosize>
+  <mat-drawer #drawer class="example-sidenav" mode="side" opened="true">
+    <p>1231231312312</p>
+  </mat-drawer>
+
+  <div class="example-sidenav-content">
+    <button mat-icon-button (click)="drawer.toggle()">
+      <mat-icon *ngIf="drawer.opened">navigate_before</mat-icon>
+      <mat-icon *ngIf="!drawer.opened">navigate_next</mat-icon>
+    </button>
+  </div>
+
+</mat-drawer-container>
