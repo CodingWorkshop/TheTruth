@@ -1,3 +1,9 @@
+IF exist .\nginx\nginx.exe (
+echo Find nginx.exe
+) ELSE (
+copy .\nginx\nginx.exe_ .\nginx\nginx.exe
+)
+
 cd .\nginx
 start nginx
 
