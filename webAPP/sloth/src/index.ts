@@ -3,21 +3,25 @@ import signalr from './modules/signalr';
 import convertor from './modules/convertor';
 import http from './modules/http';
 import loadingMask from './modules/loadingMask';
+import generateVideoImage from './modules/generateVidoeImage';
+const defaultVideoImage = generateVideoImage();
 
 loadingMask.showLoading();
 
-let config: sloth.Config = {};
+export var config: sloth.Config = {};
 const defaultConfig: sloth.Config = {
     webApiRoot: 'http://127.0.0.1:5000',
     webApiGetVideoList: '/api/Video/GetVideoList',
     webApiPlayVideo: '/api/Video/PlayVideo',
     signalrApi: '/VideoHub',
     signalrChannelPlay: 'play',
-    defaultPoster: 'http://via.placeholder.com/121x68',
-    defaultType: 'video/mp4'
+    defaultPoster: defaultVideoImage,
+    defaultType: 'video/mp4',
+    defaultName: lang['Video Name'],
+    defaultDescription: lang['Video Description']
 };
 
-let player = {} as any;
+export var player = {} as any;
 
 videojs.addLanguage('zh-tw', lang);
 player = videojs('video-learning-player', {

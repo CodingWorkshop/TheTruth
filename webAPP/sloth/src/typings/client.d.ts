@@ -10,5 +10,7 @@ declare namespace sloth {
         signalrChannelPlay?: string;
         defaultPoster?: string;
         defaultType?: string;
+        defaultName?: string;
+        defaultDescription?: string;
     }
 }

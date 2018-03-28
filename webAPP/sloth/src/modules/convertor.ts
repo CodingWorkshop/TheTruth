@@ -1,8 +1,11 @@
+import generateVideoImage from './generateVidoeImage';
+const defaultVideoImage = generateVideoImage();
+
 function covertToPlayList(res: any, config: sloth.Config) {
     return res.map(function(video: any) {
         return {
-            name: video.name || '影片名稱',
-            description: video.description || '影片描述',
+            name: video.name || config.defaultName,
+            description: video.description || config.defaultDescription,
             sources: [
                 {
                     src: generateVideoParams(video, config),
@@ -12,7 +15,7 @@ function covertToPlayList(res: any, config: sloth.Config) {
             poster: video.poster || config.defaultPoster,
             thumbnail: [
                 {
-                    src: video.thumbnail || 'http://via.placeholder.com/121x68'
+                    src: video.thumbnail || config.defaultPoster
                 }
             ]
         };

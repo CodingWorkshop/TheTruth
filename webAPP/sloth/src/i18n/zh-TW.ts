@@ -89,5 +89,7 @@ export default {
     'End of dialog window.': '結束對話視窗',
     'Now Playing': '播放中',
     'Untitled Video': '無標題影片',
-    'Up Next': '接著播放'
+    'Up Next': '接著播放',
+    'Video Name': '影片名稱',
+    'Video Description': '影片描述'
 };
