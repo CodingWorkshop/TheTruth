@@ -6,16 +6,10 @@ export default (config: sloth.Config) => {
     var connection = new signalR.HubConnection(
         config.webApiRoot + config.signalrApi
     );
-
-    connection.on('play', function(data: any) {
-        player.play();
+    connection.start().then(() => {
+        connection.invoke('requestVideo');
     });
-
-    connection.on('wait', function(data: any) {
-        player.pause();
+    connection.on('playVideo', function(data: any) {
+        console.log(data);
     });
-
-    connection.on('stop', function(data: any) {});
-
-    connection.on('next', function(data: any) {});
 };

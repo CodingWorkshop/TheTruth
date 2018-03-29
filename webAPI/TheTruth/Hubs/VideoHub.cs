@@ -28,15 +28,24 @@ namespace TheTruth.Hubs
             Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} come to get Videos");
             string ip = GetRemoteIpAddress();
             //Console.WriteLine(ip);
-            var videos = Utility.VideoUtility.GetIpVideoDic().GetValueOrDefault(ip)?
-                .Select(r => new VideoViewModel
-                {
-                    Category = r.Category,
-                    Name = r.Name,
-                    Code = r.Code,
-                    Date = r.Date,
-                }).ToList();
-            return Clients.Client(Context.ConnectionId).SendAsync("playVideo", $" give videos to {Context.ConnectionId}");
+            // var videos = Utility.VideoUtility.GetIpVideoDic().GetValueOrDefault(ip)
+            //     .Select(r => new VideoViewModel
+            //     {
+            //         Category = r.Category,
+            //         Name = r.Name,
+            //         Code = r.Code,
+            //         Date = r.Date,
+            //     }).ToList();
+            var vi = new List<VideoViewModel>();
+            vi.Add(new VideoViewModel
+            {
+                Category = "Chinese",
+                Name = "FirstClass",
+                Code = "1",
+                Date = "2018-03-29"
+            });
+
+            return Clients.Client(Context.ConnectionId).SendAsync("playVideo", vi);
         }
 
         /// <summary>
