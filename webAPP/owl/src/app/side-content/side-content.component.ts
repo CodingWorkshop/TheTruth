@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-side-content',
@@ -6,10 +7,13 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./side-content.component.css']
 })
 export class SideContentComponent implements OnInit {
+  startDate: FormControl;
+  endDate: FormControl;
 
   constructor() { }
 
   ngOnInit() {
+    this.startDate = new FormControl(new Date());
   }
 
 }
