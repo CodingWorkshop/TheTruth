@@ -1,11 +1,15 @@
-.example-container {
+.container {
   height: calc(100vh - 64px);
 }
 
-.example-sidenav {
+.sidenav {
   padding: 20px;
 }
 
-.example-sidenav-content {
+.sidenav-content {
   height: 100%;
+}
+
+.mat-column-select {
+  overflow: visible;
 }

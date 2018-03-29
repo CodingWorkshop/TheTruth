@@ -10,7 +10,9 @@ import {
   MatIconModule,
   MatDatepickerModule,
   MatNativeDateModule,
-  MatInputModule
+  MatInputModule,
+  MatCheckboxModule,
+  MatTableModule
 } from '@angular/material';
 
 import { SignalrService } from './signalr.service';
@@ -38,7 +40,9 @@ import { SideBarComponent } from './side-content/side-bar/side-bar.component';
     MatIconModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatInputModule
+    MatInputModule,
+    MatCheckboxModule,
+    MatTableModule
   ],
   providers: [
     SignalrService

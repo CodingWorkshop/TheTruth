@@ -35,7 +35,7 @@ export class SideBarComponent implements OnInit {
   }
 }
 
-interface ISearchCondtion {
+export interface ISearchCondtion {
   startDate: string;
   endDate: string;
 }
