@@ -1,12 +1,13 @@
 .example-container {
-  height: 88vh;
-}
-
-.example-sidenav-content {
-  height: 100%;
+  height: calc(100vh - 64px);
 }
 
 .example-sidenav {
   padding: 20px;
-  max-width: 452px;
+  display: flex;
+  flex-direction: column;
+}
+
+.example-sidenav-content {
+  height: 100%;
 }
