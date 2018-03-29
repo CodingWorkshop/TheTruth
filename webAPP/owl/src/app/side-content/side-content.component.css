@@ -4,8 +4,6 @@
 
 .example-sidenav {
   padding: 20px;
-  display: flex;
-  flex-direction: column;
 }
 
 .example-sidenav-content {
