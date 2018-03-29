@@ -20,8 +20,8 @@ export class SectionComponent implements OnInit {
 
   search() {
     this.modelChange.emit({
-      startDate: this.startDate.value,
-      endDate: this.endDate.value
+      startDate: this.startDate.value ? this.startDate.value.toISOString() : null,
+      endDate: this.endDate.value ? this.endDate.value.toISOString() : null
     });
   }
 
