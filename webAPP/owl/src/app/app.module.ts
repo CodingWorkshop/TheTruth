@@ -18,14 +18,14 @@ import { SignalrService } from './signalr.service';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { SideContentComponent } from './side-content/side-content.component';
-import { SectionComponent } from './side-content/section/section.component';
+import { SideBarComponent } from './side-content/side-bar/side-bar.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
     SideContentComponent,
-    SectionComponent
+    SideBarComponent
   ],
   imports: [
     BrowserModule,
