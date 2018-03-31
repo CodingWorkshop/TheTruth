@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Truth - Sloth</title>
+    <title>影片播放器</title>
     <link href="assets/stylesheets/normalize.css" rel="stylesheet">
     <link href="assets/stylesheets/video-js.min.css" rel="stylesheet">
     <link href="assets/stylesheets/videojs-playlist-ui.css" rel="stylesheet">
@@ -14,16 +14,16 @@
 </head>
 
 <body>
-    <header></header>
-    <section class="main-preview-player">
-        <video style="width:100%" id="video-learning-player" class="video-js" controls preload="auto">
-        </video>
-        <div class="vjs-playlist playlist-container"></div>
+    <header class="player-header"></header>
+    <section>
+        <div class="main-preview-player">
+            <video style="width:100%" id="video-learning-player" class="video-js" controls preload="auto">
+            </video>
+            <div class="vjs-playlist playlist-container"></div>
+        </div>
+        <div class="loading-mask"></div>
     </section>
-    <footer>
-        <div id="server-time"></div>
-        <div id="DisplayMessages"></div>
-        <div id="txtMessage"></div>
+    <footer class="player-footer">
     </footer>
     <script src="assets/javascripts/video.min.js"></script>
     <script src="assets/javascripts/videojs-playlist.min.js"></script>

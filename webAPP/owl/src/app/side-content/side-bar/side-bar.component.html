@@ -1,0 +1,16 @@
+<mat-form-field>
+  <mat-label>起始時間</mat-label>
+  <input matInput [matDatepicker]="picker1" [formControl]="startDate">
+  <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+  <mat-datepicker #picker1></mat-datepicker>
+</mat-form-field>
+<mat-form-field>
+  <mat-label>結束時間</mat-label>
+  <input matInput [matDatepicker]="picker2" [formControl]="endDate">
+  <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+  <mat-datepicker #picker2></mat-datepicker>
+</mat-form-field>
+<div class="button-row">
+  <button mat-raised-button color="primary" (click)="search()">查詢</button>
+  <button mat-raised-button (click)="clearAll()">清空</button>
+</div>
