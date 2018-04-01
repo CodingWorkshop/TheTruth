@@ -32,7 +32,7 @@ namespace TheTruth.Hubs
             var videos = VideoUtility.GetIpVideoDic().GetValueOrDefault(ip)?
                 .Select(r => new VideoViewModel
                 {
-                    Category = r.Category,
+                    DisplayName = r.Category,
                     Name = r.Name,
                     Code = r.Code,
                     Date = r.Date,

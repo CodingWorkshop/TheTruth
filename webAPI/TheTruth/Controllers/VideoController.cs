@@ -14,66 +14,46 @@ namespace TheTruth.Controllers
     [Route("api/[controller]")]
     public class VideoController : Controller
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
         private readonly string _videoPath;
         private readonly IVideoService _service;
-        private readonly List<CategoryInfo> _categories;
 
-        public VideoController(IHostingEnvironment hostingEnvironment, IVideoService service)
+        public VideoController(IHostingEnvironment hostingEnvironment,
+            IVideoService service)
         {
-            _hostingEnvironment = hostingEnvironment;
-            _videoPath = $"{_hostingEnvironment.WebRootPath}\\Videos";
+            _videoPath = $"{hostingEnvironment.WebRootPath}\\Videos";
             _service = service;
-            _categories = new List<CategoryInfo>
+            var categories = new List<CategoryInfo>
             {
-                new CategoryInfo {Id = 1, DisplayName = "國文", Folder = "Chinese"},
-                new CategoryInfo {Id = 2, DisplayName = "英文", Folder = "English"},
-                new CategoryInfo {Id = 3, DisplayName = "數學", Folder = "Math"},
-                new CategoryInfo {Id = 4, DisplayName = "物理", Folder = "Physical"},
-                new CategoryInfo {Id = 5, DisplayName = "化學", Folder = "Chemical"},
-                new CategoryInfo {Id = 6, DisplayName = "社會", Folder = "Social"},
-                new CategoryInfo {Id = 7, DisplayName = "歷史", Folder = "History"},
-                new CategoryInfo {Id = 8, DisplayName = "地理", Folder = "Geography"},
+                new CategoryInfo {Id = 1, DisplayName = "國文", Name = "Chinese"},
+                new CategoryInfo {Id = 2, DisplayName = "英文", Name = "English"},
+                new CategoryInfo {Id = 3, DisplayName = "數學", Name = "Math"},
+                new CategoryInfo {Id = 4, DisplayName = "物理", Name = "Physical"},
+                new CategoryInfo {Id = 5, DisplayName = "化學", Name = "Chemical"},
+                new CategoryInfo {Id = 6, DisplayName = "社會", Name = "Social"},
+                new CategoryInfo {Id = 7, DisplayName = "歷史", Name = "History"},
+                new CategoryInfo {Id = 8, DisplayName = "地理", Name = "Geography"},
             };
-
-            service.InitDirectories(_videoPath, _categories);
-        }
-
-        [HttpGet("GetVideoList")]
-        public IActionResult GetVideoList()
-        {
-            var videos = _service.GetVideoListByIp(GetCallerIp());
-            var result = videos
-                .Select(s => new VideoViewModel
+            var clientIdentities = new List<ClientIdentity>();
+            for (var i = 1; i <= 30; i++)
+            {
+                clientIdentities.Add(new ClientIdentity
                 {
-                    Name = s.Name,
-                    Date = s.Date,
-                    Category = s.Category,
-                    Code = s.Code
+                    Id = i,
+                    Ip = $"192.168.0.{i}",
+                    IsActive = false
                 });
+            }
 
-            return new JsonResult(result);
-        }
-
-        [HttpGet("PlayVideo")]
-        public IActionResult PlayVideo(string code)
-        {
-            return Redirect(_service.GetVideo(code, _videoPath, GetCallerIp()));
+            service.Init(_videoPath, categories, clientIdentities);
         }
 
         [HttpGet("SearchVideos")]
         public IActionResult SearchVideos(
-            List<string> categories, DateTime? beginTime, DateTime? endTime)
+            List<int> categoryIds, DateTime? beginTime, DateTime? endTime)
         {
             return new JsonResult(_service.SearchVideos(
-                categories, beginTime, endTime, _videoPath)
-                .Select(s => new VideoViewModel
-                {
-                    Name = s.Name,
-                    Date = s.Date,
-                    Category = s.Category,
-                    Code = s.Code
-                }));
+                    categoryIds, beginTime, endTime, _videoPath)
+                .Select(VideoToViewModel));
         }
 
         [HttpGet("SetVideo")]
@@ -83,10 +63,26 @@ namespace TheTruth.Controllers
             return new JsonResult("Ok");
         }
 
+        [HttpGet("GetVideoList")]
+        public IActionResult GetVideoList()
+        {
+            var videos = _service.GetVideoListByIp(GetCallerIp());
+            var result = videos
+                .Select(VideoToViewModel);
+
+            return new JsonResult(result);
+        }
+
+        [HttpGet("PlayVideo")]
+        public IActionResult PlayVideo(string code)
+        {
+            return Redirect(_service.GetVideoByCode(code, _videoPath, GetCallerIp()));
+        }
+
         [HttpGet("GetCategories")]
         public IActionResult GetCategories()
         {
-            return new JsonResult(_categories
+            return new JsonResult(_service.GetCategories()
                 .Select(s => new CategoryViewModel
                 {
                     Id = s.Id,
@@ -109,6 +105,18 @@ namespace TheTruth.Controllers
         protected virtual string GetCallerIp()
         {
             return Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+        }
+
+        private VideoViewModel VideoToViewModel(Video video)
+        {
+            return new VideoViewModel
+            {
+                Id = video.CategoryId,
+                Name = video.Name,
+                Date = video.Date,
+                DisplayName = video.CategoryName,
+                Code = video.Code
+            };
         }
     }
 }

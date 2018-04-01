@@ -52,7 +52,7 @@ namespace BLL.VideoService.Test
             var expected = videos.Select(s => new VideoViewModel
             {
                 Name = s.Name,
-                Category = s.Category,
+                DisplayName = s.Category,
                 Date = s.Date,
                 Code = s.Code
             });

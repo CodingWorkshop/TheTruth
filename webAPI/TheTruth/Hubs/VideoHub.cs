@@ -31,7 +31,7 @@ namespace TheTruth.Hubs
             // var videos = Utility.VideoUtility.GetIpVideoDic().GetValueOrDefault(ip)
             //     .Select(r => new VideoViewModel
             //     {
-            //         Category = r.Category,
+            //         DisplayName = r.DisplayName,
             //         Name = r.Name,
             //         Code = r.Code,
             //         Date = r.Date,
@@ -39,7 +39,7 @@ namespace TheTruth.Hubs
             var vi = new List<VideoViewModel>();
             vi.Add(new VideoViewModel
             {
-                Category = "Chinese",
+                DisplayName = "Chinese",
                 Name = "FirstClass",
                 Code = "1",
                 Date = "2018-03-29"

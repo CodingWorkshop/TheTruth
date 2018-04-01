@@ -7,7 +7,7 @@ namespace Utility
     public static class VideoUtility
     {
         private static ConcurrentDictionary<string, string> IpConnetionIdDic = new ConcurrentDictionary<string, string>();
-        private static Dictionary<string, List<Video>> IpVideoDic = new Dictionary<string, List<Video>>();
+        private static Dictionary<string, IEnumerable<Video>> IpVideoDic = new Dictionary<string, IEnumerable<Video>>();
 
         public static ConcurrentDictionary<string, string> GetClientConnetionIdDic()
         {
@@ -19,12 +19,12 @@ namespace Utility
             IpConnetionIdDic = ipConnetionIdDic;
         }
 
-        public static Dictionary<string, List<Video>> GetIpVideoDic()
+        public static Dictionary<string, IEnumerable<Video>> GetIpVideoDic()
         {
             return IpVideoDic;
         }
 
-        public static void SetIpVideoDic(Dictionary<string, List<Video>> ipVideoDic)
+        public static void SetIpVideoDic(Dictionary<string, IEnumerable<Video>> ipVideoDic)
         {
             IpVideoDic = ipVideoDic;
         }

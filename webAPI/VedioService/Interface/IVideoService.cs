@@ -6,19 +6,19 @@ namespace VideoService.Interface
 {
     public interface IVideoService
     {
-        List<Video> GetVideoListByIp(string ip);
+        IEnumerable<Video> GetVideoListByIp(string ip);
 
-        string GetVideo(string code, string rootPath, string ip);
+        string GetVideoByCode(string code, string rootPath, string ip);
 
-        List<Video> SearchVideos(List<string> categories, DateTime? beginTime,
+        IEnumerable<Video> SearchVideos(IEnumerable<int> categoryIds, DateTime? beginTime,
             DateTime? endTime, string rootPath);
 
-        void SetVideos(List<string> codes, string ip, string rootPath);
+        void SetVideos(IEnumerable<string> codes, string ip, string rootPath);
 
-        List<string> GetCategories(string rootPath);
+        IEnumerable<CategoryInfo> GetCategories();
 
-        List<ClientIdentity> GetClientIdentities();
+        IEnumerable<ClientIdentity> GetClientIdentities();
 
-        void InitDirectories(string rootPath, List<CategoryInfo> categories);
+        void Init(string rootPath, IEnumerable<CategoryInfo> categories, IEnumerable<ClientIdentity> clientIdentities);
     }
 }
