@@ -53,4 +53,13 @@ http
     })
     .listen(parseInt(port));
 
+fs.watch(path.join(process.cwd(), 'src'), (event, filename) => {
+    console.log('event is: ' + event);
+    if (filename) {
+        console.log('filename provided: ' + filename);
+    } else {
+        console.log('filename not provided');
+    }
+});
+
 console.log(`Server listening on port ${port}`);
