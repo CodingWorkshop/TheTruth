@@ -1,7 +1,14 @@
-declare var videojs: any;
-declare var signalR: any;
-
 declare namespace sloth {
+    interface Instance {
+        config: Config;
+        action: Action;
+    }
+
+    interface Action {
+        initial(): void;
+        play(): void;
+    }
+
     interface Config {
         webApiRoot?: string;
         webApiGetVideoList?: string;
@@ -12,5 +19,10 @@ declare namespace sloth {
         defaultType?: string;
         defaultName?: string;
         defaultDescription?: string;
+    }
+
+    interface Videojs {
+        (): any;
+        addLanguage(language: string, languagePackage: object): void;
     }
 }
