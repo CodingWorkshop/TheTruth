@@ -1,30 +1,22 @@
-import lang from './i18n/zh-TW';
+import langPackage from './i18n/zh-TW';
 import signalr from './modules/signalr';
 import convertor from './modules/convertor';
 import http from './modules/http';
+import defaultConfig from './modules/getDefaultConfig';
 import loadingMask from './modules/loadingMask';
 import generateVideoImage from './modules/generateVidoeImage';
-const defaultVideoImage = generateVideoImage();
+import * as videojs from 'video.js';
+import plugin from '../node_modules/videojs-playlist/dist/videojs-playlist.es';
+import playlistUi from '../node_modules/videojs-playlist-ui/dist/videojs-playlist-ui.es';
+import * as signalR from '../node_modules/@aspnet/signalr/dist/esm/index';
 
 loadingMask.showLoading();
 
-export var config: sloth.Config = {};
-const defaultConfig: sloth.Config = {
-    webApiRoot: 'http://127.0.0.1:5000',
-    webApiGetVideoList: '/api/Video/GetVideoList',
-    webApiPlayVideo: '/api/Video/PlayVideo',
-    signalrApi: '/videohub',
-    signalrChannelPlay: 'play',
-    defaultPoster: defaultVideoImage,
-    defaultType: 'video/mp4',
-    defaultName: lang['Video Name'],
-    defaultDescription: lang['Video Description']
-};
+export let config: sloth.Config = {};
 
-export var player = {} as any;
+(videojs as sloth.Videojs).addLanguage('zh-tw', langPackage);
 
-videojs.addLanguage('zh-tw', lang);
-player = videojs('video-learning-player', {
+export const player = videojs('video-learning-player', {
     language: 'zh-tw'
 });
 
