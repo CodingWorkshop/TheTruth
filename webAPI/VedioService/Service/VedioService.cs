@@ -13,9 +13,22 @@ namespace VideoService.Service
         private readonly Dictionary<string, List<Video>> _videos =
             new Dictionary<string, List<Video>>();
 
+        private string _rootPath;
+
+        public void InitDirectories(string rootPath, List<CategoryInfo> categories)
+        {
+            _rootPath = rootPath;
+
+            foreach (var category in categories)
+                rootPath.CreateDirectory(category.Folder)
+                        .CreateDirectory(DateTime.Today.ToShortDateString());
+        }
+
         public List<Video> GetVideoListByIp(string ip)
         {
-            return _videos[ip];
+            return _videos.ContainsKey(ip)
+                ? _videos[ip]
+                : new List<Video>();
         }
 
         public string GetVideo(string code, string rootPath, string ip)
@@ -29,13 +42,13 @@ namespace VideoService.Service
             return string.Empty;
         }
 
-        public List<Video> GetAllVideo(string category, DateTime? beginTime,
+        public List<Video> SearchVideos(List<string> categories, DateTime? beginTime,
             DateTime? endTime, string rootPath)
         {
             var query = new GenericFileRepository(rootPath).GetAll();
 
-            if (!string.IsNullOrWhiteSpace(category))
-                query = query.Where(w => category.Contains(w.Category));
+            if (categories.Any())
+                query = query.Where(w => categories.Any(where => where.Contains(w.Category)));
 
             if (beginTime != null && beginTime != DateTime.MinValue)
                 query = query.Where(w => w.DateTime >= beginTime);

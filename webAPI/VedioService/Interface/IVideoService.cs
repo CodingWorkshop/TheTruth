@@ -10,7 +10,7 @@ namespace VideoService.Interface
 
         string GetVideo(string code, string rootPath, string ip);
 
-        List<Video> GetAllVideo(string category, DateTime? beginTime,
+        List<Video> SearchVideos(List<string> categories, DateTime? beginTime,
             DateTime? endTime, string rootPath);
 
         void SetVideos(List<string> codes, string ip, string rootPath);
@@ -18,5 +18,7 @@ namespace VideoService.Interface
         List<string> GetCategories(string rootPath);
 
         List<ClientIdentity> GetClientIdentities();
+
+        void InitDirectories(string rootPath, List<CategoryInfo> categories);
     }
 }
