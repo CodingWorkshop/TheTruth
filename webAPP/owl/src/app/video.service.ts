@@ -8,8 +8,16 @@ export class VideoService {
 
   constructor(private http: HttpClient) { }
 
-  getVideoList() {
-    return this.http.get<IVideo[]>(`${environment.apiUrl}/Video/getvideolist`);
+  getVideoList(params) {
+    return this.http.get<IVideo[]>(`${environment.apiUrl}/Video/SearchVideos`, { params: params });
+  }
+
+  getCategories() {
+    return this.http.get<ICategory[]>(`${environment.apiUrl}/Video/GetCategories`);
+  }
+
+  getClientIdentities() {
+    return this.http.get<IClientIdentity[]>(`${environment.apiUrl}/Video/getClientIdentities`);
   }
 }
 
@@ -20,4 +28,15 @@ export interface IVideo {
   date: string;
   displayName: string;
   code: string;
+}
+
+export interface ICategory {
+  id: number;
+  displayName: string;
+  checked: boolean;
+}
+
+export interface IClientIdentity {
+  id: number;
+  isActive: boolean;
 }

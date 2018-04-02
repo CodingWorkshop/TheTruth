@@ -11,20 +11,20 @@ import { VideoService, IVideo } from '../video.service';
 })
 export class SideContentComponent implements OnInit {
 
-  displayedColumns = ['select', 'position', 'name', 'weight', 'symbol'];
+  displayedColumns = ['select', 'position', 'displayName', 'date'];
   dataSource: MatTableDataSource<IVideo>;
-  selection = new SelectionModel<IVideo>(true, []);
+  selection: SelectionModel<IVideo>;
 
   constructor(private videoService: VideoService) { }
 
   ngOnInit() {
   }
 
-  onModelChanged(value) {
-    console.log(value);
+  onModelChanged(params) {
     this.videoService
-      .getVideoList()
+      .getVideoList(params)
       .subscribe(data => {
+        this.selection = new SelectionModel<IVideo>(true, []);
         this.dataSource = new MatTableDataSource(
           data.map((d, idx) => {
             d.position = idx + 1;
