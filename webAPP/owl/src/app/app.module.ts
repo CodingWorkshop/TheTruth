@@ -10,11 +10,11 @@ import {
   MatButtonModule,
   MatIconModule,
   MatDatepickerModule,
-  MatNativeDateModule,
   MatInputModule,
   MatCheckboxModule,
-  MatTableModule
+  MatTableModule,
 } from '@angular/material';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
 import { SignalrService } from './signalr.service';
 import { VideoService } from './video.service';
@@ -41,7 +41,7 @@ import { SideBarComponent } from './side-content/side-bar/side-bar.component';
     MatButtonModule,
     MatIconModule,
     MatDatepickerModule,
-    MatNativeDateModule,
+    MatMomentDateModule,
     MatInputModule,
     MatCheckboxModule,
     MatTableModule,

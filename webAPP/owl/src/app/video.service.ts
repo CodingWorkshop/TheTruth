@@ -8,8 +8,8 @@ export class VideoService {
 
   constructor(private http: HttpClient) { }
 
-  getVideoList() {
-    return this.http.get<IVideo[]>(`${environment.apiUrl}/Video/SearchVideos`);
+  getVideoList(params) {
+    return this.http.get<IVideo[]>(`${environment.apiUrl}/Video/SearchVideos`, { params: params });
   }
 
   getCategories() {

@@ -20,10 +20,9 @@ export class SideContentComponent implements OnInit {
   ngOnInit() {
   }
 
-  onModelChanged(value) {
-    console.log(value);
+  onModelChanged(params) {
     this.videoService
-      .getVideoList()
+      .getVideoList(params)
       .subscribe(data => {
         this.dataSource = new MatTableDataSource(
           data.map((d, idx) => {
