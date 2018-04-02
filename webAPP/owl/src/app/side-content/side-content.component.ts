@@ -13,7 +13,7 @@ export class SideContentComponent implements OnInit {
 
   displayedColumns = ['select', 'position', 'displayName', 'date'];
   dataSource: MatTableDataSource<IVideo>;
-  selection = new SelectionModel<IVideo>(true, []);
+  selection: SelectionModel<IVideo>;
 
   constructor(private videoService: VideoService) { }
 
@@ -24,6 +24,7 @@ export class SideContentComponent implements OnInit {
     this.videoService
       .getVideoList(params)
       .subscribe(data => {
+        this.selection = new SelectionModel<IVideo>(true, []);
         this.dataSource = new MatTableDataSource(
           data.map((d, idx) => {
             d.position = idx + 1;
