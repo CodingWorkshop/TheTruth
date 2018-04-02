@@ -11,6 +11,14 @@ export class VideoService {
   getVideoList() {
     return this.http.get<IVideo[]>(`${environment.apiUrl}/Video/SearchVideos`);
   }
+
+  getCategories() {
+    return this.http.get<ICategory[]>(`${environment.apiUrl}/Video/GetCategories`);
+  }
+
+  getClientIdentities() {
+    return this.http.get<IClientIdentity[]>(`${environment.apiUrl}/Video/getClientIdentities`);
+  }
 }
 
 export interface IVideo {
@@ -20,4 +28,14 @@ export interface IVideo {
   date: string;
   displayName: string;
   code: string;
+}
+
+export interface ICategory {
+  id: number;
+  displayName: string;
+}
+
+export interface IClientIdentity {
+  id: number;
+  isActive: boolean;
 }
