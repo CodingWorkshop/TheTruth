@@ -34,7 +34,7 @@ declare namespace sloth {
         addLanguage(langauge: string, langPackage: any): void;
     }
 
-    interface Player {
+    interface Player extends videojs.Player {
         playlist: Playlist;
         playlistUi: PlaylistUi;
     }
