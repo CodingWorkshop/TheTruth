@@ -1,4 +1,4 @@
-import { player, sloth } from '../index';
+import { sloth } from '../index';
 import * as signalR from '../../node_modules/@aspnet/signalr/dist/esm/index';
 
 // http://docs.videojs.com/tutorial-player-workflows.html

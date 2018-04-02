@@ -5,24 +5,22 @@ import http from './modules/http';
 import defaultConfig from './modules/getDefaultConfig';
 import loadingMask from './modules/loadingMask';
 import generateVideoImage from './modules/generateVidoeImage';
-import * as videojs from 'video.js';
 import playlist from '../node_modules/videojs-playlist/dist/videojs-playlist.es';
 import playlistUi from '../node_modules/videojs-playlist-ui/dist/videojs-playlist-ui.es';
 import * as signalR from '../node_modules/@aspnet/signalr/dist/esm/index';
 
 loadingMask.showLoading();
-(videojs as sloth.CustomVideoJs).addLanguage('zh-tw', langPackage);
-var registerPlugin =
-    (videojs as sloth.CustomVideoJs).registerPlugin ||
-    (videojs as sloth.CustomVideoJs).plugin;
+videojs.addLanguage('zh-tw', langPackage);
 
-registerPlugin('playlist', playlist);
-registerPlugin('playlistUi', playlistUi);
+var player = videojs('video-learning-player', {
+    language: 'zh-tw'
+}) as sloth.Player;
+
+player.playlist([]);
+player.playlistUi();
+player.playlist.autoadvance(0);
 
 export var sloth: sloth.Instance = {};
-export var player = videojs('video-learning-player', {
-    language: 'zh-tw'
-});
 
 http.getAppConfig(defaultConfig).then(config => {
     loadingMask.showLoading();
@@ -30,9 +28,9 @@ http.getAppConfig(defaultConfig).then(config => {
     const connection = signalr(sloth.config);
     connection.on('playVideo', data => {
         let list = convertor.covertToPlayList(data, sloth.config);
-        (player as sloth.Player).playlist(list);
-        (player as sloth.Player).playlistUi();
-        (player as sloth.Player).playlist.first();
+
+        player.playlist(list);
+        player.playlist.first();
 
         loadingMask.hideLoading();
     });

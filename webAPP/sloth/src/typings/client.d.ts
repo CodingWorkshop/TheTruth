@@ -1,3 +1,4 @@
+declare var videojs: any;
 declare namespace sloth {
     interface Instance {
         config?: Config;
@@ -42,7 +43,7 @@ declare namespace sloth {
     }
 
     interface Playlist {
-        (obj: any): any;
+        (obj?: any): any;
         autoadvance(num: number): void;
         first(): void;
     }
