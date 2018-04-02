@@ -1,7 +1,7 @@
 declare namespace sloth {
     interface Instance {
-        config: Config;
-        action: Action;
+        config?: Config;
+        action?: Action;
     }
 
     interface Action {
@@ -21,8 +21,30 @@ declare namespace sloth {
         defaultDescription?: string;
     }
 
-    interface Videojs {
+    interface VideoSlice {
+        id: string;
+        name: string;
+        date: string;
+        displayName: string;
+        code: string;
+    }
+
+    interface CustomVideoJs {
+        (element: string, object: any): any;
+        addLanguage(langauge: string, langPackage: any): void;
+    }
+
+    interface Player {
+        playlist: Playlist;
+        playlistUi: PlaylistUi;
+    }
+
+    interface Playlist {
+        (obj: any): any;
+        autoadvance(num: number): void;
+    }
+
+    interface PlaylistUi {
         (): any;
-        addLanguage(language: string, languagePackage: object): void;
     }
 }

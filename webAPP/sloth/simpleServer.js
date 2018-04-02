@@ -27,6 +27,7 @@ http
             '.eot': 'appliaction/vnd.ms-fontobject',
             '.ttf': 'aplication/font-sfnt'
         };
+
         fs.exists(pathname, function(exist) {
             if (!exist) {
                 res.statusCode = 404;
