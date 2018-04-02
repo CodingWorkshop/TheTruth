@@ -9,7 +9,7 @@ export class VideoService {
   constructor(private http: HttpClient) { }
 
   getVideoList() {
-    return this.http.get<IVideo[]>(`${environment.apiUrl}/Video/getvideolist`);
+    return this.http.get<IVideo[]>(`${environment.apiUrl}/Video/SearchVideos`);
   }
 }
 

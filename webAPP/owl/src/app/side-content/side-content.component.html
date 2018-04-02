@@ -9,7 +9,7 @@
       <mat-icon *ngIf="!drawer.opened">navigate_next</mat-icon>
     </button>
 
-    <div class="table-container">
+    <div class="table-container" *ngIf="dataSource">
       <mat-table #table [dataSource]="dataSource">
 
         <!-- Checkbox Column -->

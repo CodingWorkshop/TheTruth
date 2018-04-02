@@ -11,7 +11,7 @@ import { VideoService, IVideo } from '../video.service';
 })
 export class SideContentComponent implements OnInit {
 
-  displayedColumns = ['select', 'position', 'name', 'weight', 'symbol'];
+  displayedColumns = ['select', 'position', 'date', 'displayName'];
   dataSource: MatTableDataSource<IVideo>;
   selection = new SelectionModel<IVideo>(true, []);
 
