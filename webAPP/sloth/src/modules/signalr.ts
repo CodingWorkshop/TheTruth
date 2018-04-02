@@ -1,4 +1,4 @@
-import { player } from '../index';
+import { player, sloth } from '../index';
 import * as signalR from '../../node_modules/@aspnet/signalr/dist/esm/index';
 
 // http://docs.videojs.com/tutorial-player-workflows.html
@@ -9,7 +9,5 @@ export default (config: sloth.Config) => {
     );
     connection.start().then(() => connection.invoke('requestVideo'));
 
-    connection.on('playVideo', function(data: any) {
-        console.log(data);
-    });
+    return connection;
 };
