@@ -1,8 +1,7 @@
-﻿using System;
+﻿using DataAccess;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using DataAccess;
-using Repository.Repository;
 using Utility;
 using VideoService.Interface;
 
@@ -10,45 +9,38 @@ namespace VideoService.Service
 {
     public class VideoService : IVideoService
     {
-        private readonly Dictionary<string, List<Video>> _videos =
-            new Dictionary<string, List<Video>>();
+        private IEnumerable<Video> _allVideos;
+
+        private readonly Dictionary<string, IEnumerable<Video>> _userVideos =
+            new Dictionary<string, IEnumerable<Video>>();
+
+        private IEnumerable<CategoryInfo> _categories;
+
+        private IEnumerable<ClientIdentity> _clientIdentities;
 
         private string _rootPath;
 
-        public void InitDirectories(string rootPath, List<CategoryInfo> categories)
+        public void Init(string rootPath,
+            IEnumerable<CategoryInfo> categories,
+            IEnumerable<ClientIdentity> clientIdentities)
         {
             _rootPath = rootPath;
-
-            foreach (var category in categories)
-                rootPath.CreateDirectory(category.Folder)
-                        .CreateDirectory(DateTime.Today.ToShortDateString());
+            _categories = categories;
+            _clientIdentities = clientIdentities;
+            InitDirectories();
+            InitVideos();
         }
 
-        public List<Video> GetVideoListByIp(string ip)
-        {
-            return _videos.ContainsKey(ip)
-                ? _videos[ip]
-                : new List<Video>();
-        }
-
-        public string GetVideo(string code, string rootPath, string ip)
-        {
-            if (_videos[ip].Any(v => v.Code == code))
-                return _videos[ip]
-                    .First(v => v.Code == code)
-                    .Url
-                    .Replace(rootPath, "~/VideoRootPath");
-
-            return string.Empty;
-        }
-
-        public List<Video> SearchVideos(List<string> categories, DateTime? beginTime,
+        public IEnumerable<Video> SearchVideos(
+            IEnumerable<int> categories, DateTime? beginTime,
             DateTime? endTime, string rootPath)
         {
-            var query = new GenericFileRepository(rootPath).GetAll();
+            InitVideos();
+
+            var query = _allVideos;
 
             if (categories.Any())
-                query = query.Where(w => categories.Any(where => where.Contains(w.Category)));
+                query = query.Where(w => categories.Any(where => where == w.CategoryId));
 
             if (beginTime != null && beginTime != DateTime.MinValue)
                 query = query.Where(w => w.DateTime >= beginTime);
@@ -63,54 +55,86 @@ namespace VideoService.Service
             return query.ToList();
         }
 
-        public void SetVideos(List<string> codes, string ip, string rootPath)
+        public void SetVideos(IEnumerable<string> codes,
+            string ip, string rootPath)
         {
-            var allVideo = new GenericFileRepository(rootPath).GetAll();
-
             var videos = new List<Video>();
 
             foreach (var code in codes)
             {
-                var param = code.Split('_').Select(s => s).ToList();
-                var video = allVideo.Where(w => w.Category == param[0] && w.Date == param[1]);
+                var video = _allVideos
+                    .Where(w => w.Code == code);
+
                 if (video.Any())
                     videos.Add(video.First());
             }
-            if (_videos.ContainsKey(ip))
-                _videos[ip] = videos;
+            if (_userVideos.ContainsKey(ip))
+                _userVideos[ip] = videos;
             else
-                _videos.Add(ip, videos);
+                _userVideos.Add(ip, videos);
 
-            VideoUtility.SetIpVideoDic(_videos);
+            VideoUtility.SetIpVideoDic(_userVideos);
         }
 
-        public List<string> GetCategories(string rootPath)
+        public IEnumerable<Video> GetVideoListByIp(string ip)
         {
-            var query = new GenericFileRepository(rootPath).GetAll();
-
-            return query
-                .Select(s => s.Category)
-                .Distinct()
-                .ToList();
+            return _userVideos.ContainsKey(ip)
+                ? _userVideos[ip]
+                : new List<Video>();
         }
 
-        public List<ClientIdentity> GetClientIdentities()
+        public string GetVideoByCode(string code, string rootPath, string ip)
         {
-            var clients = new List<ClientIdentity>();
+            if (_userVideos[ip].Any(v => v.Code == code))
+                return _userVideos[ip]
+                    .First(v => v.Code == code)
+                    .Url
+                    .Replace(rootPath, "~/Videos");
 
-            for (var i = 1; i <= 30; i++)
+            return string.Empty;
+        }
+
+        public IEnumerable<CategoryInfo> GetCategories()
+        {
+            return _categories;
+        }
+
+        public IEnumerable<ClientIdentity> GetClientIdentities()
+        {
+            return _clientIdentities;
+        }
+
+        private void InitVideos()
+        {
+            _allVideos = _rootPath
+                .GetChildPaths()
+                .Select(PathInfoToVideoInfo);
+        }
+
+        private Video PathInfoToVideoInfo(PathInfo pathInfo)
+        {
+            var category = pathInfo.Hierarchy[0];
+            var date = pathInfo.Hierarchy[1];
+
+            var cate = _categories
+                .FirstOrDefault(c => c.Name == category);
+
+            return new Video
             {
-                clients.Add(new ClientIdentity
-                {
-                    Id = i,
-                    Ip = $"192.168.0.{i}",
-                    IsActive = false,
-                });
-            }
+                CategoryId = cate?.Id ?? 0,
+                CategoryName = cate?.Name,
+                Category = category,
+                Date = date,
+                Url = pathInfo.FullName,
+                Name = pathInfo.Name
+            };
+        }
 
-            return clients
-                .Where(w => _videos.ContainsKey(w.Ip))
-                .ToList();
+        private void InitDirectories()
+        {
+            foreach (var category in _categories)
+                _rootPath.InitDirectory(category.Name)
+                    .InitDirectory(DateTime.Now.ToString("yyyyMMdd"));
         }
     }
 }
