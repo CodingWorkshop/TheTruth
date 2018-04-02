@@ -18,20 +18,17 @@ export var player = videojs('video-learning-player', {
     language: 'zh-tw'
 });
 
-http
-    .getAppConfig(defaultConfig)
-    .then(config => {
-        sloth.config = config;
-        signalr(sloth.config);
-        return signalr(sloth.config);
-    })
-    .then((res: any) => {
-        return convertor.covertToPlayList(res, sloth.config);
-    })
-    .then(result => {
-        (player as sloth.Player).playlist(result);
-        (player as sloth.Player).playlistUi();
-        (player as sloth.Player).playlist.autoadvance(0);
+http.getAppConfig(defaultConfig).then(config => {
+    sloth.config = config;
+    const connection = signalr(sloth.config);
+    connection.on('playVideo', data => {
+        loadingMask.showLoading();
+        convertor.covertToPlayList(data, sloth.config).then((result: any) => {
+            (player as sloth.Player).playlist(result);
+            (player as sloth.Player).playlistUi();
+            (player as sloth.Player).playlist.autoadvance(0);
 
-        loadingMask.hideLoading();
+            loadingMask.hideLoading();
+        });
     });
+});

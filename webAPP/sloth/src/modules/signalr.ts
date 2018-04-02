@@ -9,9 +9,5 @@ export default (config: sloth.Config) => {
     );
     connection.start().then(() => connection.invoke('requestVideo'));
 
-    return new Promise((resolve, reject) => {
-        connection.on('playVideo', function(data: any) {
-            resolve(data);
-        });
-    });
+    return connection;
 };
