@@ -3,6 +3,8 @@ const url = require('url');
 const fs = require('fs');
 const path = require('path');
 const port = process.argv[2] || 3000;
+const webpack = require('webpack');
+const configuration = require('./webpack.config.js');
 
 http
     .createServer(function(req, res) {
@@ -53,13 +55,18 @@ http
     })
     .listen(parseInt(port));
 
+let hotReloard = true;
 fs.watch(path.join(process.cwd(), 'src'), (event, filename) => {
-    console.log('event is: ' + event);
-    if (filename) {
-        console.log('filename provided: ' + filename);
-    } else {
-        console.log('filename not provided');
+    if (!hotReloard) {
+        return;
     }
+    hotReloard = false;
+    let compiler = webpack(configuration);
+    compiler.apply(new webpack.ProgressPlugin());
+
+    compiler.run(function(err, stats) {
+        hotReloard = true;
+    });
 });
 
 console.log(`Server listening on port ${port}`);
