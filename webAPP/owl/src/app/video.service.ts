@@ -33,6 +33,7 @@ export interface IVideo {
 export interface ICategory {
   id: number;
   displayName: string;
+  checked: boolean;
 }
 
 export interface IClientIdentity {

@@ -13,6 +13,7 @@ import {
   MatInputModule,
   MatCheckboxModule,
   MatTableModule,
+  MatCardModule
 } from '@angular/material';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
@@ -45,6 +46,7 @@ import { SideBarComponent } from './side-content/side-bar/side-bar.component';
     MatInputModule,
     MatCheckboxModule,
     MatTableModule,
+    MatCardModule,
     HttpClientModule
   ],
   providers: [

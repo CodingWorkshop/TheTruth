@@ -4,6 +4,7 @@
 
 .sidenav {
   padding: 20px;
+  max-width: 20vw;
 }
 
 .sidenav-content {

@@ -8,3 +8,12 @@
   align-items: center;
   justify-content: space-around;
 }
+
+.mat-card-content > section {
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+
+.margin {
+  margin: 0 10px;
+}
