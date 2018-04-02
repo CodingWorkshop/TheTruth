@@ -1,38 +1,33 @@
 import generateVideoImage from './generateVidoeImage';
 const defaultVideoImage = generateVideoImage();
 
-function covertToPlayList(res: any, config: sloth.Config) {
-    return res.map(function(video: any) {
-        return {
-            name: video.name || config.defaultName,
-            description: video.description || config.defaultDescription,
+function covertToPlayList(videoList: any[], config: sloth.Config) {
+    let list = [];
+
+    for (let i = 0; i < videoList.length; i++) {
+        list.push({
+            name: videoList[i].name || config.defaultName,
+            description: videoList[i].description || config.defaultDescription,
             sources: [
                 {
-                    src: generateVideoParams(video, config),
-                    type: video.type || config.defaultType
+                    src: generateVideoParams(videoList[i], config),
+                    type: videoList[i].type || config.defaultType
                 }
             ],
-            poster: video.poster || config.defaultPoster,
+            poster: videoList[i].poster || config.defaultPoster,
             thumbnail: [
                 {
-                    src: video.thumbnail || config.defaultPoster
+                    src: videoList[i].thumbnail || config.defaultPoster
                 }
             ]
-        };
-    });
+        });
+    }
+    return list;
 }
 
 function generateVideoParams(video: any, config: sloth.Config) {
     return (
-        config.webApiRoot +
-        config.webApiPlayVideo +
-        '?' +
-        'category=' +
-        video.category +
-        '&date=' +
-        video.date +
-        '&code=' +
-        video.code
+        config.webApiRoot + config.webApiPlayVideo + '?' + 'code=' + video.code
     );
 }
 

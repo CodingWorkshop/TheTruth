@@ -32,6 +32,8 @@ declare namespace sloth {
     interface CustomVideoJs {
         (element: string, object: any): any;
         addLanguage(langauge: string, langPackage: any): void;
+        registerPlugin(pluginName: string, plugin: any): void;
+        plugin(pluginName: string, plugin: any): void;
     }
 
     interface Player extends videojs.Player {
@@ -42,6 +44,7 @@ declare namespace sloth {
     interface Playlist {
         (obj: any): any;
         autoadvance(num: number): void;
+        first(): void;
     }
 
     interface PlaylistUi {
