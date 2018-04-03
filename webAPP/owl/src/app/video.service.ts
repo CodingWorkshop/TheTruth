@@ -19,6 +19,10 @@ export class VideoService {
   getClientIdentities() {
     return this.http.get<IClientIdentity[]>(`${environment.apiUrl}/Video/GetClientIdentities`);
   }
+
+  setVideo(body: ISetVideoBody) {
+    return this.http.post<any>(`${environment.apiUrl}/Video/SetVideo`, body);
+  }
 }
 
 export interface IVideo {
@@ -39,4 +43,9 @@ export interface ICategory {
 export interface IClientIdentity {
   id: number;
   isActive: boolean;
+}
+
+export interface ISetVideoBody {
+  ip: string;
+  codes: string[];
 }

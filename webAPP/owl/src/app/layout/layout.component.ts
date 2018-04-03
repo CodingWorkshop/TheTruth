@@ -45,10 +45,23 @@ export class LayoutComponent implements OnInit {
       });
 
     dialogRef.afterClosed()
-      .subscribe(result => {
-        const selected = [].concat(result);
+      .subscribe((result: Array<any>) => {
+        const clientSelected = [].concat(result);
+        clientSelected.map(c => c.id)
+          .forEach(c => {
+            this.setVideoToClient(c);
+          });
+      });
+  }
 
-        selected.forEach(s => console.log(s));
+  setVideoToClient(ip: string) {
+    this.videoService
+      .setVideo({
+        ip: ip,
+        codes: this.videoSelected
+      })
+      .subscribe(result => {
+        console.log(result);
       });
   }
 }
