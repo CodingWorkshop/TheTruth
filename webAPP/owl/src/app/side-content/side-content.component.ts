@@ -1,4 +1,4 @@
-import { Component, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
+import { Component, Input, Output, OnInit, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { IVideo } from '../video.service';
@@ -8,7 +8,7 @@ import { IVideo } from '../video.service';
   templateUrl: './side-content.component.html',
   styleUrls: ['./side-content.component.css']
 })
-export class SideContentComponent implements OnChanges {
+export class SideContentComponent implements OnInit, OnChanges {
 
   displayedColumns = ['select', 'position', 'displayName', 'date'];
   dataSource: MatTableDataSource<IVideo>;
@@ -17,6 +17,9 @@ export class SideContentComponent implements OnChanges {
   @Output() videoSelect: EventEmitter<string[]> = new EventEmitter<string[]>();
 
   constructor() { }
+
+  ngOnInit(): void {
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.items) {

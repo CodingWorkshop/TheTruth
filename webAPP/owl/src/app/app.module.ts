@@ -10,18 +10,18 @@ import { VideoService } from './video.service';
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
+import { WrapperComponent } from './wrapper/wrapper.component';
 import { SideContentComponent } from './side-content/side-content.component';
 import { SideBarComponent } from './side-bar/side-bar.component';
-import { LayoutComponent } from './layout/layout.component';
 import { SetupDialogComponent } from './setup-dialog/setup-dialog.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
+    WrapperComponent,
     SideContentComponent,
     SideBarComponent,
-    LayoutComponent,
     SetupDialogComponent
   ],
   imports: [
@@ -33,7 +33,7 @@ import { SetupDialogComponent } from './setup-dialog/setup-dialog.component';
     AppMaterialModule
   ],
   entryComponents: [
-    LayoutComponent,
+    WrapperComponent,
     SetupDialogComponent
   ],
   providers: [
