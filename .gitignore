@@ -3,3 +3,5 @@ nginx/*.exe
 nginx/logs/*.log
 .vscode/launch.json
 .vscode/tasks.json
+webAPI/.vscode/tasks.json
+webAPI/.vscode/launch.json

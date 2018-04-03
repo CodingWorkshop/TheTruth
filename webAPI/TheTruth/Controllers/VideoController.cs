@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using DataAccess;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using TheTruth.Hubs;
 using TheTruth.ViewModels;
@@ -30,27 +30,28 @@ namespace TheTruth.Controllers
 
             var categories = new List<CategoryInfo>
             {
-                new CategoryInfo {Id = 1, DisplayName = "國文", Name = "Chinese"},
-                new CategoryInfo {Id = 2, DisplayName = "英文", Name = "English"},
-                new CategoryInfo {Id = 3, DisplayName = "數學", Name = "Math"},
-                new CategoryInfo {Id = 4, DisplayName = "物理", Name = "Physical"},
-                new CategoryInfo {Id = 5, DisplayName = "化學", Name = "Chemical"},
-                new CategoryInfo {Id = 6, DisplayName = "社會", Name = "Social"},
-                new CategoryInfo {Id = 7, DisplayName = "歷史", Name = "History"},
-                new CategoryInfo {Id = 8, DisplayName = "地理", Name = "Geography"},
+                new CategoryInfo { Id = 1, DisplayName = "國文", Name = "Chinese" },
+                new CategoryInfo { Id = 2, DisplayName = "英文", Name = "English" },
+                new CategoryInfo { Id = 3, DisplayName = "數學", Name = "Math" },
+                new CategoryInfo { Id = 4, DisplayName = "物理", Name = "Physical" },
+                new CategoryInfo { Id = 5, DisplayName = "化學", Name = "Chemical" },
+                new CategoryInfo { Id = 6, DisplayName = "社會", Name = "Social" },
+                new CategoryInfo { Id = 7, DisplayName = "歷史", Name = "History" },
+                new CategoryInfo { Id = 8, DisplayName = "地理", Name = "Geography" },
             };
             var clientIdentities = new List<ClientIdentity>();
-            for (var i = 1; i <= 30; i++)
+            for(var i = 1; i <= 30; i++)
             {
                 clientIdentities.Add(new ClientIdentity
                 {
                     Id = i,
-                    Ip = $"192.168.0.{i}",
-                    IsActive = false
+                        Ip = $"192.168.0.{i}",
+                        IsActive = false
                 });
             }
 
             service.Init(_videoPath, categories, clientIdentities);
+
         }
 
         [HttpGet("SearchVideos")]
@@ -68,7 +69,7 @@ namespace TheTruth.Controllers
             _service.SetVideos(codes, ip, _videoPath);
 
             var ips = VideoUtility.GetClientConnetionIdDic();
-            if (!ips.ContainsKey(ip))
+            if(!ips.ContainsKey(ip))
                 return new JsonResult("No client.");
 
             var connectionId = ips[ip];
@@ -101,7 +102,7 @@ namespace TheTruth.Controllers
                 .Select(s => new CategoryViewModel
                 {
                     Id = s.Id,
-                    DisplayName = s.DisplayName
+                        DisplayName = s.DisplayName
                 }));
         }
 
@@ -113,7 +114,7 @@ namespace TheTruth.Controllers
                 .Select(s => new ClientIdentityViewModel
                 {
                     Id = s.Id,
-                    IsActive = s.IsActive,
+                        IsActive = s.IsActive,
                 }));
         }
 
@@ -127,10 +128,10 @@ namespace TheTruth.Controllers
             return new VideoViewModel
             {
                 Id = video.CategoryId,
-                Name = video.Name,
-                Date = video.Date,
-                DisplayName = video.DisplayName,
-                Code = video.Code
+                    Name = video.Name,
+                    Date = video.Date,
+                    DisplayName = video.DisplayName,
+                    Code = video.Code
             };
         }
     }

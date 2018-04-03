@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR;
-using TheTruth.ViewModels;
-using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
+using TheTruth.ViewModels;
 
 namespace TheTruth.Hubs
 {
@@ -25,29 +25,9 @@ namespace TheTruth.Hubs
         [HubMethodName("requestVideo")]
         public Task RequestVideo()
         {
-            Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} come to get Videos");
             var ip = GetRemoteIpAddress();
-            Console.WriteLine(ip);
-            var videos = Utility.VideoUtility.GetIpVideoDic()
-                .GetValueOrDefault(ip)
-                .Select(r => new VideoViewModel
-                {
-                    Id = r.CategoryId,
-                    DisplayName = r.DisplayName,
-                    Name = r.Name,
-                    Code = r.Code,
-                    Date = r.Date,
-                }).ToList();
-            //var vi = new List<VideoViewModel>();
-            //vi.Add(new VideoViewModel
-            //{
-            //    Id = 1,
-            //    Name = "17_18.mp4",
-            //    Date = "20180401",
-            //    DisplayName = "國文",
-            //    Code = "Chinese_20180401_17_18.mp4"
-            //});
-
+            Console.WriteLine($"{ip} {Context.ConnectionId} come to get Videos");
+            List<VideoViewModel> videos = GetClientVideos(ip);
             return Clients.Client(Context.ConnectionId).SendAsync("playVideo", videos);
         }
 
@@ -57,9 +37,13 @@ namespace TheTruth.Hubs
         /// <returns></returns>
         public override Task OnConnectedAsync()
         {
-            Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} Login");
-            Utility.VideoUtility.GetClientConnetionIdDic().TryAdd(GetRemoteIpAddress(), Context.ConnectionId);
-            return Clients.Caller.SendAsync("playVideo", "Login Ok");
+            var ip = GetRemoteIpAddress();
+            Console.WriteLine($"{ip} {Context.ConnectionId} Login");
+            Utility.VideoUtility.GetClientConnetionIdDic().AddOrUpdate(ip, Context.ConnectionId,(key, oldValue) => Context.ConnectionId);
+            //Utility.VideoUtility.Notify();
+            var videos = GetClientVideos(ip);
+            Clients.Caller.SendAsync("loginCenter", "Login Ok");
+            return Clients.Caller.SendAsync("playVideo", videos);
         }
 
         /// <summary>
@@ -69,9 +53,9 @@ namespace TheTruth.Hubs
         /// <returns></returns>
         public override Task OnDisconnectedAsync(Exception exception)
         {
-            Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} Log Out");
-            Utility.VideoUtility.GetClientConnetionIdDic().TryRemove(GetRemoteIpAddress(), out var newDic);
-            return Clients.All.SendAsync("playVideo", "Bye");
+            var ip = GetRemoteIpAddress();
+            Utility.VideoUtility.GetClientConnetionIdDic().TryRemove(ip, out var newDic);
+            return base.OnDisconnectedAsync(exception);
         }
 
         /// <summary>
@@ -81,7 +65,20 @@ namespace TheTruth.Hubs
         private string GetRemoteIpAddress()
         {
             return _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-            //return Context?.Connection.RemoteIpAddress.ToString();
         }
+
+        private static List<VideoViewModel> GetClientVideos(string ip)
+        {
+            return Utility.VideoUtility.GetIpVideo(ip) ?
+                .Select(r => new VideoViewModel
+                {
+                    Id = r.CategoryId,
+                        DisplayName = r.DisplayName,
+                        Name = r.Name,
+                        Code = r.Code,
+                        Date = r.Date,
+                }).ToList();
+        }
+
     }
 }
