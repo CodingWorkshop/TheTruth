@@ -12,6 +12,7 @@ import { SetupDialogComponent } from '../setup-dialog/setup-dialog.component';
 export class LayoutComponent implements OnInit {
 
   videoList: Array<any>;
+  videoSelected: string[];
   clientList: Array<any>;
 
   constructor(private videoService: VideoService, public dialog: MatDialog) { }
@@ -24,12 +25,16 @@ export class LayoutComponent implements OnInit {
       });
   }
 
-  onModelChanged(params) {
+  onConditionsChanged(params) {
     this.videoService
       .getVideoList(params)
       .subscribe(data => {
         this.videoList = data;
       });
+  }
+
+  onVideoSelected(params: string[]) {
+    this.videoSelected = params;
   }
 
   openSetupDialog() {
