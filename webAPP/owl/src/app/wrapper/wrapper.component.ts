@@ -4,12 +4,12 @@ import { VideoService } from '../video.service';
 import { SetupDialogComponent } from '../setup-dialog/setup-dialog.component';
 
 @Component({
-  selector: 'app-layout',
-  templateUrl: './layout.component.html',
-  styleUrls: ['./layout.component.css'],
+  selector: 'app-wrapper',
+  templateUrl: './wrapper.component.html',
+  styleUrls: ['./wrapper.component.css'],
   providers: [VideoService]
 })
-export class LayoutComponent implements OnInit {
+export class WrapperComponent implements OnInit {
 
   videoList: Array<any>;
   videoSelected: string[];
@@ -18,6 +18,7 @@ export class LayoutComponent implements OnInit {
   constructor(private videoService: VideoService, public dialog: MatDialog) { }
 
   ngOnInit() {
+    console.log('我啟動 wrapper ngOnInit');
     this.videoService
       .getClientIdentities()
       .subscribe(data => {
