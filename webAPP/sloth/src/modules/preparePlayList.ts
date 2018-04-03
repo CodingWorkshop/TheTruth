@@ -4,6 +4,7 @@ import loadingMask from './loadingMask';
 export default (data: any[]) => {
     player.playlist([]);
     player.playlist.autoadvance();
+
     if (data.length === 0) {
         loadingMask.hideLoading();
         loadingMask.showLogo();
@@ -17,4 +18,5 @@ export default (data: any[]) => {
     player.playlist.first();
 
     loadingMask.hideLoading();
+    loadingMask.hideLogo();
 };

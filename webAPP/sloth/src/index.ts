@@ -47,6 +47,7 @@ function initial() {
                 console.log(data);
                 preparePlayList(data);
             });
+
             connection.on('loginOk', (data: any) => {
                 console.log(data);
             });
