@@ -17,7 +17,7 @@ export class VideoService {
   }
 
   getClientIdentities() {
-    return this.http.get<IClientIdentity[]>(`${environment.apiUrl}/Video/getClientIdentities`);
+    return this.http.get<IClientIdentity[]>(`${environment.apiUrl}/Video/GetClientIdentities`);
   }
 }
 
