@@ -1,5 +1,6 @@
 function getAppConfig(defaultConfig: sloth.Config) {
     return new Promise((resolve, reject) => {
+        console.log(window.location.search);
         if (window.location.search) {
             const query = window.location.search.substring(1).split('&');
             const configFromUrl: any = Object.assign({}, defaultConfig);

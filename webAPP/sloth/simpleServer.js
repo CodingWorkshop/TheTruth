@@ -3,7 +3,20 @@ const url = require('url');
 const fs = require('fs');
 const path = require('path');
 const port = process.argv[2] || 3000;
+const webpack = require('webpack');
+const configuration = require('./webpack.config.js');
 
+let hotReloard = true;
+
+function webpackBuild() {
+    let compiler = webpack(configuration);
+    compiler.apply(new webpack.ProgressPlugin());
+
+    compiler.run(function(err, stats) {
+        hotReloard = true;
+    });
+}
+webpackBuild();
 http
     .createServer(function(req, res) {
         console.log(`${req.method} ${req.url}`);
@@ -25,6 +38,7 @@ http
             '.eot': 'appliaction/vnd.ms-fontobject',
             '.ttf': 'aplication/font-sfnt'
         };
+
         fs.exists(pathname, function(exist) {
             if (!exist) {
                 res.statusCode = 404;
@@ -54,12 +68,11 @@ http
     .listen(parseInt(port));
 
 fs.watch(path.join(process.cwd(), 'src'), (event, filename) => {
-    console.log('event is: ' + event);
-    if (filename) {
-        console.log('filename provided: ' + filename);
-    } else {
-        console.log('filename not provided');
+    if (!hotReloard) {
+        return;
     }
+    hotReloard = false;
+    webpackBuild();
 });
 
 console.log(`Server listening on port ${port}`);

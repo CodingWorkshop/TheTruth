@@ -10,6 +10,14 @@
   <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
   <mat-datepicker #picker2></mat-datepicker>
 </mat-form-field>
+<mat-card-content>
+  <h4>科目</h4>
+  <section>
+    <mat-checkbox class="margin" *ngFor="let category of categories" [(ngModel)]="category.checked">
+      {{category.displayName}}
+    </mat-checkbox>
+  </section>
+</mat-card-content>
 <div class="button-row">
   <button mat-raised-button color="primary" (click)="search()">查詢</button>
   <button mat-raised-button (click)="clearAll()">清空</button>

@@ -8,7 +8,7 @@ export class SignalrService {
 
   constructor(
   ) {
-    this.connection = new signalR.HubConnection(`${environment.apiUrl}managementhub`);
+    this.connection = new signalR.HubConnection(`${environment.hubUrl}`);
     this.connection.start();
   }
 

@@ -4,10 +4,23 @@
 
 .sidenav {
   padding: 20px;
+  max-width: 20vw;
 }
 
 .sidenav-content {
   height: 100%;
+  overflow-y: hidden;
+}
+
+.table-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 800px;
+}
+
+.mat-table {
+  overflow: auto;
+  max-height: 800px;
 }
 
 .mat-column-select {

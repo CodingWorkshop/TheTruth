@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -9,13 +10,15 @@ import {
   MatButtonModule,
   MatIconModule,
   MatDatepickerModule,
-  MatNativeDateModule,
   MatInputModule,
   MatCheckboxModule,
-  MatTableModule
+  MatTableModule,
+  MatCardModule
 } from '@angular/material';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
 import { SignalrService } from './signalr.service';
+import { VideoService } from './video.service';
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
@@ -39,13 +42,16 @@ import { SideBarComponent } from './side-content/side-bar/side-bar.component';
     MatButtonModule,
     MatIconModule,
     MatDatepickerModule,
-    MatNativeDateModule,
+    MatMomentDateModule,
     MatInputModule,
     MatCheckboxModule,
-    MatTableModule
+    MatTableModule,
+    MatCardModule,
+    HttpClientModule
   ],
   providers: [
-    SignalrService
+    SignalrService,
+    VideoService
   ],
   bootstrap: [AppComponent]
 })
