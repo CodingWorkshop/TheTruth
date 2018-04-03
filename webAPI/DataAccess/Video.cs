@@ -6,7 +6,7 @@ namespace DataAccess
     public class Video
     {
         public int CategoryId { get; set; }
-        public string CategoryName { get; set; }
+        public string DisplayName { get; set; }
         public string Category { get; set; }
         public string Date { get; set; }
         public string Url { get; set; }
