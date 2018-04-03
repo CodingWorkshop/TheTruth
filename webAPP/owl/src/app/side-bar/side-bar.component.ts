@@ -1,4 +1,4 @@
-import { VideoService, ICategory } from './../../video.service';
+import { VideoService, ICategory } from './../video.service';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
