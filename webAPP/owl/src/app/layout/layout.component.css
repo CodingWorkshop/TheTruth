@@ -1,0 +1,13 @@
+.container {
+  height: calc(100vh - 64px);
+}
+
+.sidenav {
+  padding: 20px;
+  max-width: 20vw;
+}
+
+.sidenav-content {
+  height: 100%;
+  overflow-y: hidden;
+}

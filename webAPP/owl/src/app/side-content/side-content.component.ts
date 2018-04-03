@@ -1,36 +1,31 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
-import { VideoService, IVideo } from '../video.service';
+import { IVideo } from '../video.service';
 
 @Component({
   selector: 'app-side-content',
   templateUrl: './side-content.component.html',
-  styleUrls: ['./side-content.component.css'],
-  providers: [VideoService]
+  styleUrls: ['./side-content.component.css']
 })
-export class SideContentComponent implements OnInit {
+export class SideContentComponent implements OnChanges {
 
   displayedColumns = ['select', 'position', 'displayName', 'date'];
   dataSource: MatTableDataSource<IVideo>;
   selection: SelectionModel<IVideo>;
+  @Input() items: IVideo[];
 
-  constructor(private videoService: VideoService) { }
+  constructor() { }
 
-  ngOnInit() {
-  }
-
-  onModelChanged(params) {
-    this.videoService
-      .getVideoList(params)
-      .subscribe(data => {
-        this.selection = new SelectionModel<IVideo>(true, []);
-        this.dataSource = new MatTableDataSource(
-          data.map((d, idx) => {
-            d.position = idx + 1;
-            return d;
-          }));
-      });
+  ngOnChanges(changes: SimpleChanges) {
+    if (this.items) {
+      this.selection = new SelectionModel<IVideo>(true, []);
+      this.dataSource = new MatTableDataSource(
+        this.items.map((d, idx) => {
+          d.position = idx + 1;
+          return d;
+        }));
+    }
   }
 
   /** Whether the number of selected elements matches the total number of rows. */

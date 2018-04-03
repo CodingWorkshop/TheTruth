@@ -1,0 +1,15 @@
+<mat-drawer-container class="container" autosize>
+  <mat-drawer #drawer class="sidenav" mode="side" opened="true">
+    <app-side-bar (modelChange)="onModelChanged($event)"></app-side-bar>
+  </mat-drawer>
+
+  <div class="sidenav-content">
+    <button mat-icon-button (click)="drawer.toggle()">
+      <mat-icon *ngIf="drawer.opened">navigate_before</mat-icon>
+      <mat-icon *ngIf="!drawer.opened">navigate_next</mat-icon>
+    </button>
+
+    <app-side-content [items]="data"></app-side-content>
+  </div>
+
+</mat-drawer-container>

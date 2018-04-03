@@ -3,19 +3,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
-import {
-  MatToolbarModule,
-  MatSidenavModule,
-  MatButtonModule,
-  MatIconModule,
-  MatDatepickerModule,
-  MatInputModule,
-  MatCheckboxModule,
-  MatTableModule,
-  MatCardModule
-} from '@angular/material';
-import { MatMomentDateModule } from '@angular/material-moment-adapter';
+import { AppMaterialModule } from './app.material.module';
 
 import { SignalrService } from './signalr.service';
 import { VideoService } from './video.service';
@@ -23,31 +11,24 @@ import { VideoService } from './video.service';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { SideContentComponent } from './side-content/side-content.component';
-import { SideBarComponent } from './side-content/side-bar/side-bar.component';
+import { SideBarComponent } from './side-bar/side-bar.component';
+import { LayoutComponent } from './layout/layout.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
     SideContentComponent,
-    SideBarComponent
+    SideBarComponent,
+    LayoutComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
-    MatToolbarModule,
-    MatSidenavModule,
-    MatButtonModule,
-    MatIconModule,
-    MatDatepickerModule,
-    MatMomentDateModule,
-    MatInputModule,
-    MatCheckboxModule,
-    MatTableModule,
-    MatCardModule,
-    HttpClientModule
+    HttpClientModule,
+    AppMaterialModule
   ],
   providers: [
     SignalrService,
