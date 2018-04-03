@@ -8,7 +8,8 @@ import {
   MatInputModule,
   MatCheckboxModule,
   MatTableModule,
-  MatCardModule
+  MatCardModule,
+  MatDialogModule
 } from '@angular/material';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
@@ -24,6 +25,7 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
     MatCheckboxModule,
     MatTableModule,
     MatCardModule,
+    MatDialogModule
   ]
 })
 export class AppMaterialModule { }

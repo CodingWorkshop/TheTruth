@@ -13,6 +13,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { SideContentComponent } from './side-content/side-content.component';
 import { SideBarComponent } from './side-bar/side-bar.component';
 import { LayoutComponent } from './layout/layout.component';
+import { SetupDialogComponent } from './setup-dialog/setup-dialog.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { LayoutComponent } from './layout/layout.component';
     NavbarComponent,
     SideContentComponent,
     SideBarComponent,
-    LayoutComponent
+    LayoutComponent,
+    SetupDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -29,6 +31,10 @@ import { LayoutComponent } from './layout/layout.component';
     ReactiveFormsModule,
     HttpClientModule,
     AppMaterialModule
+  ],
+  entryComponents: [
+    LayoutComponent,
+    SetupDialogComponent
   ],
   providers: [
     SignalrService,

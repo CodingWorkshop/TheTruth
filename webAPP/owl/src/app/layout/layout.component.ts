@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material';
 import { VideoService } from '../video.service';
+import { SetupDialogComponent } from '../setup-dialog/setup-dialog.component';
 
 @Component({
   selector: 'app-layout',
@@ -9,18 +11,57 @@ import { VideoService } from '../video.service';
 })
 export class LayoutComponent implements OnInit {
 
-  data: Array<any>;
+  videoList: Array<any>;
+  videoSelected: string[];
+  clientList: Array<any>;
 
-  constructor(private videoService: VideoService) { }
+  constructor(private videoService: VideoService, public dialog: MatDialog) { }
 
   ngOnInit() {
+    this.videoService
+      .getClientIdentities()
+      .subscribe(data => {
+        this.clientList = data;
+      });
   }
 
-  onModelChanged(params) {
+  onConditionsChanged(params) {
     this.videoService
       .getVideoList(params)
       .subscribe(data => {
-        this.data = data;
+        this.videoList = data;
+      });
+  }
+
+  onVideoSelected(params: string[]) {
+    this.videoSelected = params;
+  }
+
+  openSetupDialog() {
+    const dialogRef = this.dialog
+      .open(SetupDialogComponent, {
+        width: '500px',
+        data: this.clientList
+      });
+
+    dialogRef.afterClosed()
+      .subscribe((result: Array<any>) => {
+        const clientSelected = [].concat(result);
+        clientSelected.map(c => c.id)
+          .forEach(c => {
+            this.setVideoToClient(c);
+          });
+      });
+  }
+
+  setVideoToClient(ip: string) {
+    this.videoService
+      .setVideo({
+        ip: ip,
+        codes: this.videoSelected
+      })
+      .subscribe(result => {
+        console.log(result);
       });
   }
 }

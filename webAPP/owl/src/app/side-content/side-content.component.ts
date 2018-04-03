@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { IVideo } from '../video.service';
@@ -14,6 +14,7 @@ export class SideContentComponent implements OnChanges {
   dataSource: MatTableDataSource<IVideo>;
   selection: SelectionModel<IVideo>;
   @Input() items: IVideo[];
+  @Output() videoSelect: EventEmitter<string[]> = new EventEmitter<string[]>();
 
   constructor() { }
 
@@ -28,6 +29,11 @@ export class SideContentComponent implements OnChanges {
     }
   }
 
+  toggle(row: IVideo) {
+    this.selection.toggle(row);
+    this.onVideoSelect();
+  }
+
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
     const numSelected = this.selection.selected.length;
@@ -40,6 +46,13 @@ export class SideContentComponent implements OnChanges {
     this.isAllSelected() ?
       this.selection.clear() :
       this.dataSource.data.forEach(row => this.selection.select(row));
+
+    this.onVideoSelect();
+  }
+
+  onVideoSelect() {
+    const selectedCode = this.dataSource.data.filter(row => this.selection.isSelected(row)).map(d => d.code);
+    this.videoSelect.emit(selectedCode);
   }
 
 }

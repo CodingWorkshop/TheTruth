@@ -8,7 +8,7 @@
         </mat-checkbox>
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
+        <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? toggle(row) : null" [checked]="selection.isSelected(row)">
         </mat-checkbox>
       </mat-cell>
     </ng-container>
@@ -30,7 +30,7 @@
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selection.toggle(row)">
+    <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="toggle(row)">
     </mat-row>
   </mat-table>
 </div>

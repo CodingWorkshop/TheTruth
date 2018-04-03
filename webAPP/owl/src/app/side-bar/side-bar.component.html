@@ -13,7 +13,7 @@
 <mat-card-content>
   <h4>科目</h4>
   <section>
-    <mat-checkbox class="margin" *ngFor="let category of categories" [(ngModel)]="category.checked">
+    <mat-checkbox class="margin" *ngFor="let category of categories" [(ngModel)]="category.checked" [color]="'primary'">
       {{category.displayName}}
     </mat-checkbox>
   </section>
