@@ -44,7 +44,7 @@ declare namespace sloth {
 
     interface Playlist {
         (obj?: any): any;
-        autoadvance(num: number): void;
+        autoadvance(num?: number): void;
         first(): void;
     }
 
