@@ -32,15 +32,15 @@ namespace VideoService.Service
         }
 
         public IEnumerable<Video> SearchVideos(
-            IEnumerable<int> categories, DateTime? beginTime,
+            IEnumerable<int> categoryIds, DateTime? beginTime,
             DateTime? endTime, string rootPath)
         {
             InitVideos();
 
             var query = _allVideos;
 
-            if (categories.Any())
-                query = query.Where(w => categories.Any(where => where == w.CategoryId));
+            if (categoryIds.Any())
+                query = query.Where(w => categoryIds.Any(where => where == w.CategoryId));
 
             if (beginTime != null && beginTime != DateTime.MinValue)
                 query = query.Where(w => w.DateTime >= beginTime);
@@ -122,7 +122,7 @@ namespace VideoService.Service
             return new Video
             {
                 CategoryId = cate?.Id ?? 0,
-                CategoryName = cate?.Name,
+                DisplayName = cate?.DisplayName,
                 Category = category,
                 Date = date,
                 Url = pathInfo.FullName,

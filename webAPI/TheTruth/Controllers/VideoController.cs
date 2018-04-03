@@ -4,7 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DataAccess;
+using Microsoft.AspNetCore.SignalR;
+using TheTruth.Hubs;
 using TheTruth.ViewModels;
+using Utility;
 using VideoService.Interface;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -16,12 +19,15 @@ namespace TheTruth.Controllers
     {
         private readonly string _videoPath;
         private readonly IVideoService _service;
+        private readonly IHubContext<VideoHub> _videoHub;
 
         public VideoController(IHostingEnvironment hostingEnvironment,
-            IVideoService service)
+            IVideoService service, IHubContext<VideoHub> videoHub)
         {
             _videoPath = $"{hostingEnvironment.WebRootPath}\\Videos";
             _service = service;
+            _videoHub = videoHub;
+
             var categories = new List<CategoryInfo>
             {
                 new CategoryInfo {Id = 1, DisplayName = "國文", Name = "Chinese"},
@@ -49,10 +55,10 @@ namespace TheTruth.Controllers
 
         [HttpGet("SearchVideos")]
         public IActionResult SearchVideos(
-            List<int> categoryIds, DateTime? beginTime, DateTime? endTime)
+            List<int> categoryIds, DateTime? startDate, DateTime? endDate)
         {
             return new JsonResult(_service.SearchVideos(
-                    categoryIds, beginTime, endTime, _videoPath)
+                    categoryIds, startDate, endDate, _videoPath)
                 .Select(VideoToViewModel));
         }
 
@@ -60,6 +66,15 @@ namespace TheTruth.Controllers
         public IActionResult SetVideo(string ip, List<string> codes)
         {
             _service.SetVideos(codes, ip, _videoPath);
+
+            var ips = VideoUtility.GetClientConnetionIdDic();
+            if (!ips.ContainsKey(ip))
+                return new JsonResult("No client.");
+
+            var connectionId = ips[ip];
+            var client = _videoHub.Clients.Client(connectionId);
+            client.SendAsync("playVideo", _service.GetVideoListByIp(ip));
+
             return new JsonResult("Ok");
         }
 
@@ -114,7 +129,7 @@ namespace TheTruth.Controllers
                 Id = video.CategoryId,
                 Name = video.Name,
                 Date = video.Date,
-                DisplayName = video.CategoryName,
+                DisplayName = video.DisplayName,
                 Code = video.Code
             };
         }
