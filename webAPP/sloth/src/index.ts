@@ -27,7 +27,7 @@ http.getAppConfig(defaultConfig).then(config => {
     sloth.config = config;
     const connection = signalr(sloth.config);
     connection.on('playVideo', data => {
-        let list = convertor.covertToPlayList(data, sloth.config);
+        const list = convertor.covertToPlayList(data, sloth.config);
 
         player.playlist(list);
         player.playlist.first();
