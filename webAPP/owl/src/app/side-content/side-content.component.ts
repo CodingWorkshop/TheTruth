@@ -18,12 +18,14 @@ export class SideContentComponent implements OnChanges {
   constructor() { }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.selection = new SelectionModel<IVideo>(true, []);
-    this.dataSource = new MatTableDataSource(
-      this.items.map((d, idx) => {
-        d.position = idx + 1;
-        return d;
-      }));
+    if (this.items) {
+      this.selection = new SelectionModel<IVideo>(true, []);
+      this.dataSource = new MatTableDataSource(
+        this.items.map((d, idx) => {
+          d.position = idx + 1;
+          return d;
+        }));
+    }
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
