@@ -8,8 +8,13 @@ export default (config: sloth.Config) => {
         const connection = new signalR.HubConnection(
             config.webApiRoot + config.signalrApi
         );
-        connection.start().then(init => {
-            resolve(connection);
-        });
+        connection
+            .start()
+            .then(init => {
+                resolve(connection);
+            })
+            .catch(noneApi => {
+                resolve(null);
+            });
     });
 };

@@ -15,6 +15,7 @@ loadingMask.showLoading();
 loadingMask.hideLogo();
 videojs.addLanguage('zh-tw', langPackage);
 
+export var sloth: sloth.Instance = {};
 export var player = videojs('video-learning-player', {
     language: 'zh-tw'
 }) as sloth.Player;
@@ -23,27 +24,32 @@ player.playlist([]);
 player.playlistUi();
 player.playlist.autoadvance(0);
 
-export var sloth: sloth.Instance = {};
+initial();
 
-http.getAppConfig(defaultConfig).then(config => {
-    loadingMask.showLoading();
-    sloth.config = config;
-    signalr(sloth.config).then((connection: any) => {
-        http
-            .getVideoList(
-                sloth.config.webApiRoot + sloth.config.webApiGetVideoList
-            )
-            .then(data => {
+function initial() {
+    http.getAppConfig(defaultConfig).then(config => {
+        loadingMask.showLoading();
+        sloth.config = config;
+        signalr(sloth.config).then((connection: any) => {
+            if (!connection) {
+                return;
+            }
+            http
+                .getVideoList(
+                    sloth.config.webApiRoot + sloth.config.webApiGetVideoList
+                )
+                .then(data => {
+                    console.log(data);
+                    preparePlayList(data);
+                });
+
+            connection.on('playVideo', (data: any) => {
                 console.log(data);
                 preparePlayList(data);
             });
-
-        connection.on('playVideo', (data: any) => {
-            console.log(data);
-            preparePlayList(data);
-        });
-        connection.on('loginOk', (data: any) => {
-            console.log(data);
+            connection.on('loginOk', (data: any) => {
+                console.log(data);
+            });
         });
     });
-});
+}
