@@ -18,7 +18,6 @@ export class WrapperComponent implements OnInit {
   constructor(private videoService: VideoService, public dialog: MatDialog) { }
 
   ngOnInit() {
-    console.log('我啟動 wrapper ngOnInit');
     this.videoService
       .getClientIdentities()
       .subscribe(data => {
