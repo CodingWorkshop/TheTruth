@@ -30,10 +30,11 @@ function initial() {
     http.getAppConfig(defaultConfig).then(config => {
         loadingMask.showLoading();
         sloth.config = config;
-        signalr(sloth.config).then((connection: any) => {
+        signalr(sloth.config).then((connection: signalR.HubConnection) => {
             if (!connection) {
                 return;
             }
+
             http
                 .getVideoList(
                     sloth.config.webApiRoot + sloth.config.webApiGetVideoList
@@ -50,6 +51,11 @@ function initial() {
 
             connection.on('loginOk', (data: any) => {
                 console.log(data);
+            });
+
+            connection.onclose(() => {
+                loadingMask.hideLoading();
+                loadingMask.showLogo();
             });
         });
     });
