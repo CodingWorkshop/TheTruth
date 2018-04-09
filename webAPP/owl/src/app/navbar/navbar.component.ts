@@ -18,7 +18,7 @@ export class NavbarComponent implements OnInit {
     this.onlineUsers = 0;
 
     this.signalrService
-      .on('getonlineusers', val => {
+      .on('getOnlineUsers', val => {
         this.onlineUsers = val;
       });
   }
