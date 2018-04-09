@@ -48,13 +48,22 @@ namespace TheTruth
         {
             if (env.IsDevelopment())
             {
-                app.UseBrowserLink();
                 app.UseDeveloperExceptionPage();
             }
-            else
+
+            app.Use(async (context, next) =>
             {
-                app.UseExceptionHandler("/Home/Error");
-            }
+                await next();
+
+                if (context.Response.StatusCode == 404
+                    && !System.IO.Path.HasExtension(context.Request.Path.Value)
+                    && !context.Request.Path.Value.StartsWith("/api"))
+                {
+                    context.Request.Path = "/index.html";
+                    context.Response.StatusCode = 200;
+                    await next();
+                }
+            });
             app.UseCors("CorsPolicy");
             app.UseStaticFiles();
             app.UseSignalR(routes =>
@@ -62,12 +71,7 @@ namespace TheTruth
                 routes.MapHub<VideoHub>("/videohub");
                 routes.MapHub<ManagementHub>("/managementhub");
             });
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.UseMvc();
         }
     }
 }

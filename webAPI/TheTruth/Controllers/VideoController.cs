@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
 using TheTruth.Hubs;
 using TheTruth.ViewModels;
 using Utility;
@@ -17,51 +18,66 @@ using VideoService.Interface;
 
 namespace TheTruth.Controllers
 {
+    public class SetParams
+    {
+        public string Id { get; set; }
+        public List<string> Codes { get; set; }
+    }
+
     [Route("api/[controller]")]
     public class VideoController : Controller
     {
         private readonly string _videoPath;
         private readonly IVideoService _service;
         private readonly IHubContext<VideoHub, IVideoHub> _videoHub;
+        private readonly IHubContext<ManagementHub, IManagementHub> _managementHub;
 
         public VideoController(
             IHostingEnvironment hostingEnvironment,
             IVideoService service,
-            IHubContext<VideoHub, IVideoHub> videoHub)
+            IHubContext<VideoHub, IVideoHub> videoHub,
+            IHubContext<ManagementHub, IManagementHub> managementHub)
         {
             _videoPath = $"{hostingEnvironment.WebRootPath}\\Videos";
             _service = service;
             _videoHub = videoHub;
-
+            _managementHub = managementHub;
             var categories = CategoryInfos();
             var clientIdentities = GetClientIdentities1();
 
             _service.Init(_videoPath, categories, clientIdentities);
-
+            ManagementHub.AddNotifyEvent(
+                (sender, args) =>
+                {
+                    _managementHub.Clients.All.getOnlineUsers(Utility.VideoUtility.GetClientCount());
+                }
+            );
             VideoHub.AddConnectedEvent(
                 (senger, args) =>
                 {
                     _service.AddClientIdentity(
-                        args.Id, args.Ip, args.IsActive);
+                        args.Id, args.Ip, true);
+                    _managementHub.Clients.All.getOnlineUsers(Utility.VideoUtility.GetClientCount());
                 });
 
             VideoHub.AddDisconnectedEvent((senger, args) =>
             {
                 _service.AddClientIdentity(
-                    args.Id, args.Ip, args.IsActive);
+                    args.Id, args.Ip, false);
+                _managementHub.Clients.All.getOnlineUsers(Utility.VideoUtility.GetClientCount());
             });
         }
 
         private IEnumerable<ClientIdentity> GetClientIdentities1()
         {
             var clientIdentities = new List<ClientIdentity>();
-            for(var i = 1; i <= 30; i++)
+            for (var i = 1; i <= 30; i++)
             {
                 clientIdentities.Add(new ClientIdentity
                 {
                     Id = i,
-                        Ip = $"192.168.0.{i}",
-                        IsActive = false
+                    Ip = $"192.168.0.{i}",
+                    IsActive = false
                 });
             }
 
@@ -72,14 +88,14 @@ namespace TheTruth.Controllers
         {
             var categories = new List<CategoryInfo>
             {
-                new CategoryInfo {Id = 1, DisplayName = "國文", Name = "Chinese"},
-                new CategoryInfo {Id = 2, DisplayName = "英文", Name = "English"},
-                new CategoryInfo {Id = 3, DisplayName = "數學", Name = "Math"},
-                new CategoryInfo {Id = 4, DisplayName = "物理", Name = "Physical"},
-                new CategoryInfo {Id = 5, DisplayName = "化學", Name = "Chemical"},
-                new CategoryInfo {Id = 6, DisplayName = "社會", Name = "Social"},
-                new CategoryInfo {Id = 7, DisplayName = "歷史", Name = "History"},
-                new CategoryInfo {Id = 8, DisplayName = "地理", Name = "Geography"},
+                new CategoryInfo { Id = 1, DisplayName = "國文", Name = "Chinese" },
+                new CategoryInfo { Id = 2, DisplayName = "英文", Name = "English" },
+                new CategoryInfo { Id = 3, DisplayName = "數學", Name = "Math" },
+                new CategoryInfo { Id = 4, DisplayName = "物理", Name = "Physical" },
+                new CategoryInfo { Id = 5, DisplayName = "化學", Name = "Chemical" },
+                new CategoryInfo { Id = 6, DisplayName = "社會", Name = "Social" },
+                new CategoryInfo { Id = 7, DisplayName = "歷史", Name = "History" },
+                new CategoryInfo { Id = 8, DisplayName = "地理", Name = "Geography" },
             };
             return categories;
         }
@@ -94,22 +110,24 @@ namespace TheTruth.Controllers
         }
 
         [HttpPost("SetVideo")]
-        public async Task<IActionResult> SetVideo(string id, List<string> codes)
+        public async Task<IActionResult> SetVideo([FromBody] SetParams setParams)
         {
             var ipInfo = _service.GetClientIdentities()
-                .FirstOrDefault(i => i.Id.ToString() == id);
+                .FirstOrDefault(i => i.Id.ToString() == setParams.Id);
 
             if (ipInfo == null)
                 return new JsonResult("No client.");
 
-            _service.SetVideos(codes, ipInfo.Ip, _videoPath);
+            var ip = ipInfo.Ip;
+
+            _service.SetVideos(setParams.Codes, ip, _videoPath);
 
             var ips = VideoUtility.GetClientConnetionIdDic();
-            if (!ips.ContainsKey(id))
+            if (!ips.ContainsKey(ip))
                 return new JsonResult("No online client.");
 
-            await _videoHub.Clients.Client(ips[id])
-                .PlayVideo(_service.GetVideoListByIp(id)
+            await _videoHub.Clients.Client(ips[ip])
+                .PlayVideo(_service.GetVideoListByIp(ip)
                     .Select(VideoToViewModel));
 
             return new JsonResult("Ok");
@@ -138,7 +156,7 @@ namespace TheTruth.Controllers
                 .Select(s => new CategoryViewModel
                 {
                     Id = s.Id,
-                        DisplayName = s.DisplayName
+                    DisplayName = s.DisplayName
                 }));
         }
 
@@ -150,7 +168,7 @@ namespace TheTruth.Controllers
                 .Select(s => new ClientIdentityViewModel
                 {
                     Id = s.Id,
-                        IsActive = s.IsActive,
+                    IsActive = s.IsActive,
                 }));
         }
 
@@ -164,10 +182,10 @@ namespace TheTruth.Controllers
             return new VideoViewModel
             {
                 Id = video.CategoryId,
-                    Name = video.Name,
-                    Date = video.Date,
-                    DisplayName = video.DisplayName,
-                    Code = video.Code
+                Name = video.Name,
+                Date = video.Date,
+                DisplayName = video.DisplayName,
+                Code = video.Code
             };
         }
     }
