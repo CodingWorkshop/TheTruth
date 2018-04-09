@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
-import { VideoService } from '../video.service';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDrawer } from '@angular/material';
+import { VideoService, IClientIdentity } from '../video.service';
 import { SetupDialogComponent } from '../setup-dialog/setup-dialog.component';
 
 @Component({
@@ -13,7 +13,8 @@ export class WrapperComponent implements OnInit {
 
   videoList: Array<any>;
   videoSelected: string[];
-  clientList: Array<any>;
+  clientList: IClientIdentity[];
+  @ViewChild('drawer') drawer: MatDrawer;
 
   constructor(private videoService: VideoService, public dialog: MatDialog) { }
 
@@ -30,6 +31,7 @@ export class WrapperComponent implements OnInit {
       .getVideoList(params)
       .subscribe(data => {
         this.videoList = data;
+        this.drawer.toggle();
       });
   }
 
@@ -46,7 +48,7 @@ export class WrapperComponent implements OnInit {
 
     dialogRef.afterClosed()
       .subscribe((result: Array<any>) => {
-        const clientSelected = [].concat(result);
+        const clientSelected = [].concat(result || []);
         clientSelected.map(c => c.id)
           .forEach(c => {
             this.setVideoToClient(c);

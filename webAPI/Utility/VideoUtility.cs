@@ -10,11 +10,8 @@ namespace Utility
     {
         private static ConcurrentDictionary<string, string> IpConnetionIdDic = new ConcurrentDictionary<string, string>();
         private static Dictionary<string, IEnumerable<Video>> IpVideoDic = new Dictionary<string, IEnumerable<Video>>();
-        public static event EventHandler OnlineUserEvent;
-        public static void Notify()
-        {
-            OnlineUserEvent(null, EventArgs.Empty);
-        }
+        public static event EventHandler NotifyEvent;
+
         public static ConcurrentDictionary<string, string> GetClientConnetionIdDic()
         {
             return IpConnetionIdDic;
@@ -42,11 +39,28 @@ namespace Utility
         public static void SetIpVideo(string ip, IEnumerable<Video> videos)
         {
             IpVideoDic.TryGetValue(ip, out var thisVideos);
-            if(thisVideos == null)
+            if (thisVideos == null)
                 IpVideoDic.Add(ip, videos);
             else
                 IpVideoDic["ip"] = videos;
 
+        }
+        public static void SetNotifyEvent(EventHandler e)
+        {
+            if (NotifyEvent == null)
+            {
+                NotifyEvent = e;
+            }
+        }
+
+        public static void DoNotifyEvent()
+        {
+            NotifyEvent?.Invoke(null, EventArgs.Empty);
+        }
+
+        public static int GetClientCount()
+        {
+            return Utility.VideoUtility.GetClientConnetionIdDic().Count;
         }
     }
 }

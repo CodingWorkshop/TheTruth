@@ -8,7 +8,7 @@
       <mat-icon *ngIf="drawer.opened">navigate_before</mat-icon>
       <mat-icon *ngIf="!drawer.opened">navigate_next</mat-icon>
     </button>
-    <button class="setup" mat-raised-button (click)="openSetupDialog()" *ngIf="videoSelected?.length">
+    <button class="setup" mat-raised-button (click)="openSetupDialog()" color="accent" *ngIf="videoSelected?.length">
       發送
     </button>
 
