@@ -1,12 +1,10 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.SignalR;
-using Newtonsoft.Json;
-using Microsoft.AspNetCore.Http;
-using DataAccess;
+using TheTruth.ViewModels;
 
 namespace TheTruth.Hubs
 {
@@ -137,14 +135,14 @@ namespace TheTruth.Hubs
 
         private static List<VideoViewModel> GetClientVideos(string ip)
         {
-            return Utility.VideoUtility.GetIpVideo(ip) ?
+            return Utility.VideoUtility.GetIpVideo(ip)?
                 .Select(r => new VideoViewModel
                 {
                     Id = r.CategoryId,
-                        DisplayName = r.DisplayName,
-                        Name = r.Name,
-                        Code = r.Code,
-                        Date = r.Date,
+                    DisplayName = r.DisplayName,
+                    Name = r.Name,
+                    Code = r.Code,
+                    Date = r.Date,
                 }).ToList();
         }
     }
