@@ -20,5 +20,7 @@ namespace VideoService.Interface
         IEnumerable<ClientIdentity> GetClientIdentities();
 
         void Init(string rootPath, IEnumerable<CategoryInfo> categories, IEnumerable<ClientIdentity> clientIdentities);
+
+        void AddClientIdentity(int id, string ip, bool isActive);
     }
 }

@@ -31,6 +31,29 @@ namespace VideoService.Service
             InitVideos();
         }
 
+        public void AddClientIdentity(int id, string ip, bool isActive)
+        {
+            if (_clientIdentities.All(i => i.Id != id))
+            {
+                _clientIdentities = _clientIdentities
+                    .Concat(new[]
+                    {
+                        new ClientIdentity
+                        {
+                            Id = id,
+                            Ip = ip,
+                            IsActive = isActive
+                        }
+                    });
+            }
+            else
+            {
+                var client = _clientIdentities.First(i => i.Id == id);
+                client.Ip = ip;
+                client.IsActive = true;
+            }
+        }
+
         public IEnumerable<Video> SearchVideos(
             IEnumerable<int> categoryIds, DateTime? beginTime,
             DateTime? endTime, string rootPath)

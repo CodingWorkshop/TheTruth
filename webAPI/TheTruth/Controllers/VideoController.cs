@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using DataAccess;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.SignalR;
 using TheTruth.Hubs;
 using TheTruth.ViewModels;
@@ -19,26 +22,38 @@ namespace TheTruth.Controllers
     {
         private readonly string _videoPath;
         private readonly IVideoService _service;
-        private readonly IHubContext<VideoHub> _videoHub;
+        private readonly IHubContext<VideoHub, IVideoHub> _videoHub;
 
-        public VideoController(IHostingEnvironment hostingEnvironment,
-            IVideoService service, IHubContext<VideoHub> videoHub)
+        public VideoController(
+            IHostingEnvironment hostingEnvironment,
+            IVideoService service,
+            IHubContext<VideoHub, IVideoHub> videoHub)
         {
             _videoPath = $"{hostingEnvironment.WebRootPath}\\Videos";
             _service = service;
             _videoHub = videoHub;
 
-            var categories = new List<CategoryInfo>
+            var categories = CategoryInfos();
+            var clientIdentities = GetClientIdentities1();
+
+            _service.Init(_videoPath, categories, clientIdentities);
+
+            VideoHub.AddConnectedEvent(
+                (senger, args) =>
+                {
+                    _service.AddClientIdentity(
+                        args.Id, args.Ip, args.IsActive);
+                });
+
+            VideoHub.AddDisconnectedEvent((senger, args) =>
             {
-                new CategoryInfo {Id = 1, DisplayName = "國文", Name = "Chinese"},
-                new CategoryInfo {Id = 2, DisplayName = "英文", Name = "English"},
-                new CategoryInfo {Id = 3, DisplayName = "數學", Name = "Math"},
-                new CategoryInfo {Id = 4, DisplayName = "物理", Name = "Physical"},
-                new CategoryInfo {Id = 5, DisplayName = "化學", Name = "Chemical"},
-                new CategoryInfo {Id = 6, DisplayName = "社會", Name = "Social"},
-                new CategoryInfo {Id = 7, DisplayName = "歷史", Name = "History"},
-                new CategoryInfo {Id = 8, DisplayName = "地理", Name = "Geography"},
-            };
+                _service.AddClientIdentity(
+                    args.Id, args.Ip, args.IsActive);
+            });
+        }
+
+        private IEnumerable<ClientIdentity> GetClientIdentities1()
+        {
             var clientIdentities = new List<ClientIdentity>();
             for (var i = 1; i <= 30; i++)
             {
@@ -50,7 +65,23 @@ namespace TheTruth.Controllers
                 });
             }
 
-            service.Init(_videoPath, categories, clientIdentities);
+            return clientIdentities;
+        }
+
+        private IEnumerable<CategoryInfo> CategoryInfos()
+        {
+            var categories = new List<CategoryInfo>
+            {
+                new CategoryInfo {Id = 1, DisplayName = "國文", Name = "Chinese"},
+                new CategoryInfo {Id = 2, DisplayName = "英文", Name = "English"},
+                new CategoryInfo {Id = 3, DisplayName = "數學", Name = "Math"},
+                new CategoryInfo {Id = 4, DisplayName = "物理", Name = "Physical"},
+                new CategoryInfo {Id = 5, DisplayName = "化學", Name = "Chemical"},
+                new CategoryInfo {Id = 6, DisplayName = "社會", Name = "Social"},
+                new CategoryInfo {Id = 7, DisplayName = "歷史", Name = "History"},
+                new CategoryInfo {Id = 8, DisplayName = "地理", Name = "Geography"},
+            };
+            return categories;
         }
 
         [HttpGet("SearchVideos")]
@@ -62,18 +93,24 @@ namespace TheTruth.Controllers
                 .Select(VideoToViewModel));
         }
 
-        [HttpGet("SetVideo")]
-        public IActionResult SetVideo(string ip, List<string> codes)
+        [HttpPost("SetVideo")]
+        public async Task<IActionResult> SetVideo(string id, List<string> codes)
         {
-            _service.SetVideos(codes, ip, _videoPath);
+            var ipInfo = _service.GetClientIdentities()
+                .FirstOrDefault(i => i.Id.ToString() == id);
 
-            var ips = VideoUtility.GetClientConnetionIdDic();
-            if (!ips.ContainsKey(ip))
+            if (ipInfo == null)
                 return new JsonResult("No client.");
 
-            var connectionId = ips[ip];
-            var client = _videoHub.Clients.Client(connectionId);
-            client.SendAsync("playVideo", _service.GetVideoListByIp(ip));
+            _service.SetVideos(codes, ipInfo.Ip, _videoPath);
+
+            var ips = VideoUtility.GetClientConnetionIdDic();
+            if (!ips.ContainsKey(id))
+                return new JsonResult("No online client.");
+
+            await _videoHub.Clients.Client(ips[id])
+                .PlayVideo(_service.GetVideoListByIp(id)
+                    .Select(VideoToViewModel));
 
             return new JsonResult("Ok");
         }

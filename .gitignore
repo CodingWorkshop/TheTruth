@@ -3,3 +3,4 @@ nginx/*.exe
 nginx/logs/*.log
 .vscode/launch.json
 .vscode/tasks.json
+/webAPI/TheTruth/wwwroot/Videos

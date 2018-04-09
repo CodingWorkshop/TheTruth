@@ -6,50 +6,69 @@ using Microsoft.AspNetCore.SignalR;
 using TheTruth.ViewModels;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
+using DataAccess;
 
 namespace TheTruth.Hubs
 {
-    public class VideoHub : Hub
+    public class SignalRConnectionEventArgs : EventArgs
+    {
+        public int Id { get; set; }
+        public string Ip { get; set; }
+        public bool IsActive { get; set; }
+    }
+
+    public class VideoHub : Hub<IVideoHub>
     {
         private IHttpContextAccessor _accessor;
 
+        private static event EventHandler<SignalRConnectionEventArgs>
+            ConnectedEvent;
+
+        private static event EventHandler<SignalRConnectionEventArgs>
+            DisconnectedEvent;
+
         public VideoHub(IHttpContextAccessor accessor)
         {
-            this._accessor = accessor;
+            _accessor = accessor;
         }
 
-        /// <summary>
-        /// Client 端 來取Video
-        /// </summary>
-        /// <returns></returns>
-        [HubMethodName("requestVideo")]
-        public Task RequestVideo()
+        public static void AddConnectedEvent(
+            EventHandler<SignalRConnectionEventArgs> e)
         {
-            Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} come to get Videos");
-            var ip = GetRemoteIpAddress();
-            Console.WriteLine(ip);
-            var videos = Utility.VideoUtility.GetIpVideoDic()
-                .GetValueOrDefault(ip)
-                .Select(r => new VideoViewModel
-                {
-                    Id = r.CategoryId,
-                    DisplayName = r.DisplayName,
-                    Name = r.Name,
-                    Code = r.Code,
-                    Date = r.Date,
-                }).ToList();
-            //var vi = new List<VideoViewModel>();
-            //vi.Add(new VideoViewModel
-            //{
-            //    Id = 1,
-            //    Name = "17_18.mp4",
-            //    Date = "20180401",
-            //    DisplayName = "國文",
-            //    Code = "Chinese_20180401_17_18.mp4"
-            //});
-
-            return Clients.Client(Context.ConnectionId).SendAsync("playVideo", videos);
+            if (ConnectedEvent == null)
+                ConnectedEvent = e;
         }
+
+        public static void AddDisconnectedEvent(
+            EventHandler<SignalRConnectionEventArgs> e)
+        {
+            if (DisconnectedEvent == null)
+                DisconnectedEvent = e;
+        }
+
+        ///// <summary>
+        ///// Client 端 來取Video
+        ///// </summary>
+        ///// <returns></returns>
+        //[HubMethodName("requestVideo")]
+        //public Task RequestVideo()
+        //{
+        //    Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} come to get Videos");
+        //    var ip = GetRemoteIpAddress();
+        //    Console.WriteLine(ip);
+        //    var videos = Utility.VideoUtility.GetIpVideoDic()
+        //        .GetValueOrDefault(ip)
+        //        .Select(r => new VideoViewModel
+        //        {
+        //            Id = r.CategoryId,
+        //            DisplayName = r.DisplayName,
+        //            Name = r.Name,
+        //            Code = r.Code,
+        //            Date = r.Date,
+        //        }).ToList();
+        //
+        //    return Clients.Client(Context.ConnectionId).PlayVideo(videos);
+        //}
 
         /// <summary>
         /// 連線進來
@@ -58,8 +77,17 @@ namespace TheTruth.Hubs
         public override Task OnConnectedAsync()
         {
             Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} Login");
-            Utility.VideoUtility.GetClientConnetionIdDic().TryAdd(GetRemoteIpAddress(), Context.ConnectionId);
-            return Clients.Caller.SendAsync("playVideo", "Login Ok");
+
+            var ip = GetRemoteIpAddress();
+
+            Utility.VideoUtility
+                .GetClientConnetionIdDic()
+                .TryAdd(ip, Context.ConnectionId);
+
+            OnConnectionChanged(ConnectedEvent, ip);
+
+            return base.OnConnectedAsync();
+            //return Clients.Caller.Connected("Login Ok");
         }
 
         /// <summary>
@@ -70,8 +98,32 @@ namespace TheTruth.Hubs
         public override Task OnDisconnectedAsync(Exception exception)
         {
             Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} Log Out");
-            Utility.VideoUtility.GetClientConnetionIdDic().TryRemove(GetRemoteIpAddress(), out var newDic);
-            return Clients.All.SendAsync("playVideo", "Bye");
+
+            var ip = GetRemoteIpAddress();
+
+            Utility.VideoUtility
+                .GetClientConnetionIdDic()
+                .TryRemove(ip, out var newDic);
+
+            OnConnectionChanged(DisconnectedEvent, ip);
+
+            return base.OnDisconnectedAsync(exception);
+            //return Clients.All.Disconnected("Bye");
+        }
+
+        private void OnConnectionChanged(
+            EventHandler<SignalRConnectionEventArgs> connectionEvent,
+            string ip)
+        {
+            Console.WriteLine();
+            connectionEvent?.Invoke(
+                this,
+                new SignalRConnectionEventArgs
+                {
+                    Id = int.Parse(ip.Split('.').Last()),
+                    Ip = ip,
+                    IsActive = true
+                });
         }
 
         /// <summary>
@@ -83,5 +135,14 @@ namespace TheTruth.Hubs
             return _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
             //return Context?.Connection.RemoteIpAddress.ToString();
         }
+    }
+
+    public interface IVideoHub
+    {
+        Task PlayVideo(IEnumerable<VideoViewModel> videos);
+
+        //Task Connected(string msg);
+        //
+        //Task Disconnected(string msg);
     }
 }
