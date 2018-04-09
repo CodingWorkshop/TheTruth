@@ -1,36 +1,40 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, Output, OnInit, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
-import { VideoService, IVideo } from '../video.service';
+import { IVideo } from '../video.service';
 
 @Component({
   selector: 'app-side-content',
   templateUrl: './side-content.component.html',
-  styleUrls: ['./side-content.component.css'],
-  providers: [VideoService]
+  styleUrls: ['./side-content.component.css']
 })
-export class SideContentComponent implements OnInit {
+export class SideContentComponent implements OnInit, OnChanges {
 
   displayedColumns = ['select', 'position', 'displayName', 'date'];
   dataSource: MatTableDataSource<IVideo>;
   selection: SelectionModel<IVideo>;
+  @Input() items: IVideo[];
+  @Output() videoSelect: EventEmitter<string[]> = new EventEmitter<string[]>();
 
-  constructor(private videoService: VideoService) { }
+  constructor() { }
 
-  ngOnInit() {
+  ngOnInit(): void {
   }
 
-  onModelChanged(params) {
-    this.videoService
-      .getVideoList(params)
-      .subscribe(data => {
-        this.selection = new SelectionModel<IVideo>(true, []);
-        this.dataSource = new MatTableDataSource(
-          data.map((d, idx) => {
-            d.position = idx + 1;
-            return d;
-          }));
-      });
+  ngOnChanges(changes: SimpleChanges) {
+    if (this.items) {
+      this.selection = new SelectionModel<IVideo>(true, []);
+      this.dataSource = new MatTableDataSource(
+        this.items.map((d, idx) => {
+          d.position = idx + 1;
+          return d;
+        }));
+    }
+  }
+
+  toggle(row: IVideo) {
+    this.selection.toggle(row);
+    this.onVideoSelect();
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -45,6 +49,13 @@ export class SideContentComponent implements OnInit {
     this.isAllSelected() ?
       this.selection.clear() :
       this.dataSource.data.forEach(row => this.selection.select(row));
+
+    this.onVideoSelect();
+  }
+
+  onVideoSelect() {
+    const selectedCode = this.dataSource.data.filter(row => this.selection.isSelected(row)).map(d => d.code);
+    this.videoSelect.emit(selectedCode);
   }
 
 }

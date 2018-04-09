@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.SignalR;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
 using TheTruth.ViewModels;
 using Utility;
 
@@ -17,27 +17,17 @@ namespace TheTruth.Hubs
         public ManagementHub(IHttpContextAccessor accessor)
         {
             this._accessor = accessor;
+            Utility.VideoUtility.OnlineUserEvent += new EventHandler(this.DoNotify);
         }
 
         /// <summary>
         /// 管端來取學生機器清單
         /// </summary>
         /// <returns></returns>
-        [HubMethodName("requestVideo")]
-        public Task RequestVideo()
+        [HubMethodName("getonlineusers")]
+        public Task GetOnlineUsers()
         {
-            Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} come to get Videos");
-            string ip = GetRemoteIpAddress();
-            //Console.WriteLine(ip);
-            var videos = VideoUtility.GetIpVideoDic().GetValueOrDefault(ip)?
-                .Select(r => new VideoViewModel
-                {
-                    DisplayName = r.Category,
-                    Name = r.Name,
-                    Code = r.Code,
-                    Date = r.Date,
-                }).ToList();
-            return Clients.Client(Context.ConnectionId).SendAsync("playVideo", $" give videos to {Context.ConnectionId}");
+            return Clients.Caller.SendAsync("getonlineusers", Utility.VideoUtility.GetClientConnetionIdDic().Count);
         }
 
         /// <summary>
@@ -47,19 +37,7 @@ namespace TheTruth.Hubs
         public override Task OnConnectedAsync()
         {
             Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} 管端 Login");
-            return Clients.Caller.SendAsync("playVideo", "Login Ok");
-        }
-
-        /// <summary>
-        /// 管端來取學生機器清單
-        /// </summary>
-        /// <returns></returns>
-        [HubMethodName("getonlineusers")]
-        public Task GetOnlineUser()
-        {
-            var userList = VideoUtility.GetClientConnetionIdDic();
-            Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} 管端");
-            return Clients.All.SendAsync("getonlineusers", JsonConvert.SerializeObject(userList));
+            return Clients.Caller.SendAsync("management", "Login Ok");
         }
 
         /// <summary>
@@ -70,7 +48,7 @@ namespace TheTruth.Hubs
         public override Task OnDisconnectedAsync(Exception exception)
         {
             Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} 管端 Log Out");
-            return Clients.All.SendAsync("playVideo", "Bye");
+            return Clients.All.SendAsync("management", "Bye");
         }
 
         /// <summary>
@@ -80,6 +58,11 @@ namespace TheTruth.Hubs
         private string GetRemoteIpAddress()
         {
             return _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+        }
+
+        private void DoNotify(object o, EventArgs e)
+        {
+            Clients.Caller.SendAsync("getonlineusers", Utility.VideoUtility.GetClientConnetionIdDic().Count);
         }
     }
 }

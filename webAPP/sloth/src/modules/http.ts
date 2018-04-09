@@ -18,21 +18,7 @@ function getAppConfig(defaultConfig: sloth.Config) {
 function getVideoList(videoUrl: string) {
     return fetch(videoUrl, {
         method: 'get'
-    })
-        .then(function(res) {
-            return res.json();
-        })
-        .catch(function(res) {
-            console.log(res);
-            var fakeList = [];
-            for (let index = 0; index < 10; index++) {
-                fakeList[index] = {
-                    category: 'video-' + index,
-                    date: new Date()
-                };
-            }
-            return fakeList;
-        });
+    }).then(res => res.json());
 }
 
 export default {

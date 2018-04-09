@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
-using TheTruth.ViewModels;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 using DataAccess;
@@ -133,7 +133,19 @@ namespace TheTruth.Hubs
         private string GetRemoteIpAddress()
         {
             return _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-            //return Context?.Connection.RemoteIpAddress.ToString();
+        }
+
+        private static List<VideoViewModel> GetClientVideos(string ip)
+        {
+            return Utility.VideoUtility.GetIpVideo(ip) ?
+                .Select(r => new VideoViewModel
+                {
+                    Id = r.CategoryId,
+                        DisplayName = r.DisplayName,
+                        Name = r.Name,
+                        Code = r.Code,
+                        Date = r.Date,
+                }).ToList();
         }
     }
 

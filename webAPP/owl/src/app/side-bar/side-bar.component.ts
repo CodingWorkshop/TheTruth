@@ -1,4 +1,4 @@
-import { VideoService, ICategory } from './../../video.service';
+import { VideoService, ICategory } from './../video.service';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
@@ -21,7 +21,7 @@ export class SideBarComponent implements OnInit {
   endDate: FormControl;
   categories: ICategory[];
 
-  @Output() modelChange: EventEmitter<ISearchCondtion> = new EventEmitter<ISearchCondtion>();
+  @Output() conditionsChange: EventEmitter<ISearchCondtion> = new EventEmitter<ISearchCondtion>();
 
   constructor(
     private videoService: VideoService
@@ -32,7 +32,7 @@ export class SideBarComponent implements OnInit {
   }
 
   search() {
-    this.modelChange.emit({
+    this.conditionsChange.emit({
       startDate: this.startDate.value ? moment(this.startDate.value).format('YYYY-MM-DD') : null,
       endDate: this.endDate.value ? moment(this.endDate.value).format('YYYY-MM-DD') : null,
       categoryIds: this.categories.filter(c => c.checked).map(c => c.id)

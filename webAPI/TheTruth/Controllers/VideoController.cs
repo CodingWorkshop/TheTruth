@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DataAccess;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.SignalR;
 using TheTruth.Hubs;
@@ -55,13 +55,13 @@ namespace TheTruth.Controllers
         private IEnumerable<ClientIdentity> GetClientIdentities1()
         {
             var clientIdentities = new List<ClientIdentity>();
-            for (var i = 1; i <= 30; i++)
+            for(var i = 1; i <= 30; i++)
             {
                 clientIdentities.Add(new ClientIdentity
                 {
                     Id = i,
-                    Ip = $"192.168.0.{i}",
-                    IsActive = false
+                        Ip = $"192.168.0.{i}",
+                        IsActive = false
                 });
             }
 
@@ -138,7 +138,7 @@ namespace TheTruth.Controllers
                 .Select(s => new CategoryViewModel
                 {
                     Id = s.Id,
-                    DisplayName = s.DisplayName
+                        DisplayName = s.DisplayName
                 }));
         }
 
@@ -150,7 +150,7 @@ namespace TheTruth.Controllers
                 .Select(s => new ClientIdentityViewModel
                 {
                     Id = s.Id,
-                    IsActive = s.IsActive,
+                        IsActive = s.IsActive,
                 }));
         }
 
@@ -164,10 +164,10 @@ namespace TheTruth.Controllers
             return new VideoViewModel
             {
                 Id = video.CategoryId,
-                Name = video.Name,
-                Date = video.Date,
-                DisplayName = video.DisplayName,
-                Code = video.Code
+                    Name = video.Name,
+                    Date = video.Date,
+                    DisplayName = video.DisplayName,
+                    Code = video.Code
             };
         }
     }

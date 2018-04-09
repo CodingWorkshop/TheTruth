@@ -221,3 +221,240 @@
         -webkit-transform: rotate(360deg);
     }
 }
+
+.logo-mask {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: #010101;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 9999;
+}
+
+.logo-mask-disable {
+    display: none;
+}
+
+.sloth-logo {
+    position: absolute;
+    height: 350px;
+    width: 300px;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+}
+
+.sloth-logo div {
+    position: absolute;
+}
+
+.hair1 {
+    height: 250px;
+    width: 200px;
+    top: 40px;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    background-color: #111;
+    transform: rotate(30deg);
+}
+
+.hair2 {
+    height: 215px;
+    width: 180px;
+    top: 100px;
+    left: 12px;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    background-color: #111;
+    transform: rotate(-85deg);
+}
+
+.hair3 {
+    height: 250px;
+    width: 200px;
+    top: 40px;
+    left: 60px;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    background-color: #111;
+    transform: rotate(-30deg);
+}
+
+.hair4 {
+    height: 215px;
+    width: 180px;
+    top: 100px;
+    left: 70px;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    background-color: #111;
+    transform: rotate(85deg);
+}
+
+.face1 {
+    height: 215px;
+    width: 226px;
+    left: 17px;
+    top: 70px;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    background-color: #999;
+    z-index: 1;
+}
+
+.face2 {
+    height: 215px;
+    width: 200px;
+    top: 68px;
+    left: 13px;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    background-color: #999;
+    -webkit-transform: rotate(30deg);
+    -ms-transform: rotate(30deg);
+    transform: rotate(30deg);
+}
+
+.face3 {
+    height: 215px;
+    width: 200px;
+    top: 68px;
+    left: 47px;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    background-color: #999;
+    -webkit-transform: rotate(-30deg);
+    -ms-transform: rotate(-30deg);
+    transform: rotate(-30deg);
+    z-index: 1;
+}
+
+.eye-left {
+    width: 30px;
+    left: 50px;
+    background-color: #efefef;
+    z-index: 2;
+    animation: blink 3s infinite;
+}
+
+.around-eye-left1 {
+    width: 65px;
+    height: 50px;
+    top: 143px;
+    left: 30px;
+    border-radius: 56% 40% 40% 30% / 41% 50% 50% 30%;
+    background-color: #111;
+    z-index: 1;
+}
+
+.around-eye-left2 {
+    width: 40px;
+    height: 84px;
+    top: 146px;
+    left: 13px;
+    border-radius: 50%;
+    background-color: #111;
+    transform: rotate(25deg);
+    z-index: 1;
+}
+
+.around-eye-left3 {
+    width: 80px;
+    height: 40px;
+    top: 193px;
+    left: 15px;
+    background-color: #999;
+    border-radius: 50% 0 0 12% / 50% 0 0 50%;
+    z-index: 1;
+}
+
+.eye-right {
+    width: 30px;
+    left: 180px;
+    background-color: #efefef;
+    z-index: 2;
+    animation: blink 3s infinite;
+}
+
+.around-eye-right1 {
+    width: 65px;
+    height: 50px;
+    top: 143px;
+    left: 166px;
+    border-radius: 40% 50% 30% 40% / 50% 41% 30% 50%;
+    background-color: #111;
+    z-index: 1;
+}
+
+.around-eye-right2 {
+    width: 40px;
+    height: 84px;
+    top: 146px;
+    left: 210px;
+    border-radius: 50%;
+    background-color: #111;
+    transform: rotate(-25deg);
+    z-index: 1;
+}
+
+.around-eye-right3 {
+    width: 80px;
+    height: 40px;
+    top: 193px;
+    left: 165px;
+    background-color: #999;
+    border-radius: 0 50% 12% 0 / 0 50% 50% 0;
+    z-index: 1;
+}
+
+.nose {
+    width: 35px;
+    height: 30px;
+    top: 175px;
+    left: 113px;
+    background-color: #000;
+    border-radius: 50%;
+    z-index: 4;
+}
+
+.mouth1 {
+    width: 60px;
+    height: 50px;
+    top: 180px;
+    left: 100px;
+    background-color: #000;
+    background-image: linear-gradient(#999 50%, #000 50%, #000);
+    border-radius: 50%;
+    z-index: 2;
+}
+
+.mouth2 {
+    width: 46px;
+    height: 40px;
+    top: 182px;
+    left: 107px;
+    background-color: #999;
+    border-radius: 50%;
+    z-index: 3;
+}
+
+@keyframes blink {
+    0% {
+        height: 35px;
+        top: 150px;
+        border-radius: 50%;
+    }
+    90% {
+        height: 35px;
+        top: 150px;
+        border-radius: 50%;
+    }
+    95% {
+        height: 3px;
+        top: 165px;
+        border-radius: 20%;
+    }
+    100% {
+        height: 35px;
+        top: 150px;
+        border-radius: 50%;
+    }
+}

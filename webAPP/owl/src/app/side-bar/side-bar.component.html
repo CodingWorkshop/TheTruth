@@ -11,9 +11,12 @@
   <mat-datepicker #picker2></mat-datepicker>
 </mat-form-field>
 <mat-card-content>
-  <h4>科目</h4>
+  <h4>
+    <mat-progress-spinner *ngIf="!(categories?.length)" [diameter]="20" mode="indeterminate"></mat-progress-spinner>
+    科目
+  </h4>
   <section>
-    <mat-checkbox class="margin" *ngFor="let category of categories" [(ngModel)]="category.checked">
+    <mat-checkbox class="margin" *ngFor="let category of categories" [(ngModel)]="category.checked" [color]="'primary'">
       {{category.displayName}}
     </mat-checkbox>
   </section>

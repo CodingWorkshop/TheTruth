@@ -3,6 +3,11 @@
   flex-direction: column;
 }
 
+.mat-progress-spinner{
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .button-row {
   display: flex;
   align-items: center;

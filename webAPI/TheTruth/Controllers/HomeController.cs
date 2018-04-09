@@ -22,8 +22,6 @@ namespace TheTruth.Controllers
             _hubcontext = hubContext;
         }
 
-        private static int count;
-
         public async Task<IActionResult> Count()
         {
             await _hubcontext.Clients.All.SendAsync("getonlineusers", Utility.VideoUtility.GetClientConnetionIdDic().Count);
