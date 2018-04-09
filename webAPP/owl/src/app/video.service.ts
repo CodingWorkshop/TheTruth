@@ -43,6 +43,7 @@ export interface ICategory {
 export interface IClientIdentity {
   id: number;
   isActive: boolean;
+  checked: boolean;
 }
 
 export interface ISetVideoBody {
