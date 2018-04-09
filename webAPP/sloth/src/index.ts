@@ -1,8 +1,8 @@
 import langPackage from './i18n/zh-TW';
+import initial from './modules/initial';
 import signalr from './modules/signalr';
 import convertor from './modules/convertor';
 import http from './modules/http';
-import defaultConfig from './modules/getDefaultConfig';
 import loadingMask from './modules/loadingMask';
 import generateVideoImage from './modules/generateVidoeImage';
 import preparePlayList from './modules/preparePlayList';
@@ -24,39 +24,4 @@ player.playlist([]);
 player.playlistUi();
 player.playlist.autoadvance(0);
 
-initial();
-
-function initial() {
-    http.getAppConfig(defaultConfig).then(config => {
-        loadingMask.showLoading();
-        sloth.config = config;
-        signalr(sloth.config).then((connection: signalR.HubConnection) => {
-            if (!connection) {
-                return;
-            }
-
-            http
-                .getVideoList(
-                    sloth.config.webApiRoot + sloth.config.webApiGetVideoList
-                )
-                .then(data => {
-                    console.log(data);
-                    preparePlayList(data);
-                });
-
-            connection.on('playVideo', (data: any) => {
-                console.log(data);
-                preparePlayList(data);
-            });
-
-            connection.on('loginOk', (data: any) => {
-                console.log(data);
-            });
-
-            connection.onclose(() => {
-                loadingMask.hideLoading();
-                loadingMask.showLogo();
-            });
-        });
-    });
-}
+initial(sloth);

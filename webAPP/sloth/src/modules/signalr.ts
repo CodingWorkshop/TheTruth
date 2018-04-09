@@ -20,7 +20,7 @@ export default (config: sloth.Config) => {
                 console.log('noneApi');
                 loadingMask.hideLoading();
                 loadingMask.showLogo();
-                resolve(null);
+                reject(null);
             });
     });
 };
