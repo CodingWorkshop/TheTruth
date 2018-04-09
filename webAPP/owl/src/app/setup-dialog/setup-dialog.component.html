@@ -1,9 +1,11 @@
 <h1 mat-dialog-title>選擇要撥放的 Client</h1>
 <div mat-dialog-content>
-  <mat-checkbox class="margin" *ngFor="let item of checkList" [(ngModel)]="item.checked" [color]="'primary'">
-    {{item.id}}
-  </mat-checkbox>
+  <mat-grid-list cols="3" rowHeight="2:1">
+    <mat-grid-tile *ngFor="let item of checkList">
+      <mat-checkbox class="margin" [(ngModel)]="item.checked" [color]="'primary'">{{item.id}}</mat-checkbox>
+    </mat-grid-tile>
+  </mat-grid-list>
 </div>
 <div mat-dialog-actions>
-    <button mat-button (click)="onOKClick()">Ok</button>
+  <button mat-button (click)="onOKClick()">Ok</button>
 </div>

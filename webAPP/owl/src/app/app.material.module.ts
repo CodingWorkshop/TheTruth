@@ -10,6 +10,7 @@ import {
   MatTableModule,
   MatCardModule,
   MatDialogModule,
+  MatGridListModule,
   MatProgressSpinnerModule
 } from '@angular/material';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
@@ -27,6 +28,7 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
     MatTableModule,
     MatCardModule,
     MatDialogModule,
+    MatGridListModule,
     MatProgressSpinnerModule
   ]
 })

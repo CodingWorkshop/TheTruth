@@ -1,7 +1,7 @@
-.margin {
-  margin: 0 10px;
-}
-
 .mat-dialog-actions {
   flex-direction: row-reverse;
+}
+
+.mat-grid-tile {
+  background: lightblue;
 }

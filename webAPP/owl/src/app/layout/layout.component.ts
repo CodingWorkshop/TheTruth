@@ -4,12 +4,12 @@ import { VideoService } from '../video.service';
 import { SetupDialogComponent } from '../setup-dialog/setup-dialog.component';
 
 @Component({
-  selector: 'app-wrapper',
-  templateUrl: './wrapper.component.html',
-  styleUrls: ['./wrapper.component.css'],
+  selector: 'app-layout',
+  templateUrl: './layout.component.html',
+  styleUrls: ['./layout.component.css'],
   providers: [VideoService]
 })
-export class WrapperComponent implements OnInit {
+export class LayoutComponent implements OnInit {
 
   videoList: Array<any>;
   videoSelected: string[];

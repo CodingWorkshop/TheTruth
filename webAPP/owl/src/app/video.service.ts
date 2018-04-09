@@ -46,6 +46,6 @@ export interface IClientIdentity {
 }
 
 export interface ISetVideoBody {
-  ip: string;
+  id: string;
   codes: string[];
 }
