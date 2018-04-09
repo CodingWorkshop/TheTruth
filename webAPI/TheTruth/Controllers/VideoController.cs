@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
 using TheTruth.Hubs;
 using TheTruth.ViewModels;
 using Utility;
@@ -17,6 +18,12 @@ using VideoService.Interface;
 
 namespace TheTruth.Controllers
 {
+    public class SetParams
+    {
+        public string Id { get; set; }
+        public List<string> Codes { get; set; }
+    }
+
     [Route("api/[controller]")]
     public class VideoController : Controller
     {
@@ -42,26 +49,28 @@ namespace TheTruth.Controllers
                 (senger, args) =>
                 {
                     _service.AddClientIdentity(
-                        args.Id, args.Ip, args.IsActive);
+                        args.Id, args.Ip, true);
+
+                    var identity = _service.GetClientIdentities().FirstOrDefault(w => w.Id == args.Id);
                 });
 
             VideoHub.AddDisconnectedEvent((senger, args) =>
-            {
-                _service.AddClientIdentity(
-                    args.Id, args.Ip, args.IsActive);
-            });
+                {
+                    _service.AddClientIdentity(
+                        args.Id, args.Ip, false);
+                });
         }
 
         private IEnumerable<ClientIdentity> GetClientIdentities1()
         {
             var clientIdentities = new List<ClientIdentity>();
-            for(var i = 1; i <= 30; i++)
+            for (var i = 1; i <= 30; i++)
             {
                 clientIdentities.Add(new ClientIdentity
                 {
                     Id = i,
-                        Ip = $"192.168.0.{i}",
-                        IsActive = false
+                    Ip = $"192.168.0.{i}",
+                    IsActive = false
                 });
             }
 
@@ -94,22 +103,24 @@ namespace TheTruth.Controllers
         }
 
         [HttpPost("SetVideo")]
-        public async Task<IActionResult> SetVideo(string id, List<string> codes)
+        public async Task<IActionResult> SetVideo([FromBody] SetParams setParams)
         {
             var ipInfo = _service.GetClientIdentities()
-                .FirstOrDefault(i => i.Id.ToString() == id);
+                .FirstOrDefault(i => i.Id.ToString() == setParams.Id);
 
             if (ipInfo == null)
                 return new JsonResult("No client.");
 
-            _service.SetVideos(codes, ipInfo.Ip, _videoPath);
+            var ip = ipInfo.Ip;
+
+            _service.SetVideos(setParams.Codes, ip, _videoPath);
 
             var ips = VideoUtility.GetClientConnetionIdDic();
-            if (!ips.ContainsKey(id))
+            if (!ips.ContainsKey(ip))
                 return new JsonResult("No online client.");
 
-            await _videoHub.Clients.Client(ips[id])
-                .PlayVideo(_service.GetVideoListByIp(id)
+            await _videoHub.Clients.Client(ips[ip])
+                .PlayVideo(_service.GetVideoListByIp(ip)
                     .Select(VideoToViewModel));
 
             return new JsonResult("Ok");
@@ -138,7 +149,7 @@ namespace TheTruth.Controllers
                 .Select(s => new CategoryViewModel
                 {
                     Id = s.Id,
-                        DisplayName = s.DisplayName
+                    DisplayName = s.DisplayName
                 }));
         }
 
@@ -150,7 +161,7 @@ namespace TheTruth.Controllers
                 .Select(s => new ClientIdentityViewModel
                 {
                     Id = s.Id,
-                        IsActive = s.IsActive,
+                    IsActive = s.IsActive,
                 }));
         }
 
@@ -164,10 +175,10 @@ namespace TheTruth.Controllers
             return new VideoViewModel
             {
                 Id = video.CategoryId,
-                    Name = video.Name,
-                    Date = video.Date,
-                    DisplayName = video.DisplayName,
-                    Code = video.Code
+                Name = video.Name,
+                Date = video.Date,
+                DisplayName = video.DisplayName,
+                Code = video.Code
             };
         }
     }

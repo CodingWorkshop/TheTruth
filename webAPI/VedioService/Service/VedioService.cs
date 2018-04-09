@@ -1,7 +1,7 @@
-﻿using System;
+﻿using DataAccess;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using DataAccess;
 using Utility;
 using VideoService.Interface;
 
@@ -26,7 +26,10 @@ namespace VideoService.Service
         {
             _rootPath = rootPath;
             _categories = categories;
-            _clientIdentities = clientIdentities;
+            _clientIdentities = _clientIdentities == null ||
+                                !_clientIdentities.Any()
+                                ? clientIdentities
+                                : _clientIdentities;
             InitDirectories();
             InitVideos();
         }
@@ -62,15 +65,15 @@ namespace VideoService.Service
 
             var query = _allVideos;
 
-            if(categoryIds.Any())
+            if (categoryIds.Any())
                 query = query.Where(w => categoryIds.Any(where => where == w.CategoryId));
 
-            if(beginTime != null && beginTime != DateTime.MinValue)
+            if (beginTime != null && beginTime != DateTime.MinValue)
                 query = query.Where(w => w.DateTime >= beginTime);
             else
                 query = query.Where(w => w.DateTime >= DateTime.Today.AddMonths(-1));
 
-            if(endTime != null && endTime != DateTime.MinValue)
+            if (endTime != null && endTime != DateTime.MinValue)
                 query = query.Where(w => w.DateTime <= endTime);
             else
                 query = query.Where(w => w.DateTime <= DateTime.Now);
@@ -83,15 +86,15 @@ namespace VideoService.Service
         {
             var videos = new List<Video>();
 
-            foreach(var code in codes)
+            foreach (var code in codes)
             {
                 var video = _allVideos
                     .Where(w => w.Code == code);
 
-                if(video.Any())
+                if (video.Any())
                     videos.Add(video.First());
             }
-            if(_userVideos.ContainsKey(ip))
+            if (_userVideos.ContainsKey(ip))
                 _userVideos[ip] = videos;
             else
                 _userVideos.Add(ip, videos);
@@ -108,7 +111,7 @@ namespace VideoService.Service
 
         public string GetVideoByCode(string code, string rootPath, string ip)
         {
-            if(_userVideos[ip].Any(v => v.Code == code))
+            if (_userVideos[ip].Any(v => v.Code == code))
                 return _userVideos[ip]
                     .First(v => v.Code == code)
                     .Url
@@ -145,17 +148,17 @@ namespace VideoService.Service
             return new Video
             {
                 CategoryId = cate?.Id ?? 0,
-                    DisplayName = cate?.DisplayName,
-                    Category = category,
-                    Date = date,
-                    Url = pathInfo.FullName,
-                    Name = pathInfo.Name
+                DisplayName = cate?.DisplayName,
+                Category = category,
+                Date = date,
+                Url = pathInfo.FullName,
+                Name = pathInfo.Name
             };
         }
 
         private void InitDirectories()
         {
-            foreach(var category in _categories)
+            foreach (var category in _categories)
                 _rootPath.InitDirectory(category.Name)
                 .InitDirectory(DateTime.Now.ToString("yyyyMMdd"));
         }

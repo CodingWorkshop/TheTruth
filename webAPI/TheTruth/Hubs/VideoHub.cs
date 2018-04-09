@@ -44,34 +44,6 @@ namespace TheTruth.Hubs
                 DisconnectedEvent = e;
         }
 
-        ///// <summary>
-        ///// Client 端 來取Video
-        ///// </summary>
-        ///// <returns></returns>
-        //[HubMethodName("requestVideo")]
-        //public Task RequestVideo()
-        //{
-        //    Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} come to get Videos");
-        //    var ip = GetRemoteIpAddress();
-        //    Console.WriteLine(ip);
-        //    var videos = Utility.VideoUtility.GetIpVideoDic()
-        //        .GetValueOrDefault(ip)
-        //        .Select(r => new VideoViewModel
-        //        {
-        //            Id = r.CategoryId,
-        //            DisplayName = r.DisplayName,
-        //            Name = r.Name,
-        //            Code = r.Code,
-        //            Date = r.Date,
-        //        }).ToList();
-        //
-        //    return Clients.Client(Context.ConnectionId).PlayVideo(videos);
-        //}
-
-        /// <summary>
-        /// 連線進來
-        /// </summary>
-        /// <returns></returns>
         public override Task OnConnectedAsync()
         {
             Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} Login");
@@ -85,14 +57,8 @@ namespace TheTruth.Hubs
             OnConnectionChanged(ConnectedEvent, ip);
 
             return base.OnConnectedAsync();
-            //return Clients.Caller.Connected("Login Ok");
         }
 
-        /// <summary>
-        /// 離線
-        /// </summary>
-        /// <param name="exception"></param>
-        /// <returns></returns>
         public override Task OnDisconnectedAsync(Exception exception)
         {
             Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} Log Out");
@@ -106,14 +72,12 @@ namespace TheTruth.Hubs
             OnConnectionChanged(DisconnectedEvent, ip);
 
             return base.OnDisconnectedAsync(exception);
-            //return Clients.All.Disconnected("Bye");
         }
 
         private void OnConnectionChanged(
             EventHandler<SignalRConnectionEventArgs> connectionEvent,
             string ip)
         {
-            Console.WriteLine();
             connectionEvent?.Invoke(
                 this,
                 new SignalRConnectionEventArgs
@@ -124,10 +88,6 @@ namespace TheTruth.Hubs
                 });
         }
 
-        /// <summary>
-        /// Get IP
-        /// </summary>
-        /// <returns></returns>
         private string GetRemoteIpAddress()
         {
             return _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
