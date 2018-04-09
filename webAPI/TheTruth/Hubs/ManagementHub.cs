@@ -10,14 +10,13 @@ using Utility;
 
 namespace TheTruth.Hubs
 {
-    public class ManagementHub : Hub
+    public class ManagementHub : Hub<IManagementHub>
     {
         private IHttpContextAccessor _accessor;
-
+        private int userCount = Utility.VideoUtility.GetClientConnetionIdDic().Count;
         public ManagementHub(IHttpContextAccessor accessor)
         {
             this._accessor = accessor;
-            Utility.VideoUtility.OnlineUserEvent += new EventHandler(this.DoNotify);
         }
 
         /// <summary>
@@ -27,7 +26,7 @@ namespace TheTruth.Hubs
         [HubMethodName("getonlineusers")]
         public Task GetOnlineUsers()
         {
-            return Clients.Caller.SendAsync("getonlineusers", Utility.VideoUtility.GetClientConnetionIdDic().Count);
+            return Clients.All.getOnlineUsers(userCount);
         }
 
         /// <summary>
@@ -37,7 +36,9 @@ namespace TheTruth.Hubs
         public override Task OnConnectedAsync()
         {
             Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} 管端 Login");
-            return Clients.Caller.SendAsync("management", "Login Ok");
+            GetOnlineUsers();
+            return base.OnConnectedAsync();
+
         }
 
         /// <summary>
@@ -48,7 +49,13 @@ namespace TheTruth.Hubs
         public override Task OnDisconnectedAsync(Exception exception)
         {
             Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} 管端 Log Out");
-            return Clients.All.SendAsync("management", "Bye");
+            return base.OnDisconnectedAsync(exception);
+        }
+
+        public static void AddNotifyEvent(
+            EventHandler e)
+        {
+            Utility.VideoUtility.SetNotifyEvent(e);
         }
 
         /// <summary>
@@ -60,9 +67,13 @@ namespace TheTruth.Hubs
             return _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
         }
 
-        private void DoNotify(object o, EventArgs e)
-        {
-            Clients.Caller.SendAsync("getonlineusers", Utility.VideoUtility.GetClientConnetionIdDic().Count);
-        }
+        //public void DoNotify(object o, EventArgs e)
+        //{
+        //    Clients.Caller.getOnlineUsers(Utility.VideoUtility.GetClientConnetionIdDic().Count);
+        //}
     }
+}
+public interface IManagementHub
+{
+    Task getOnlineUsers(int count);
 }
