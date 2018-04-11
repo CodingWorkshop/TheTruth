@@ -5,14 +5,14 @@ using DataAccess;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using TheTruth.Controllers;
+using TruthAPI.Controllers;
 using Xunit;
 using NSubstitute;
 using VideoService.Interface;
 using System.Linq;
 using FluentAssertions;
 using FluentAssertions.Common;
-using TheTruth.ViewModels;
+using TruthAPI.ViewModels;
 
 namespace BLL.VideoService.Test
 {
