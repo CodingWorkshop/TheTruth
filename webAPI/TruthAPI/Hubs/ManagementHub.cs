@@ -72,8 +72,9 @@ namespace TruthAPI.Hubs
         //    Clients.Caller.getOnlineUsers(Utility.VideoUtility.GetClientConnetionIdDic().Count);
         //}
     }
-}
-public interface IManagementHub
-{
-    Task getOnlineUsers(int count);
+
+    public interface IManagementHub
+    {
+        Task getOnlineUsers(int count);
+    }
 }
