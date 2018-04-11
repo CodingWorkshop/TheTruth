@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,13 +47,13 @@ namespace TruthAPI.Controllers
 
             _service.Init(_videoPath, categories, clientIdentities);
             ManagementHub.AddNotifyEvent(
-                (sender, args) =>
+               (sender, args) =>
                 {
                     _managementHub.Clients.All.getOnlineUsers(Utility.VideoUtility.GetClientCount());
                 }
             );
             VideoHub.AddConnectedEvent(
-                (senger, args) =>
+               (senger, args) =>
                 {
                     _service.AddClientIdentity(
                         args.Id, args.Ip, true);
@@ -71,13 +71,13 @@ namespace TruthAPI.Controllers
         private IEnumerable<ClientIdentity> GetClientIdentities1()
         {
             var clientIdentities = new List<ClientIdentity>();
-            for (var i = 1; i <= 30; i++)
+            for(var i = 1; i <= 30; i++)
             {
                 clientIdentities.Add(new ClientIdentity
                 {
                     Id = i,
-                    Ip = $"192.168.0.{i}",
-                    IsActive = false
+                        Ip = $"192.168.0.{i}",
+                        IsActive = false
                 });
             }
 
@@ -115,7 +115,7 @@ namespace TruthAPI.Controllers
             var ipInfo = _service.GetClientIdentities()
                 .FirstOrDefault(i => i.Id.ToString() == setParams.Id);
 
-            if (ipInfo == null)
+            if(ipInfo == null)
                 return new JsonResult("No client.");
 
             var ip = ipInfo.Ip;
@@ -123,7 +123,7 @@ namespace TruthAPI.Controllers
             _service.SetVideos(setParams.Codes, ip, _videoPath);
 
             var ips = VideoUtility.GetClientConnetionIdDic();
-            if (!ips.ContainsKey(ip))
+            if(!ips.ContainsKey(ip))
                 return new JsonResult("No online client.");
 
             await _videoHub.Clients.Client(ips[ip])
@@ -156,7 +156,7 @@ namespace TruthAPI.Controllers
                 .Select(s => new CategoryViewModel
                 {
                     Id = s.Id,
-                    DisplayName = s.DisplayName
+                        DisplayName = s.DisplayName
                 }));
         }
 
@@ -168,7 +168,7 @@ namespace TruthAPI.Controllers
                 .Select(s => new ClientIdentityViewModel
                 {
                     Id = s.Id,
-                    IsActive = s.IsActive,
+                        IsActive = s.IsActive,
                 }));
         }
 
@@ -182,10 +182,10 @@ namespace TruthAPI.Controllers
             return new VideoViewModel
             {
                 Id = video.CategoryId,
-                Name = video.Name,
-                Date = video.Date,
-                DisplayName = video.DisplayName,
-                Code = video.Code
+                    Name = video.Name,
+                    Date = video.Date,
+                    DisplayName = video.DisplayName,
+                    Code = video.Code
             };
         }
     }

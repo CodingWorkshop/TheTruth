@@ -20,10 +20,10 @@ namespace TruthAPI.Hubs
         private IHttpContextAccessor _accessor;
 
         private static event EventHandler<SignalRConnectionEventArgs>
-            ConnectedEvent;
+        ConnectedEvent;
 
         private static event EventHandler<SignalRConnectionEventArgs>
-            DisconnectedEvent;
+        DisconnectedEvent;
 
         public VideoHub(IHttpContextAccessor accessor)
         {
@@ -33,14 +33,14 @@ namespace TruthAPI.Hubs
         public static void AddConnectedEvent(
             EventHandler<SignalRConnectionEventArgs> e)
         {
-            if (ConnectedEvent == null)
+            if(ConnectedEvent == null)
                 ConnectedEvent = e;
         }
 
         public static void AddDisconnectedEvent(
             EventHandler<SignalRConnectionEventArgs> e)
         {
-            if (DisconnectedEvent == null)
+            if(DisconnectedEvent == null)
                 DisconnectedEvent = e;
         }
 
@@ -82,8 +82,8 @@ namespace TruthAPI.Hubs
                 new SignalRConnectionEventArgs
                 {
                     Id = int.Parse(ip.Split('.').Last()),
-                    Ip = ip,
-                    IsActive = true
+                        Ip = ip,
+                        IsActive = true
                 });
         }
 

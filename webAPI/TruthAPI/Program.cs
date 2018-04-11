@@ -22,9 +22,9 @@ namespace TruthAPI
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseUrls("http://localhost:5000")
-                .UseStartup<Startup>()
-                .UseNLog()
-                .Build();
+            .UseUrls("http://localhost:5000")
+            .UseStartup<Startup>()
+            .UseNLog()
+            .Build();
     }
 }
