@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
+using Microsoft.Extensions.Options;
 using TruthAPI.Hubs;
 
 namespace TruthAPI
@@ -54,9 +58,9 @@ namespace TruthAPI
             {
                 await next();
 
-                if (context.Response.StatusCode == 404
-                && !System.IO.Path.HasExtension(context.Request.Path.Value)
-                && !context.Request.Path.Value.StartsWith("/api"))
+                if (context.Response.StatusCode == 404 &&
+                    !System.IO.Path.HasExtension(context.Request.Path.Value) &&
+                    !context.Request.Path.Value.StartsWith("/api"))
                 {
                     context.Request.Path = "/index.html";
                     context.Response.StatusCode = 200;
