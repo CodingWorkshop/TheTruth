@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using NLog.Web;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -34,6 +35,9 @@ namespace TruthAPI
             {
                 BuildWebHost(args).Run();
             }
+
+            //var logger = NLog.LogManager.LoadConfiguration("nlog.config").GetCurrentClassLogger();
+            //logger.Debug("init main");
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
@@ -44,10 +48,11 @@ namespace TruthAPI
                     options.Authentication.Schemes = Microsoft.AspNetCore.Server.HttpSys.AuthenticationSchemes.NTLM;
                     options.MaxConnections = 100;
                     options.MaxRequestBodySize = 30000000;
-                    options.UrlPrefixes.Add("http://localhost:7000");
+                    options.UrlPrefixes.Add("http://localhost:5000");
                 })
                 .UseStartup<Startup>()
                 .UseContentRoot(pathToContentRoot)
+                .UseNLog()
                 .Build();
     }
 }

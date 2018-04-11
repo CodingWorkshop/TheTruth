@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
+using TruthAPI.Hubs;
 
 namespace TruthAPI
 {
@@ -18,7 +21,25 @@ namespace TruthAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSignalR(options =>
+            {
+                // Faster pings for testing
+                options.KeepAliveInterval = TimeSpan.FromSeconds(5);
+            });
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
             services.AddMvc();
+            services.AddOptions();
+            services.AddSingleton<VideoService.Interface.IVideoService, VideoService.Service.VideoService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,10 +63,14 @@ namespace TruthAPI
                     await next();
                 }
             });
-
+            app.UseCors("CorsPolicy");
             app.UseDefaultFiles();
             app.UseStaticFiles();
-
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<VideoHub>("/videohub");
+                routes.MapHub<ManagementHub>("/managementhub");
+            });
             app.UseMvc();
         }
     }
