@@ -8,7 +8,12 @@
     "build": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "publishAPI": "dotnet publish ../../webAPI/TruthAPI/TruthAPI.csproj -c release -o C:\/owl",
+    "publishAPP": "ng build --prod -op C:\/owl\/wwwroot",
+    "pack": "",
+    "dotnetRun": "C: && cd owl && dotnet TruthAPI.dll",
+    "deploy": "npm run publishAPI && npm run publishAPP && npm run dotnetRun"
   },
   "private": true,
   "dependencies": {
