@@ -7,6 +7,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using NLog.Web;
 
 namespace TruthAPI
 {
@@ -14,12 +15,16 @@ namespace TruthAPI
     {
         public static void Main(string[] args)
         {
+            //var logger = NLog.LogManager.LoadConfiguration("nlog.config").GetCurrentClassLogger();
+            //logger.Debug("init main");
             BuildWebHost(args).Run();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .UseUrls("http://localhost:5000")
                 .UseStartup<Startup>()
+                .UseNLog()
                 .Build();
     }
 }
