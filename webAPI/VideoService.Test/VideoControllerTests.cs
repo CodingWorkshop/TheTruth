@@ -68,7 +68,7 @@ namespace BLL.VideoService.Test
             private readonly string _ip;
 
             public MockVideoController(IHostingEnvironment hostingEnvironment, IVideoService service, string ip)
-                : base(hostingEnvironment, service, null)
+                : base(hostingEnvironment, service, null, null)
             {
                 _ip = ip;
             }
