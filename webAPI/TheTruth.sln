@@ -23,7 +23,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataModel", "DataModel\Data
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TruthAPI", "TruthAPI\TruthAPI.csproj", "{BFF8F68F-1885-4A41-B283-845777B413D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utility", "Utility\Utility.csproj", "{5C7A04DF-E457-42D1-B4B5-A572CEFA1DC4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utility", "Utility\Utility.csproj", "{5C7A04DF-E457-42D1-B4B5-A572CEFA1DC4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TruthWindowsService", "TruthWindowsService\TruthWindowsService.csproj", "{449CF7DE-5DDE-44D6-ABE4-B6EDF4FAF119}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{5C7A04DF-E457-42D1-B4B5-A572CEFA1DC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C7A04DF-E457-42D1-B4B5-A572CEFA1DC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C7A04DF-E457-42D1-B4B5-A572CEFA1DC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{449CF7DE-5DDE-44D6-ABE4-B6EDF4FAF119}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{449CF7DE-5DDE-44D6-ABE4-B6EDF4FAF119}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{449CF7DE-5DDE-44D6-ABE4-B6EDF4FAF119}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{449CF7DE-5DDE-44D6-ABE4-B6EDF4FAF119}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
