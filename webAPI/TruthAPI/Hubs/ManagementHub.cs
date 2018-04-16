@@ -18,8 +18,6 @@ namespace TruthAPI.Hubs
             this._accessor = accessor;
         }
 
-        public Getuse
-
         /// <summary>
         /// 管端來取學生機器清單
         /// </summary>
