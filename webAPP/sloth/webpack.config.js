@@ -15,6 +15,6 @@ module.exports = {
     },
     output: {
         filename: 'client.js',
-        path: path.resolve(__dirname, 'app', 'javascripts')
+        path: path.resolve(__dirname, 'client', 'app', 'javascripts')
     }
 };

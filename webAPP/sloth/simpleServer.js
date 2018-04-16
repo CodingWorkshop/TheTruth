@@ -21,7 +21,7 @@ http
     .createServer(function(req, res) {
         console.log(`${req.method} ${req.url}`);
         const parsedUrl = url.parse(req.url);
-        let pathname = `.${parsedUrl.pathname}`;
+        let pathname = `./client${parsedUrl.pathname}`;
         const mimeType = {
             '.ico': 'image/x-icon',
             '.html': 'text/html',
