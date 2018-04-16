@@ -1,6 +1,6 @@
 ﻿namespace DataAccess
 {
-    public class CategoryInfo
+    public class Category
     {
         public string DisplayName { get; set; }
         public int Id { get; set; }

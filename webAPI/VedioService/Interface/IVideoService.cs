@@ -15,11 +15,11 @@ namespace VideoService.Interface
 
         void SetVideos(IEnumerable<string> codes, string ip, string rootPath);
 
-        IEnumerable<CategoryInfo> GetCategories();
+        IEnumerable<Category> GetCategories();
 
         IEnumerable<ClientIdentity> GetClientIdentities();
 
-        void Init(string rootPath, IEnumerable<CategoryInfo> categories, IEnumerable<ClientIdentity> clientIdentities);
+        void Init(string rootPath, IEnumerable<Category> categories, IEnumerable<ClientIdentity> clientIdentities);
 
         void AddClientIdentity(int id, string ip, bool isActive);
     }

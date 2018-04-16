@@ -20,16 +20,16 @@ namespace BLL.VideoService.Test
 {
     public class FilePathExtensionTests
     {
-        private List<CategoryInfo> _categories = new List<CategoryInfo>
+        private List<Category> _categories = new List<Category>
         {
-            new CategoryInfo {Id = 1, DisplayName = "國文", Name = "Chinese"},
-            new CategoryInfo {Id = 2, DisplayName = "英文", Name = "English"},
-            new CategoryInfo {Id = 3, DisplayName = "數學", Name = "Math"},
-            new CategoryInfo {Id = 4, DisplayName = "物理", Name = "Physical"},
-            new CategoryInfo {Id = 5, DisplayName = "化學", Name = "Chemical"},
-            new CategoryInfo {Id = 6, DisplayName = "社會", Name = "Social"},
-            new CategoryInfo {Id = 7, DisplayName = "歷史", Name = "History"},
-            new CategoryInfo {Id = 8, DisplayName = "地理", Name = "Geography"},
+            new Category {Id = 1, DisplayName = "國文", Name = "Chinese"},
+            new Category {Id = 2, DisplayName = "英文", Name = "English"},
+            new Category {Id = 3, DisplayName = "數學", Name = "Math"},
+            new Category {Id = 4, DisplayName = "物理", Name = "Physical"},
+            new Category {Id = 5, DisplayName = "化學", Name = "Chemical"},
+            new Category {Id = 6, DisplayName = "社會", Name = "Social"},
+            new Category {Id = 7, DisplayName = "歷史", Name = "History"},
+            new Category {Id = 8, DisplayName = "地理", Name = "Geography"},
         };
 
         private string _path;

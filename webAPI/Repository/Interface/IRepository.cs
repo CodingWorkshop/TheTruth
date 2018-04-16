@@ -6,6 +6,12 @@ namespace Repository.Interface
 {
     public interface IRepository<TEntity>
     {
-        IEnumerable<TEntity> GetAll();
+        IEnumerable<TEntity> Get();
+
+        void Add(TEntity entity);
+
+        void Update(TEntity entity);
+
+        void Delete(TEntity entity);
     }
 }
