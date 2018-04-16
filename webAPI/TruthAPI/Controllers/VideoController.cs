@@ -184,7 +184,7 @@ namespace TruthAPI.Controllers
                 Id = video.CategoryId,
                     Name = video.Name,
                     Date = video.Date,
-                    DisplayName = video.DisplayName,
+                    CategoryName = video.CategoryName,
                     Code = video.Code
             };
         }

@@ -148,7 +148,7 @@ namespace VideoService.Service
             return new Video
             {
                 CategoryId = cate?.Id ?? 0,
-                DisplayName = cate?.DisplayName,
+                CategoryName = cate?.DisplayName,
                 Category = category,
                 Date = date,
                 Url = pathInfo.FullName,

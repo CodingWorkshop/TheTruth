@@ -179,7 +179,7 @@ namespace TruthWindowsService.Controllers
                 Id = video.CategoryId,
                 Name = video.Name,
                 Date = video.Date,
-                DisplayName = video.DisplayName,
+                DisplayName = video.CategoryName,
                 Code = video.Code
             };
         }
