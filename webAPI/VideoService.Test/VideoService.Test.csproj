@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TheTruth\TheTruth.csproj" />
+    <ProjectReference Include="..\TruthAPI\TruthAPI.csproj" />
   </ItemGroup>
 
 </Project>

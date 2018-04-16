@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheTruth", "TheTruth\TheTruth.csproj", "{DD93C637-EED6-4F09-A98E-5A058D51DD59}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BLL", "BLL", "{028C67DE-9948-417C-A35F-933EDDA67DA1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DAL", "DAL", "{A20189C6-E24D-447F-9E0E-4B302B9BF63F}"
@@ -23,7 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataModel", "DataModel\Data
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TruthAPI", "TruthAPI\TruthAPI.csproj", "{BFF8F68F-1885-4A41-B283-845777B413D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utility", "Utility\Utility.csproj", "{5C7A04DF-E457-42D1-B4B5-A572CEFA1DC4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Utility", "Utility\Utility.csproj", "{5C7A04DF-E457-42D1-B4B5-A572CEFA1DC4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TruthWindowsService", "TruthWindowsService\TruthWindowsService.csproj", "{449CF7DE-5DDE-44D6-ABE4-B6EDF4FAF119}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +31,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DD93C637-EED6-4F09-A98E-5A058D51DD59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DD93C637-EED6-4F09-A98E-5A058D51DD59}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DD93C637-EED6-4F09-A98E-5A058D51DD59}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DD93C637-EED6-4F09-A98E-5A058D51DD59}.Release|Any CPU.Build.0 = Release|Any CPU
 		{33214544-A07A-4FED-BB10-6453041AB7BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{33214544-A07A-4FED-BB10-6453041AB7BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33214544-A07A-4FED-BB10-6453041AB7BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -63,6 +59,10 @@ Global
 		{5C7A04DF-E457-42D1-B4B5-A572CEFA1DC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C7A04DF-E457-42D1-B4B5-A572CEFA1DC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C7A04DF-E457-42D1-B4B5-A572CEFA1DC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{449CF7DE-5DDE-44D6-ABE4-B6EDF4FAF119}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{449CF7DE-5DDE-44D6-ABE4-B6EDF4FAF119}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{449CF7DE-5DDE-44D6-ABE4-B6EDF4FAF119}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{449CF7DE-5DDE-44D6-ABE4-B6EDF4FAF119}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
