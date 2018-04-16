@@ -13,11 +13,12 @@ namespace TruthAPI.Hubs
     public class ManagementHub : Hub<IManagementHub>
     {
         private IHttpContextAccessor _accessor;
-        private int userCount = Utility.VideoUtility.GetClientConnetionIdDic().Count;
         public ManagementHub(IHttpContextAccessor accessor)
         {
             this._accessor = accessor;
         }
+
+        public Getuse
 
         /// <summary>
         /// 管端來取學生機器清單
@@ -26,7 +27,7 @@ namespace TruthAPI.Hubs
         [HubMethodName("getonlineusers")]
         public Task GetOnlineUsers()
         {
-            return Clients.All.getOnlineUsers(userCount);
+            return Clients.All.getOnlineUsers(Utility.VideoUtility.GetClientConnetionIdDic().Count);
         }
 
         /// <summary>
@@ -36,7 +37,7 @@ namespace TruthAPI.Hubs
         public override Task OnConnectedAsync()
         {
             Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} 管端 Login");
-            GetOnlineUsers();
+            Clients.All.getOnlineUsers(Utility.VideoUtility.GetClientConnetionIdDic().Count);
             return base.OnConnectedAsync();
 
         }
