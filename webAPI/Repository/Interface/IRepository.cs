@@ -6,6 +6,8 @@ namespace Repository.Interface
 {
     public interface IRepository<TEntity>
     {
+        void Init(string path);
+
         IEnumerable<TEntity> GetAll();
 
         IEnumerable<TEntity> Get(Func<TEntity, bool> predicate);

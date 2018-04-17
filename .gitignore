@@ -6,3 +6,4 @@ webAPI/.vscode/launch.json
 /webAPI/TheTruth/wwwroot/Videos
 webAPI/TruthAPI/.vscode/launch.json
 webAPI/TruthAPI/.vscode/tasks.json
+/webAPI/TruthAPI/Category.txt

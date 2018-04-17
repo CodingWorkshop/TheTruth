@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Newtonsoft.Json;
 
 namespace Repository.Repository
@@ -11,18 +12,26 @@ namespace Repository.Repository
     public class FileGenericRepository<TEntity> : IRepository<TEntity>
         where TEntity : class
     {
-        private readonly string _filePath;
+        private string _filePath;
 
         private Dictionary<TEntity, TEntity> _entities { get; set; }
 
         private List<TEntity> _deletEntities { get; set; }
 
-        public FileGenericRepository(string filePath)
+        public void Init(string filePath)
         {
-            _filePath = filePath;
-            _entities = (File.Exists(_filePath)
-                ? JsonConvert.DeserializeObject<List<TEntity>>(File.ReadAllText(_filePath))
-                : new List<TEntity>()).ToDictionary(k => k, v => default(TEntity));
+            _filePath = Path.Combine(filePath, $"{typeof(TEntity).Name}.txt");
+
+            if (!File.Exists(_filePath))
+                File.CreateText(_filePath).Close();
+
+            var content = File.ReadAllText(_filePath, Encoding.UTF8);
+
+            _entities = string.IsNullOrWhiteSpace(content)
+                ? new Dictionary<TEntity, TEntity>()
+                : JsonConvert.DeserializeObject<List<TEntity>>(content)
+                    .ToDictionary(k => k, v => default(TEntity));
+
             _deletEntities = new List<TEntity>();
         }
 
@@ -74,5 +83,9 @@ namespace Repository.Repository
         {
             return _entities.Any(e => e.Value != null) || _deletEntities.Any();
         }
+    }
+
+    public class CategoryRepository : FileGenericRepository<Category>
+    {
     }
 }
