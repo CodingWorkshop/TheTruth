@@ -79,18 +79,18 @@ namespace TruthWindowsService.Controllers
             return clientIdentities;
         }
 
-        private IEnumerable<CategoryInfo> CategoryInfos()
+        private IEnumerable<Category> CategoryInfos()
         {
-            var categories = new List<CategoryInfo>
+            var categories = new List<Category>
             {
-                new CategoryInfo { Id = 1, DisplayName = "國文", Name = "Chinese" },
-                new CategoryInfo { Id = 2, DisplayName = "英文", Name = "English" },
-                new CategoryInfo { Id = 3, DisplayName = "數學", Name = "Math" },
-                new CategoryInfo { Id = 4, DisplayName = "物理", Name = "Physical" },
-                new CategoryInfo { Id = 5, DisplayName = "化學", Name = "Chemical" },
-                new CategoryInfo { Id = 6, DisplayName = "社會", Name = "Social" },
-                new CategoryInfo { Id = 7, DisplayName = "歷史", Name = "History" },
-                new CategoryInfo { Id = 8, DisplayName = "地理", Name = "Geography" },
+                new Category { Id = 1, DisplayName = "國文", Name = "Chinese" },
+                new Category { Id = 2, DisplayName = "英文", Name = "English" },
+                new Category { Id = 3, DisplayName = "數學", Name = "Math" },
+                new Category { Id = 4, DisplayName = "物理", Name = "Physical" },
+                new Category { Id = 5, DisplayName = "化學", Name = "Chemical" },
+                new Category { Id = 6, DisplayName = "社會", Name = "Social" },
+                new Category { Id = 7, DisplayName = "歷史", Name = "History" },
+                new Category { Id = 8, DisplayName = "地理", Name = "Geography" },
             };
             return categories;
         }
@@ -179,7 +179,7 @@ namespace TruthWindowsService.Controllers
                 Id = video.CategoryId,
                 Name = video.Name,
                 Date = video.Date,
-                DisplayName = video.DisplayName,
+                DisplayName = video.CategoryName,
                 Code = video.Code
             };
         }

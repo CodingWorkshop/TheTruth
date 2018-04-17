@@ -14,14 +14,14 @@ namespace VideoService.Service
         private readonly Dictionary<string, IEnumerable<Video>> _userVideos =
             new Dictionary<string, IEnumerable<Video>>();
 
-        private IEnumerable<CategoryInfo> _categories;
+        private IEnumerable<Category> _categories;
 
         private IEnumerable<ClientIdentity> _clientIdentities;
 
         private string _rootPath;
 
         public void Init(string rootPath,
-            IEnumerable<CategoryInfo> categories,
+            IEnumerable<Category> categories,
             IEnumerable<ClientIdentity> clientIdentities)
         {
             _rootPath = rootPath;
@@ -120,7 +120,7 @@ namespace VideoService.Service
             return string.Empty;
         }
 
-        public IEnumerable<CategoryInfo> GetCategories()
+        public IEnumerable<Category> GetCategories()
         {
             return _categories;
         }
@@ -148,7 +148,7 @@ namespace VideoService.Service
             return new Video
             {
                 CategoryId = cate?.Id ?? 0,
-                DisplayName = cate?.DisplayName,
+                CategoryName = cate?.DisplayName,
                 Category = category,
                 Date = date,
                 Url = pathInfo.FullName,

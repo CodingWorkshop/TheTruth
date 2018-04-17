@@ -1,14 +1,11 @@
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using DataAccess;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.SignalR;
-using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using TruthAPI.Hubs;
 using TruthAPI.ViewModels;
 using Utility;
@@ -71,31 +68,31 @@ namespace TruthAPI.Controllers
         private IEnumerable<ClientIdentity> GetClientIdentities1()
         {
             var clientIdentities = new List<ClientIdentity>();
-            for(var i = 1; i <= 30; i++)
+            for (var i = 1; i <= 30; i++)
             {
                 clientIdentities.Add(new ClientIdentity
                 {
                     Id = i,
-                        Ip = $"192.168.0.{i}",
-                        IsActive = false
+                    Ip = $"192.168.0.{i}",
+                    IsActive = false
                 });
             }
 
             return clientIdentities;
         }
 
-        private IEnumerable<CategoryInfo> CategoryInfos()
+        private IEnumerable<Category> CategoryInfos()
         {
-            var categories = new List<CategoryInfo>
+            var categories = new List<Category>
             {
-                new CategoryInfo { Id = 1, DisplayName = "國文", Name = "Chinese" },
-                new CategoryInfo { Id = 2, DisplayName = "英文", Name = "English" },
-                new CategoryInfo { Id = 3, DisplayName = "數學", Name = "Math" },
-                new CategoryInfo { Id = 4, DisplayName = "物理", Name = "Physical" },
-                new CategoryInfo { Id = 5, DisplayName = "化學", Name = "Chemical" },
-                new CategoryInfo { Id = 6, DisplayName = "社會", Name = "Social" },
-                new CategoryInfo { Id = 7, DisplayName = "歷史", Name = "History" },
-                new CategoryInfo { Id = 8, DisplayName = "地理", Name = "Geography" },
+                new Category { Id = 1, DisplayName = "國文", Name = "Chinese" },
+                new Category { Id = 2, DisplayName = "英文", Name = "English" },
+                new Category { Id = 3, DisplayName = "數學", Name = "Math" },
+                new Category { Id = 4, DisplayName = "物理", Name = "Physical" },
+                new Category { Id = 5, DisplayName = "化學", Name = "Chemical" },
+                new Category { Id = 6, DisplayName = "社會", Name = "Social" },
+                new Category { Id = 7, DisplayName = "歷史", Name = "History" },
+                new Category { Id = 8, DisplayName = "地理", Name = "Geography" },
             };
             return categories;
         }
@@ -115,7 +112,7 @@ namespace TruthAPI.Controllers
             var ipInfo = _service.GetClientIdentities()
                 .FirstOrDefault(i => i.Id.ToString() == setParams.Id);
 
-            if(ipInfo == null)
+            if (ipInfo == null)
                 return new JsonResult("No client.");
 
             var ip = ipInfo.Ip;
@@ -123,7 +120,7 @@ namespace TruthAPI.Controllers
             _service.SetVideos(setParams.Codes, ip, _videoPath);
 
             var ips = VideoUtility.GetClientConnetionIdDic();
-            if(!ips.ContainsKey(ip))
+            if (!ips.ContainsKey(ip))
                 return new JsonResult("No online client.");
 
             await _videoHub.Clients.Client(ips[ip])
@@ -156,7 +153,7 @@ namespace TruthAPI.Controllers
                 .Select(s => new CategoryViewModel
                 {
                     Id = s.Id,
-                        DisplayName = s.DisplayName
+                    DisplayName = s.DisplayName
                 }));
         }
 
@@ -168,7 +165,7 @@ namespace TruthAPI.Controllers
                 .Select(s => new ClientIdentityViewModel
                 {
                     Id = s.Id,
-                        IsActive = s.IsActive,
+                    IsActive = s.IsActive,
                 }));
         }
 
@@ -182,10 +179,10 @@ namespace TruthAPI.Controllers
             return new VideoViewModel
             {
                 Id = video.CategoryId,
-                    Name = video.Name,
-                    Date = video.Date,
-                    DisplayName = video.DisplayName,
-                    Code = video.Code
+                Name = video.Name,
+                Date = video.Date,
+                CategoryName = video.CategoryName,
+                Code = video.Code
             };
         }
     }
