@@ -1,4 +1,5 @@
 declare var videojs: any;
+declare var __owl__: any;
 declare namespace sloth {
     interface Instance {
         config?: Config;
