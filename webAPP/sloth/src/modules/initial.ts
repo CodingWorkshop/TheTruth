@@ -20,12 +20,10 @@ export default function initail(sloth: sloth.Instance) {
                             sloth.config.webApiGetVideoList
                     )
                     .then(data => {
-                        console.log(data);
                         preparePlayList(data);
                     });
 
                 connection.on('playVideo', function playVideoFunc(data: any) {
-                    console.log(data);
                     preparePlayList(data);
                 });
 

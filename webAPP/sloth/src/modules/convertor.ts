@@ -6,7 +6,7 @@ function covertToPlayList(videoList: any[], config: sloth.Config) {
 
     for (let i = 0; i < videoList.length; i++) {
         list.push({
-            name: videoList[i].displayName || config.defaultName,
+            name: videoList[i].categoryName || config.defaultName,
             description: videoList[i].description || config.defaultDescription,
             sources: [
                 {
