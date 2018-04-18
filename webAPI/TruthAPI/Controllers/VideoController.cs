@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,12 +18,6 @@ using VideoService.Interface;
 
 namespace TruthAPI.Controllers
 {
-    public class SetParams
-    {
-        public string Id { get; set; }
-        public List<string> Codes { get; set; }
-    }
-
     [Route("api/[controller]")]
     public class VideoController : Controller
     {
@@ -105,34 +100,30 @@ namespace TruthAPI.Controllers
         }
 
         [HttpPost("SetVideo")]
-        public async Task<IActionResult> SetVideo([FromBody] SetParams setParams)
+        public async Task<IActionResult> SetVideo([FromBody] SetVideoViewModel setVideoParams)
         {
-            var ipInfo = _videoService.GetClientIdentities()
-                .FirstOrDefault(i => i.Id.ToString() == setParams.Id);
+            var ipInfo = GetIpInfo(setVideoParams.Id);
 
             if (ipInfo == null)
                 return new JsonResult("No client.");
 
             var ip = ipInfo.Ip;
 
-            _videoService.SetVideos(setParams.Codes, ip, _videoPath);
+            _videoService.SetVideos(setVideoParams.Codes, ip, _videoPath);
 
             var ips = VideoUtility.GetClientConnetionIdDic();
             if (!ips.ContainsKey(ip))
                 return new JsonResult("No online client.");
 
-            await _videoHub.Clients.Client(ips[ip])
-                .PlayVideo(_videoService.GetVideoListByIp(ip)
-                    .Select(VideoToViewModel));
+            await SetClientVideo(ips[ip], ip);
 
             return new JsonResult("Ok");
         }
 
-        [HttpGet("CleanVideo")]
-        public async Task<IActionResult> CleanVideo(string id)
+        [HttpPost("CleanVideo")]
+        public async Task<IActionResult> CleanVideo([FromBody] CleanVideoViewModel cleanVideoParams)
         {
-            var ipInfo = _videoService.GetClientIdentities()
-                .FirstOrDefault(i => i.Id.ToString() == id);
+            var ipInfo = GetIpInfo(cleanVideoParams.Id);
 
             if (ipInfo == null)
                 return new JsonResult("No client.");
@@ -145,9 +136,7 @@ namespace TruthAPI.Controllers
             if (!ips.ContainsKey(ip))
                 return new JsonResult("No online client.");
 
-            await _videoHub.Clients.Client(ips[ip])
-                .PlayVideo(_videoService.GetVideoListByIp(ip)
-                    .Select(VideoToViewModel));
+            await SetClientVideo(ips[ip], ip);
 
             return new JsonResult("Ok");
         }
@@ -194,6 +183,20 @@ namespace TruthAPI.Controllers
         protected virtual string GetCallerIp()
         {
             return Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+        }
+        
+        private async Task SetClientVideo(string connectionId, string ip)
+        {
+            await _videoHub.Clients.Client(connectionId)
+                .PlayVideo(_videoService.GetVideoListByIp(ip)
+                    .Select(VideoToViewModel));
+        }
+
+        private ClientIdentity GetIpInfo(string id)
+        {
+            var ipInfo = _videoService.GetClientIdentities()
+                .FirstOrDefault(i => i.Id.ToString() == id);
+            return ipInfo;
         }
 
         private VideoViewModel VideoToViewModel(Video video)

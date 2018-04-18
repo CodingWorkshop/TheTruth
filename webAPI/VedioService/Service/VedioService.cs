@@ -110,6 +110,8 @@ namespace VideoService.Service
                 _userVideos[ip] = vodeoList;
             else
                 _userVideos.Add(ip, vodeoList);
+
+            VideoUtility.SetAllVideoDic(_userVideos);
         }
 
         public IEnumerable<Video> GetVideoListByIp(string ip)
