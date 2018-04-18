@@ -46,7 +46,7 @@ export class WrapperComponent implements OnInit {
       const dialogRef = this.dialog
         .open(SetupDialogComponent, {
           width: '500px',
-          data: data
+          data: { title: '選擇要播放之 Client', list: data }
         });
 
       dialogRef.afterClosed()

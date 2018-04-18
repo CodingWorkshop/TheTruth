@@ -23,6 +23,10 @@ export class VideoService {
   setVideo(body: ISetVideoBody) {
     return this.http.post<any>(`${environment.apiUrl}/Video/SetVideo`, body);
   }
+
+  cleanVideo(id: string) {
+    return this.http.post<any>(`${environment.apiUrl}/Video/CleanVideo`, { id: id });
+  }
 }
 
 export interface IVideo {

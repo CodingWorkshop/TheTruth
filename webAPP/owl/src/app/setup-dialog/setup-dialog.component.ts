@@ -10,13 +10,15 @@ import { IClientIdentity } from '../video.service';
 })
 export class SetupDialogComponent implements OnInit {
 
+  title: string;
   checkList: IClientIdentity[];
 
   constructor(
     public dialogRef: MatDialogRef<WrapperComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    this.checkList = data;
+    this.title = data.title;
+    this.checkList = data.list;
   }
 
   ngOnInit() {

@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>選擇要撥放的 Client</h1>
+<h1 mat-dialog-title>{{title}}</h1>
 <div mat-dialog-content>
   <mat-grid-list cols="3" rowHeight="2:1">
     <mat-grid-tile *ngFor="let item of checkList" (click)="onGridTitleClicked(item)">
