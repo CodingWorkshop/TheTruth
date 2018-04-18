@@ -134,6 +134,30 @@ namespace TruthAPI.Controllers
             return new JsonResult("Ok");
         }
 
+        [HttpGet("CleanVideo")]
+        public async Task<IActionResult> CleanVideo(string id)
+        {
+            var ipInfo = _videoService.GetClientIdentities()
+                .FirstOrDefault(i => i.Id.ToString() == id);
+
+            if (ipInfo == null)
+                return new JsonResult("No client.");
+
+            var ip = ipInfo.Ip;
+
+            _videoService.CleanVideo(ip);
+
+            var ips = VideoUtility.GetClientConnetionIdDic();
+            if (!ips.ContainsKey(ip))
+                return new JsonResult("No online client.");
+
+            await _videoHub.Clients.Client(ips[ip])
+                .PlayVideo(_videoService.GetVideoListByIp(ip)
+                    .Select(VideoToViewModel));
+
+            return new JsonResult("Ok");
+        }
+
         [HttpGet("GetVideoList")]
         public IActionResult GetVideoList()
         {
