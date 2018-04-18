@@ -18,10 +18,15 @@
       <mat-header-cell *matHeaderCellDef> No. </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.position}} </mat-cell>
     </ng-container>
+    <!-- CategoryName Column -->
+    <ng-container matColumnDef="categoryName">
+      <mat-header-cell *matHeaderCellDef> Category </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.categoryName}} </mat-cell>
+    </ng-container>
     <!-- Name Column -->
-    <ng-container matColumnDef="displayName">
+    <ng-container matColumnDef="name">
       <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.displayName}} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
     </ng-container>
     <!-- Date Column -->
     <ng-container matColumnDef="date">
