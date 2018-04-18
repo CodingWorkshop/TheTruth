@@ -17,11 +17,7 @@ function getAppConfig(defaultConfig: sloth.Config) {
 
 function getVideoList(videoUrl: string) {
     return fetch(videoUrl, {
-        method: 'post',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: ''
+        method: 'get'
     }).then(res => res.json());
 }
 
