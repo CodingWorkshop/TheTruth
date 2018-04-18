@@ -20,7 +20,7 @@ namespace Repository.Repository
 
         public void Init(string filePath)
         {
-            _filePath = Path.Combine(filePath, $"{typeof(TEntity).Name}.txt");
+            _filePath = Path.Combine(filePath, $"{typeof(TEntity).Name}.json");
 
             if (!File.Exists(_filePath))
                 File.CreateText(_filePath).Close();
@@ -86,6 +86,10 @@ namespace Repository.Repository
     }
 
     public class CategoryRepository : FileGenericRepository<Category>
+    {
+    }
+
+    public class ClientIdentityRepository : FileGenericRepository<ClientIdentity>
     {
     }
 }

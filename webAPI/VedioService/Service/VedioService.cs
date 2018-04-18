@@ -102,6 +102,18 @@ namespace VideoService.Service
             VideoUtility.SetAllVideoDic(_userVideos);
         }
 
+        public void CleanVideo(string ip)
+        {
+            var vodeoList = new List<Video>();
+
+            if (_userVideos.ContainsKey(ip))
+                _userVideos[ip] = vodeoList;
+            else
+                _userVideos.Add(ip, vodeoList);
+
+            VideoUtility.SetAllVideoDic(_userVideos);
+        }
+
         public IEnumerable<Video> GetVideoListByIp(string ip)
         {
             return _userVideos.ContainsKey(ip) ?
