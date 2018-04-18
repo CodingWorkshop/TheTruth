@@ -74,8 +74,7 @@ namespace TruthAPI.Controllers
             ManagementHub.AddNotifyEvent(
                 (sender, args) => { _managementHub.Clients.All.getOnlineUsers(Utility.VideoUtility.GetClientCount()); }
             );
-            VideoHub.AddConnectedEvent(
-                (senger, args) =>
+            VideoHub.AddConnectedEvent((senger, args) =>
                 {
                     _videoService.AddClientIdentity(
                         args.Id, args.Ip, true);
