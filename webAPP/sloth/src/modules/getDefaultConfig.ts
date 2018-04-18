@@ -2,7 +2,7 @@ import generateVideoImage from './generateVidoeImage';
 import langPackage from '../i18n/zh-TW';
 
 const defaultConfig: sloth.Config = {
-    webApiRoot: 'http://127.0.0.1:5000',
+    webApiRoot: __owl__,
     webApiGetVideoList: '/api/Video/GetVideoList',
     webApiPlayVideo: '/api/Video/PlayVideo',
     signalrApi: '/videohub',
