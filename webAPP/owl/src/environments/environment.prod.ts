@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  hubUrl: 'http://localhost:5000/managementhub',
-  apiUrl: 'http://localhost:5000/api'
+  hubUrl: 'http://192.168.0.104:5000/managementhub',
+  apiUrl: 'http://192.168.0.104:5000/api'
 };

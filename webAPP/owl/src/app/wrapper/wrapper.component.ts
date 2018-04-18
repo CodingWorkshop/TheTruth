@@ -13,17 +13,11 @@ export class WrapperComponent implements OnInit {
 
   videoList: Array<any>;
   videoSelected: string[];
-  clientList: IClientIdentity[];
   @ViewChild('drawer') drawer: MatDrawer;
 
   constructor(private videoService: VideoService, public dialog: MatDialog) { }
 
   ngOnInit() {
-    this.videoService
-      .getClientIdentities()
-      .subscribe(data => {
-        this.clientList = data;
-      });
   }
 
   onConditionsChanged(params) {
@@ -39,21 +33,33 @@ export class WrapperComponent implements OnInit {
     this.videoSelected = params;
   }
 
-  openSetupDialog() {
-    const dialogRef = this.dialog
-      .open(SetupDialogComponent, {
-        width: '500px',
-        data: this.clientList
+  getClientList(callback: (arg: any) => void) {
+    return this.videoService
+      .getClientIdentities()
+      .subscribe(data => {
+        callback(data);
       });
+  }
 
-    dialogRef.afterClosed()
-      .subscribe((result: Array<any>) => {
-        const clientSelected = [].concat(result || []);
-        clientSelected.map(c => c.id)
-          .forEach(c => {
-            this.setVideoToClient(c);
-          });
-      });
+  openSetupDialog() {
+    const callback = (data: IClientIdentity[]) => {
+      const dialogRef = this.dialog
+        .open(SetupDialogComponent, {
+          width: '500px',
+          data: data
+        });
+
+      dialogRef.afterClosed()
+        .subscribe((result: Array<any>) => {
+          const clientSelected = [].concat(result || []);
+          clientSelected.map(c => c.id)
+            .forEach(c => {
+              this.setVideoToClient(c);
+            });
+        });
+    };
+
+    this.getClientList(callback);
   }
 
   setVideoToClient(id: string) {

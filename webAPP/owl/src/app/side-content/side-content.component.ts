@@ -10,7 +10,7 @@ import { IVideo } from '../video.service';
 })
 export class SideContentComponent implements OnInit, OnChanges {
 
-  displayedColumns = ['select', 'position', 'displayName', 'date'];
+  displayedColumns = ['select', 'position', 'categoryName', 'name', 'date'];
   dataSource: MatTableDataSource<IVideo>;
   selection: SelectionModel<IVideo>;
   @Input() items: IVideo[];
