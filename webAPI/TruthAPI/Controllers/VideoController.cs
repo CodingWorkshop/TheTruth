@@ -31,6 +31,7 @@ namespace TruthAPI.Controllers
         private readonly IHubContext<VideoHub, IVideoHub> _videoHub;
         private readonly IHubContext<ManagementHub, IManagementHub> _managementHub;
         private IRepository<Category> _categoryRepository;
+        private IRepository<ClientIdentity> _clientIdentityRepository;
 
         private string _rootPath;
 
@@ -38,6 +39,7 @@ namespace TruthAPI.Controllers
             IHostingEnvironment hostingEnvironment,
             IVideoService videoService,
             IRepository<Category> categoryRepository,
+            IRepository<ClientIdentity> clientIdentityRepository,
             IHubContext<VideoHub, IVideoHub> videoHub,
             IHubContext<ManagementHub, IManagementHub> managementHub)
         {
@@ -47,19 +49,27 @@ namespace TruthAPI.Controllers
             _videoHub = videoHub;
             _managementHub = managementHub;
 
-            var categories = InitCategoryRepository(hostingEnvironment, categoryRepository);
+            var categories = InitCategoryRepository(categoryRepository);
 
-            var clientIdentities = GetClientIdentities1();
+            var clientIdentities = InitClientIdentities(clientIdentityRepository);
 
             InitVideoService(videoService, categories, clientIdentities);
         }
 
-        private IEnumerable<Category> InitCategoryRepository(IHostingEnvironment hostingEnvironment, IRepository<Category> categoryRepository)
+        private IEnumerable<Category> InitCategoryRepository(IRepository<Category> categoryRepository)
         {
             _categoryRepository = categoryRepository;
             _categoryRepository.Init(_rootPath);
             var categories = _categoryRepository.GetAll();
             return categories;
+        }
+
+        private IEnumerable<ClientIdentity> InitClientIdentities(IRepository<ClientIdentity> clientIdentityRepository)
+        {
+            _clientIdentityRepository = clientIdentityRepository;
+            _clientIdentityRepository.Init(_rootPath);
+            var identities = _clientIdentityRepository.GetAll();
+            return identities;
         }
 
         private void InitVideoService(IVideoService videoService, IEnumerable<Category> categories, IEnumerable<ClientIdentity> clientIdentities)
@@ -83,22 +93,6 @@ namespace TruthAPI.Controllers
                     args.Id, args.Ip, false);
                 _managementHub.Clients.All.getOnlineUsers(Utility.VideoUtility.GetClientCount());
             });
-        }
-
-        private IEnumerable<ClientIdentity> GetClientIdentities1()
-        {
-            var clientIdentities = new List<ClientIdentity>();
-            for (var i = 1; i <= 30; i++)
-            {
-                clientIdentities.Add(new ClientIdentity
-                {
-                    Id = i,
-                    Ip = $"192.168.0.{i}",
-                    IsActive = false
-                });
-            }
-
-            return clientIdentities;
         }
 
         [HttpGet("SearchVideos")]

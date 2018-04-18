@@ -88,4 +88,8 @@ namespace Repository.Repository
     public class CategoryRepository : FileGenericRepository<Category>
     {
     }
+
+    public class ClientIdentityRepository : FileGenericRepository<ClientIdentity>
+    {
+    }
 }

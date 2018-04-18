@@ -47,7 +47,8 @@ namespace TruthAPI
             services.AddMvc();
             services.AddOptions();
             services.AddSingleton<VideoService.Interface.IVideoService, VideoService.Service.VideoService>();
-            services.AddSingleton<IRepository<Category>, CategoryRepository>();
+            services.AddSingleton<IRepository<Category>, CategoryRepository>()
+                .AddSingleton<IRepository<ClientIdentity>, ClientIdentityRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
