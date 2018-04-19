@@ -1,0 +1,10 @@
+[
+	{"DisplayName":"國文","Id":1,"Name":"Chinese"},
+	{"DisplayName":"英文","Id":2,"Name":"English"},
+	{"DisplayName":"數學","Id":3,"Name":"Math"},
+	{"DisplayName":"物理","Id":4,"Name":"Physical"},
+	{"DisplayName":"化學","Id":5,"Name":"Chemical"},
+	{"DisplayName":"社會","Id":6,"Name":"Social"},
+	{"DisplayName":"歷史","Id":7,"Name":"History"},
+	{"DisplayName":"地理","Id":8,"Name":"Geography"}
+]
