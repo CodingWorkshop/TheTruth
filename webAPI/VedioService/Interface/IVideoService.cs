@@ -13,7 +13,7 @@ namespace VideoService.Interface
         IEnumerable<Video> SearchVideos(IEnumerable<int> categoryIds, DateTime? beginTime,
             DateTime? endTime, string rootPath);
 
-        void SetVideos(IEnumerable<string> codes, string ip, string rootPath);
+        string SetVideos(IEnumerable<string> codes, string ip, string rootPath);
 
         IEnumerable<Category> GetCategories();
 
@@ -21,6 +21,12 @@ namespace VideoService.Interface
 
         void Init(string rootPath, IEnumerable<Category> categories, IEnumerable<ClientIdentity> clientIdentities);
 
-        void CleanVideo(string ip);
+        string CleanVideo(string ip);
+
+        void AddConnetionId(string ip, string connectionId);
+
+        void UpdateOnlineStatus(string ip, bool isOnline);
+
+        void RemoveConnetionId(string ip);
     }
 }

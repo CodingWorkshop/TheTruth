@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using TruthAPI.ViewModels;
+using VideoService.Interface;
 
 namespace TruthAPI.Hubs
 {
@@ -18,6 +19,7 @@ namespace TruthAPI.Hubs
     public class VideoHub : Hub<IVideoHub>
     {
         private IHttpContextAccessor _accessor;
+        private IVideoService _videoService;
 
         private static event EventHandler<SignalRConnectionEventArgs>
         ConnectedEvent;
@@ -25,9 +27,10 @@ namespace TruthAPI.Hubs
         private static event EventHandler<SignalRConnectionEventArgs>
         DisconnectedEvent;
 
-        public VideoHub(IHttpContextAccessor accessor)
+        public VideoHub(IHttpContextAccessor accessor, IVideoService videoService)
         {
             _accessor = accessor;
+            _videoService = videoService;
         }
 
         public static void AddConnectedEvent(
@@ -48,8 +51,8 @@ namespace TruthAPI.Hubs
         {
             var ip = GetRemoteIpAddress();
 
-            Utility.VideoUtility.AddConnetionId(ip, Context.ConnectionId);
-            Utility.VideoUtility.UpdateOnlineStatus(ip, true);
+            _videoService.AddConnetionId(ip, Context.ConnectionId);
+            _videoService.UpdateOnlineStatus(ip, true);
 
             OnConnectionChanged(ConnectedEvent, ip);
 
@@ -60,8 +63,8 @@ namespace TruthAPI.Hubs
         {
             var ip = GetRemoteIpAddress();
 
-            Utility.VideoUtility.RemoveConnetionId(ip);
-            Utility.VideoUtility.UpdateOnlineStatus(ip, false);
+            _videoService.RemoveConnetionId(ip);
+            _videoService.UpdateOnlineStatus(ip, false);
 
             OnConnectionChanged(DisconnectedEvent, ip);
 

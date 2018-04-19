@@ -1,22 +1,24 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.SignalR;
-using Newtonsoft.Json;
 using TruthAPI.ViewModels;
-using Utility;
+using VideoService.Interface;
 
 namespace TruthAPI.Hubs
 {
     public class ManagementHub : Hub<IManagementHub>
     {
         private IHttpContextAccessor _accessor;
+        private IVideoService _videoService;
         public static event EventHandler NotifyEvent;
-        public ManagementHub(IHttpContextAccessor accessor)
+
+        public ManagementHub(IHttpContextAccessor accessor, IVideoService videoService)
         {
             _accessor = accessor;
+            _videoService = videoService;
         }
 
         /// <summary>
@@ -26,11 +28,15 @@ namespace TruthAPI.Hubs
         [HubMethodName("getonlineusers")]
         public Task GetOnlineUsers()
         {
-            return Clients.All.GetOnlineUsers(VideoUtility.GetAllClientInfo().Select(r=> new ClientIdentityViewModel{
-                Id = r.Id,
-                IsActive = r.IsActive,
-                IsOnline = r.IsOnline,
-            }));
+            return Clients.All.GetOnlineUsers(
+                _videoService
+                    .GetClientIdentities()
+                    .Select(r=> new ClientIdentityViewModel
+                    {
+                        Id = r.Id,
+                        IsActive = r.IsActive,
+                        IsOnline = r.IsOnline,
+                    }));
         }
 
         /// <summary>

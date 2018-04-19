@@ -9,7 +9,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using TruthAPI.Hubs;
 using TruthAPI.ViewModels;
-using Utility;
 using VideoService.Interface;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -108,11 +107,8 @@ namespace TruthAPI.Controllers
 
             var ip = ipInfo.Ip;
 
-            _videoService.SetVideos(setVideoParams.Codes, ip, _videoPath);
-
-            var connectionId = VideoUtility.GetConnectionIdByIp(ip);
-            VideoUtility.UpdateActiveStatus(ip, true);
-
+            var connectionId = _videoService.SetVideos(setVideoParams.Codes, ip, _videoPath);
+            
             if (string.IsNullOrWhiteSpace(connectionId))
                 return new JsonResult("No online client.");
 
@@ -131,12 +127,7 @@ namespace TruthAPI.Controllers
 
             var ip = ipInfo.Ip;
 
-            _videoService.CleanVideo(ip);
-
-            var connectionId = VideoUtility.GetConnectionIdByIp(ip);
-            VideoUtility.UpdateActiveStatus(ip, false);
-
-            await SetClientVideo(connectionId, ip);
+            await SetClientVideo(_videoService.CleanVideo(ip), ip);
 
             return new JsonResult("Ok");
         }

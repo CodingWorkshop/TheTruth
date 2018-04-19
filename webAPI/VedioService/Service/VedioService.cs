@@ -55,7 +55,7 @@ namespace VideoService.Service
             return query.ToList();
         }
 
-        public void SetVideos(IEnumerable<string> codes,
+        public string SetVideos(IEnumerable<string> codes,
             string ip, string rootPath)
         {
             var videos = new List<Video>();
@@ -70,11 +70,30 @@ namespace VideoService.Service
             }
 
             VideoUtility.AddVideo(ip, videos);
+            VideoUtility.UpdateActiveStatus(ip, true);
+            return VideoUtility.GetConnectionIdByIp(ip);
         }
 
-        public void CleanVideo(string ip)
+        public string CleanVideo(string ip)
         {
             VideoUtility.AddVideo(ip, new List<Video>());
+            VideoUtility.UpdateActiveStatus(ip, false);
+            return VideoUtility.GetConnectionIdByIp(ip);
+        }
+
+        public void AddConnetionId(string ip, string connectionId)
+        {
+            VideoUtility.AddConnetionId(ip, connectionId);
+        }
+
+        public void UpdateOnlineStatus(string ip, bool isOnline)
+        {
+            VideoUtility.UpdateOnlineStatus(ip, true);
+        }
+
+        public void RemoveConnetionId(string ip)
+        {
+            VideoUtility.RemoveConnetionId(ip);
         }
 
         public IEnumerable<Video> GetVideoListByIp(string ip)
