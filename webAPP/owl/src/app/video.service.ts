@@ -47,7 +47,8 @@ export interface ICategory {
 export interface IClientIdentity {
   id: number;
   isActive: boolean;
-  checked: boolean;
+  isOnline: boolean;
+  selected: boolean;
 }
 
 export interface ISetVideoBody {

@@ -50,12 +50,11 @@ export class WrapperComponent implements OnInit {
         });
 
       dialogRef.afterClosed()
-        .subscribe((result: Array<any>) => {
+        .subscribe((result: number[]) => {
           const clientSelected = [].concat(result || []);
-          clientSelected.map(c => c.id)
-            .forEach(c => {
-              this.setVideoToClient(c);
-            });
+          clientSelected.forEach(c => {
+            this.setVideoToClient(c);
+          });
         });
     };
 

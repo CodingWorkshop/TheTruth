@@ -12,7 +12,7 @@ export class SignalrService {
     this.connection.start();
   }
 
-  on<T>(methodName: string, method: (T) => void) {
+  on<T>(methodName: string, method: (arg: T) => void) {
     this.connection.on(methodName, method);
   }
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, MatCheckboxChange } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { WrapperComponent } from '../wrapper/wrapper.component';
 import { IClientIdentity } from '../video.service';
 
@@ -11,29 +11,25 @@ import { IClientIdentity } from '../video.service';
 export class SetupDialogComponent implements OnInit {
 
   title: string;
-  checkList: IClientIdentity[];
+  clients: IClientIdentity[];
+  selectedOptions: number[];
 
   constructor(
     public dialogRef: MatDialogRef<WrapperComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.title = data.title;
-    this.checkList = data.list;
+    this.clients = data.list || [];
   }
 
   ngOnInit() {
   }
 
+  onNgModelChange($event: Event) {
+  }
+
   onOKClick() {
     this.dialogRef
-      .close(this.checkList.filter(c => c.checked));
-  }
-
-  onGridTitleClicked(item: any) {
-    item.checked = !item.checked;
-  }
-
-  onCheckBoxClicked($event: Event) {
-    $event.preventDefault();
+      .close(this.selectedOptions);
   }
 }
