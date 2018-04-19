@@ -44,10 +44,9 @@ export class NavbarComponent implements OnInit {
     dialogRef.afterClosed()
       .subscribe((result: Array<any>) => {
         const clientSelected = [].concat(result || []);
-        clientSelected.map(c => c.id)
-          .forEach(c => {
-            this.cleanVideo(c);
-          });
+        clientSelected.forEach(c => {
+          this.cleanVideo(c);
+        });
       });
   }
 
