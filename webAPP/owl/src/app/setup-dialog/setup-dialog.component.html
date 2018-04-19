@@ -1,10 +1,14 @@
 <h1 mat-dialog-title>{{title}}</h1>
 <div mat-dialog-content>
-  <mat-grid-list cols="3" rowHeight="2:1">
-    <mat-grid-tile *ngFor="let item of checkList" (click)="onGridTitleClicked(item)">
-      <mat-checkbox class="margin" [(ngModel)]="item.checked" [color]="'primary'" (click)="onCheckBoxClicked($event)">{{item.id}}</mat-checkbox>
-    </mat-grid-tile>
-  </mat-grid-list>
+  <mat-selection-list [(ngModel)]="selectedOptions" (ngModelChange)="onNgModelChange($event)">
+    <mat-list-option *ngFor="let item of clients" [selected]="item.selected" [value]="item.id">
+      <p mat-line>
+        <span> {{item.id}} </span>
+        <i class="material-icons">{{item.isActive ? 'videocam' : 'videocam_off'}}</i>
+        <i class="material-icons">{{item.isOnline ? 'person' : 'person_outline'}}</i>
+      </p>
+    </mat-list-option>
+  </mat-selection-list>
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="onOKClick()">Ok</button>

@@ -2,6 +2,7 @@
   flex-direction: row-reverse;
 }
 
-.mat-grid-tile {
-  background: lightblue;
+.mat-list-option .material-icons{
+  vertical-align: middle;
+  font-size: 18px;
 }

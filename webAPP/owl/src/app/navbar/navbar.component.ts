@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDrawer } from '@angular/material';
 
-import { VideoService } from '../video.service';
+import { VideoService, IClientIdentity } from '../video.service';
 import { SetupDialogComponent } from '../setup-dialog/setup-dialog.component';
 import { SignalrService } from '../signalr.service';
 
@@ -13,6 +13,7 @@ import { SignalrService } from '../signalr.service';
 export class NavbarComponent implements OnInit {
 
   onlineUsers: number;
+  clientInfos: IClientIdentity[];
 
   constructor(
     private signalrService: SignalrService,
@@ -24,8 +25,9 @@ export class NavbarComponent implements OnInit {
     this.onlineUsers = 0;
 
     this.signalrService
-      .on('getOnlineUsers', val => {
-        this.onlineUsers = val;
+      .on<IClientIdentity[]>('getOnlineUsers', list => {
+        this.clientInfos = list;
+        this.onlineUsers = list.filter(l => l.isOnline).length;
       });
   }
 
@@ -34,10 +36,8 @@ export class NavbarComponent implements OnInit {
       .open(SetupDialogComponent, {
         width: '500px',
         data: {
-          title: '選擇停止播放之 Client', list: [
-            { id: 104, isActive: true },
-            { id: 128, isActive: true }
-          ]
+          title: '選擇停止播放之 Client',
+          list: this.clientInfos
         }
       });
 
