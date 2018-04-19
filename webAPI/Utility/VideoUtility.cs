@@ -58,19 +58,6 @@ namespace Utility
             _connetionIdDic.TryRemove(ip, out var newdic);
         }
 
-        public static void SetNotifyEvent(EventHandler e)
-        {
-            if (NotifyEvent == null)
-            {
-                NotifyEvent = e;
-            }
-        }
-
-        public static void DoNotifyEvent()
-        {
-            NotifyEvent?.Invoke(null, EventArgs.Empty);
-        }
-
         public static void UpdateOnlineStatus(string ip, bool isOnline)
         {
             var identity = GetClientIdentityByIp(ip);
