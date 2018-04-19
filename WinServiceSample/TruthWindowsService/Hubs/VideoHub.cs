@@ -50,9 +50,7 @@ namespace TruthWindowsService.Hubs
 
             var ip = GetRemoteIpAddress();
 
-            Utility.VideoUtility
-                .GetClientConnetionIdDic()
-                .TryAdd(ip, Context.ConnectionId);
+            Utility.VideoUtility.AddConnetionId(ip, Context.ConnectionId);
             OnConnectionChanged(ConnectedEvent, ip);
 
             return base.OnConnectedAsync();
@@ -64,9 +62,7 @@ namespace TruthWindowsService.Hubs
 
             var ip = GetRemoteIpAddress();
 
-            Utility.VideoUtility
-                .GetClientConnetionIdDic()
-                .TryRemove(ip, out var newDic);
+            Utility.VideoUtility.RemoveConnetionId(ip);
 
             OnConnectionChanged(DisconnectedEvent, ip);
             return base.OnDisconnectedAsync(exception);
@@ -76,7 +72,6 @@ namespace TruthWindowsService.Hubs
             EventHandler<SignalRConnectionEventArgs> connectionEvent,
             string ip)
         {
-            Utility.VideoUtility.DoNotifyEvent();
             connectionEvent?.Invoke(
                 this,
                 new SignalRConnectionEventArgs

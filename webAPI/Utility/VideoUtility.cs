@@ -8,43 +8,56 @@ namespace Utility
 {
     public static class VideoUtility
     {
-        private static ConcurrentDictionary<string, string> IpConnetionIdDic = new ConcurrentDictionary<string, string>();
-        private static Dictionary<string, IEnumerable<Video>> IpVideoDic = new Dictionary<string, IEnumerable<Video>>();
+        private static ConcurrentDictionary<string, string> ConnetionIdDic = new ConcurrentDictionary<string, string>();
+        private static ConcurrentDictionary<string, IEnumerable<Video>> VideoDic = new ConcurrentDictionary<string, IEnumerable<Video>>();
+        private static ConcurrentDictionary<string, ClientIdentity> ClientIdentityDic = new ConcurrentDictionary<string, ClientIdentity>();
         public static event EventHandler NotifyEvent;
 
-        public static ConcurrentDictionary<string, string> GetClientConnetionIdDic()
+        public static IEnumerable<ClientIdentity> GetClientConnetionIdDic()
         {
-            return IpConnetionIdDic;
+            return ClientIdentityDic.Values;
         }
 
-        public static void SetIpConnetionIdDic(ConcurrentDictionary<string, string> ipConnetionIdDic)
+        public static IEnumerable<ClientIdentity> GetClientInfo()
         {
-            IpConnetionIdDic = ipConnetionIdDic;
+            throw new NotImplementedException();
         }
 
-        public static Dictionary<string, IEnumerable<Video>> GetAllVideoDic()
+        public static string GetConnectionIdByIp(string ip)
         {
-            return IpVideoDic;
+            return ConnetionIdDic.TryGetValue(ip, out var connectionId) ? connectionId : null;
         }
-        public static IEnumerable<Video> GetIpVideo(string ip)
+     
+
+        public static void AddConnetionId(string ip, string connectionId)
         {
-            IpVideoDic.TryGetValue(ip, out var videos);
-            return videos;
+            ConnetionIdDic.TryAdd(ip, connectionId);
+        }
+        public static void AddVideo(string ip, IEnumerable<Video> videos)
+        {
+            VideoDic.TryAdd(ip, videos);
         }
 
-        public static void SetAllVideoDic(Dictionary<string, IEnumerable<Video>> ipVideoDic)
+        public static void AddClientIdentity(string ip, ClientIdentity clientIdentity)
         {
-            IpVideoDic = ipVideoDic;
+            ClientIdentityDic.TryAdd(ip, clientIdentity);
         }
-        public static void SetIpVideo(string ip, IEnumerable<Video> videos)
-        {
-            IpVideoDic.TryGetValue(ip, out var thisVideos);
-            if (thisVideos == null)
-                IpVideoDic.Add(ip, videos);
-            else
-                IpVideoDic["ip"] = videos;
 
+        public static void RemoveVideo(string ip)
+        {
+            VideoDic.TryRemove(ip, out var newdic);
         }
+
+         public static void RemoveClientIdentity(string ip)
+        {
+            ClientIdentityDic.TryRemove(ip, out var newdic);
+        }
+
+         public static void RemoveConnetionId(string ip)
+        {
+            ConnetionIdDic.TryRemove(ip, out var newdic);
+        }
+
         public static void SetNotifyEvent(EventHandler e)
         {
             if (NotifyEvent == null)
@@ -56,11 +69,6 @@ namespace Utility
         public static void DoNotifyEvent()
         {
             NotifyEvent?.Invoke(null, EventArgs.Empty);
-        }
-
-        public static int GetClientCount()
-        {
-            return Utility.VideoUtility.GetClientConnetionIdDic().Count;
         }
     }
 }

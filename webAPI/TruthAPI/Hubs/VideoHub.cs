@@ -50,9 +50,7 @@ namespace TruthAPI.Hubs
 
             var ip = GetRemoteIpAddress();
 
-            Utility.VideoUtility
-                .GetClientConnetionIdDic()
-                .TryAdd(ip, Context.ConnectionId);
+            Utility.VideoUtility.AddConnetionId(ip, Context.ConnectionId);
             OnConnectionChanged(ConnectedEvent, ip);
 
             return base.OnConnectedAsync();
@@ -64,9 +62,7 @@ namespace TruthAPI.Hubs
 
             var ip = GetRemoteIpAddress();
 
-            Utility.VideoUtility
-                .GetClientConnetionIdDic()
-                .TryRemove(ip, out var newDic);
+            Utility.VideoUtility.RemoveConnetionId(ip);
 
             OnConnectionChanged(DisconnectedEvent, ip);
             return base.OnDisconnectedAsync(exception);
@@ -76,7 +72,6 @@ namespace TruthAPI.Hubs
             EventHandler<SignalRConnectionEventArgs> connectionEvent,
             string ip)
         {
-            Utility.VideoUtility.DoNotifyEvent();
             connectionEvent?.Invoke(
                 this,
                 new SignalRConnectionEventArgs
@@ -96,9 +91,5 @@ namespace TruthAPI.Hubs
     public interface IVideoHub
     {
         Task PlayVideo(IEnumerable<VideoViewModel> videos);
-
-        //Task Connected(string msg);
-        //
-        //Task Disconnected(string msg);
     }
 }

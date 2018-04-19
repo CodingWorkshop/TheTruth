@@ -1,14 +1,16 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Truth.ViewModels;
 
 namespace TruthWindowsService.Hubs
 {
     public class ManagementHub : Hub<IManagementHub>
     {
         private IHttpContextAccessor _accessor;
-        private int userCount = Utility.VideoUtility.GetClientConnetionIdDic().Count;
 
         public ManagementHub(IHttpContextAccessor accessor)
         {
@@ -22,7 +24,12 @@ namespace TruthWindowsService.Hubs
         [HubMethodName("getonlineusers")]
         public Task GetOnlineUsers()
         {
-            return Clients.All.getOnlineUsers(userCount);
+            Utility.VideoUtility.GetClientInfo().Select(r=> new ClientIdentityViewModel{
+                Id = r.Id,
+                IsActive = r.IsActive,
+                IsOnline = r.IsOnline,
+            });
+            return Clients.All.GetOnlineUsers();
         }
 
         /// <summary>
@@ -70,6 +77,6 @@ namespace TruthWindowsService.Hubs
 
     public interface IManagementHub
     {
-        Task getOnlineUsers(int count);
+        Task GetOnlineUsers(IEnumerable<ClientIdentityViewModel> clientIdentities);
     }
 }

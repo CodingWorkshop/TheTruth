@@ -94,24 +94,13 @@ namespace VideoService.Service
                 if (video.Any())
                     videos.Add(video.First());
             }
-            if (_userVideos.ContainsKey(ip))
-                _userVideos[ip] = videos;
-            else
-                _userVideos.Add(ip, videos);
-
-            VideoUtility.SetAllVideoDic(_userVideos);
+            Utility.VideoUtility.AddVideo(ip,videos);
         }
 
         public void CleanVideo(string ip)
         {
-            var vodeoList = new List<Video>();
-
-            if (_userVideos.ContainsKey(ip))
-                _userVideos[ip] = vodeoList;
-            else
-                _userVideos.Add(ip, vodeoList);
-
-            VideoUtility.SetAllVideoDic(_userVideos);
+            var videoList = new List<Video>();
+            VideoUtility.AddVideo(ip,videoList);
         }
 
         public IEnumerable<Video> GetVideoListByIp(string ip)

@@ -1,12 +1,12 @@
-using DataAccess;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DataAccess;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using Repository.Interface;
 using TruthAPI.Hubs;
@@ -40,7 +40,7 @@ namespace TruthAPI.Controllers
         {
             _rootPath = hostingEnvironment.WebRootPath ?? hostingEnvironment.ContentRootPath;
             _videoPath = $"{_rootPath}\\Videos";
-            
+
             _videoHub = videoHub;
             _managementHub = managementHub;
 
@@ -71,21 +71,27 @@ namespace TruthAPI.Controllers
         {
             _videoService = videoService;
             _videoService.Init(_videoPath, categories, clientIdentities);
-            ManagementHub.AddNotifyEvent(
-                (sender, args) => { _managementHub.Clients.All.getOnlineUsers(Utility.VideoUtility.GetClientCount()); }
-            );
-            VideoHub.AddConnectedEvent((senger, args) =>
+            ManagementHub.AddNotifyEvent((sender, args) =>
+            {
+                _managementHub.Clients.All.GetOnlineUsers(Utility.VideoUtility.GetClientInfo().Select(r => new ClientIdentityViewModel
                 {
-                    _videoService.AddClientIdentity(
-                        args.Id, args.Ip, true);
-                    _managementHub.Clients.All.getOnlineUsers(Utility.VideoUtility.GetClientCount());
-                });
+                    Id = r.Id,
+                    IsActive = r.IsActive,
+                    IsOnline = r.IsOnline,
+                }));
+            });
+            VideoHub.AddConnectedEvent((senger, args) =>
+            {
+                _videoService.AddClientIdentity(
+                    args.Id, args.Ip, true);
+                ManagementHub.DoNotifyEvent();
+            });
 
             VideoHub.AddDisconnectedEvent((senger, args) =>
             {
                 _videoService.AddClientIdentity(
                     args.Id, args.Ip, false);
-                _managementHub.Clients.All.getOnlineUsers(Utility.VideoUtility.GetClientCount());
+                ManagementHub.DoNotifyEvent();
             });
         }
 
@@ -110,11 +116,11 @@ namespace TruthAPI.Controllers
 
             _videoService.SetVideos(setVideoParams.Codes, ip, _videoPath);
 
-            var ips = VideoUtility.GetClientConnetionIdDic();
-            if (!ips.ContainsKey(ip))
+            var connectionId = VideoUtility.GetConnectionIdByIp(ip);
+            if (string.IsNullOrWhiteSpace(connectionId))
                 return new JsonResult("No online client.");
 
-            await SetClientVideo(ips[ip], ip);
+            await SetClientVideo(connectionId, ip);
 
             return new JsonResult("Ok");
         }
@@ -131,11 +137,9 @@ namespace TruthAPI.Controllers
 
             _videoService.CleanVideo(ip);
 
-            var ips = VideoUtility.GetClientConnetionIdDic();
-            if (!ips.ContainsKey(ip))
-                return new JsonResult("No online client.");
+            var connectionId = VideoUtility.GetConnectionIdByIp(ip);
 
-            await SetClientVideo(ips[ip], ip);
+            await SetClientVideo(connectionId, ip);
 
             return new JsonResult("Ok");
         }
@@ -163,7 +167,7 @@ namespace TruthAPI.Controllers
                 .Select(s => new CategoryViewModel
                 {
                     Id = s.Id,
-                    DisplayName = s.DisplayName
+                        DisplayName = s.DisplayName
                 }));
         }
 
@@ -175,7 +179,7 @@ namespace TruthAPI.Controllers
                 .Select(s => new ClientIdentityViewModel
                 {
                     Id = s.Id,
-                    IsActive = s.IsActive,
+                        IsActive = s.IsActive,
                 }));
         }
 
@@ -183,7 +187,7 @@ namespace TruthAPI.Controllers
         {
             return Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
         }
-        
+
         private async Task SetClientVideo(string connectionId, string ip)
         {
             await _videoHub.Clients.Client(connectionId)
@@ -203,10 +207,10 @@ namespace TruthAPI.Controllers
             return new VideoViewModel
             {
                 Id = video.CategoryId,
-                Name = video.Name,
-                Date = video.Date,
-                CategoryName = video.CategoryName,
-                Code = video.Code
+                    Name = video.Name,
+                    Date = video.Date,
+                    CategoryName = video.CategoryName,
+                    Code = video.Code
             };
         }
     }

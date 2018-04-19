@@ -13,6 +13,7 @@ namespace TruthAPI.Hubs
     public class ManagementHub : Hub<IManagementHub>
     {
         private IHttpContextAccessor _accessor;
+        public static event EventHandler NotifyEvent;
         public ManagementHub(IHttpContextAccessor accessor)
         {
             this._accessor = accessor;
@@ -25,7 +26,11 @@ namespace TruthAPI.Hubs
         [HubMethodName("getonlineusers")]
         public Task GetOnlineUsers()
         {
-            return Clients.All.getOnlineUsers(Utility.VideoUtility.GetClientConnetionIdDic().Count);
+            return Clients.All.GetOnlineUsers( Utility.VideoUtility.GetClientInfo().Select(r=> new ClientIdentityViewModel{
+                Id = r.Id,
+                IsActive = r.IsActive,
+                IsOnline = r.IsOnline,
+            }));
         }
 
         /// <summary>
@@ -35,7 +40,6 @@ namespace TruthAPI.Hubs
         public override Task OnConnectedAsync()
         {
             Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} 管端 Login");
-            Clients.All.getOnlineUsers(Utility.VideoUtility.GetClientConnetionIdDic().Count);
             return base.OnConnectedAsync();
 
         }
@@ -54,7 +58,14 @@ namespace TruthAPI.Hubs
         public static void AddNotifyEvent(
             EventHandler e)
         {
-            Utility.VideoUtility.SetNotifyEvent(e);
+            if (NotifyEvent == null)
+            {
+                NotifyEvent = e;
+            }
+        }
+        public static void DoNotifyEvent()
+        {
+            NotifyEvent?.Invoke(null, EventArgs.Empty);
         }
 
         /// <summary>
@@ -65,15 +76,11 @@ namespace TruthAPI.Hubs
         {
             return _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
         }
-
-        //public void DoNotify(object o, EventArgs e)
-        //{
-        //    Clients.Caller.getOnlineUsers(Utility.VideoUtility.GetClientConnetionIdDic().Count);
-        //}
     }
 
     public interface IManagementHub
     {
-        Task getOnlineUsers(int count);
+        Task GetOnlineUsers(IEnumerable<ClientIdentityViewModel> clientIdentities);
     }
+
 }
