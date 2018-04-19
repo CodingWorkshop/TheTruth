@@ -42,7 +42,7 @@ export class NavbarComponent implements OnInit {
       });
 
     dialogRef.afterClosed()
-      .subscribe((result: Array<any>) => {
+      .subscribe((result: number[]) => {
         const clientSelected = [].concat(result || []);
         clientSelected.forEach(c => {
           this.cleanVideo(c);
