@@ -4,6 +4,10 @@
  flex: 1 1 auto;
 }
 
-img, i{
+img, i {
   vertical-align: text-top;
+}
+
+.online-users:hover {
+  cursor: pointer;
 }
