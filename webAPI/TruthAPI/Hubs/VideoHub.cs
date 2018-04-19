@@ -46,11 +46,11 @@ namespace TruthAPI.Hubs
 
         public override Task OnConnectedAsync()
         {
-            Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} Login");
-
             var ip = GetRemoteIpAddress();
 
             Utility.VideoUtility.AddConnetionId(ip, Context.ConnectionId);
+            Utility.VideoUtility.UpdateOnlineStatus(ip, true);
+
             OnConnectionChanged(ConnectedEvent, ip);
 
             return base.OnConnectedAsync();
@@ -58,13 +58,13 @@ namespace TruthAPI.Hubs
 
         public override Task OnDisconnectedAsync(Exception exception)
         {
-            Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} Log Out");
-
             var ip = GetRemoteIpAddress();
 
             Utility.VideoUtility.RemoveConnetionId(ip);
+            Utility.VideoUtility.UpdateOnlineStatus(ip, false);
 
             OnConnectionChanged(DisconnectedEvent, ip);
+
             return base.OnDisconnectedAsync(exception);
         }
 

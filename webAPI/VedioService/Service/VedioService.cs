@@ -10,13 +10,8 @@ namespace VideoService.Service
     public class VideoService : IVideoService
     {
         private IEnumerable<Video> _allVideos;
-
-        private readonly Dictionary<string, IEnumerable<Video>> _userVideos =
-            new Dictionary<string, IEnumerable<Video>>();
-
+        
         private IEnumerable<Category> _categories;
-
-        private IEnumerable<ClientIdentity> _clientIdentities;
 
         private string _rootPath;
 
@@ -26,35 +21,14 @@ namespace VideoService.Service
         {
             _rootPath = rootPath;
             _categories = categories;
-            _clientIdentities = _clientIdentities == null ||
-                                !_clientIdentities.Any()
-                                ? clientIdentities
-                                : _clientIdentities;
+
+            foreach (var identity in clientIdentities)
+            {
+                VideoUtility.AddClientIdentity(identity);
+            }
+
             InitDirectories();
             InitVideos();
-        }
-
-        public void AddClientIdentity(int id, string ip, bool isActive)
-        {
-            if (_clientIdentities.All(i => i.Id != id))
-            {
-                _clientIdentities = _clientIdentities
-                    .Concat(new[]
-                    {
-                        new ClientIdentity
-                        {
-                            Id = id,
-                            Ip = ip,
-                            IsActive = isActive
-                        }
-                    });
-            }
-            else
-            {
-                var client = _clientIdentities.First(i => i.Id == id);
-                client.Ip = ip;
-                client.IsActive = true;
-            }
         }
 
         public IEnumerable<Video> SearchVideos(
@@ -94,31 +68,26 @@ namespace VideoService.Service
                 if (video.Any())
                     videos.Add(video.First());
             }
-            Utility.VideoUtility.AddVideo(ip,videos);
+
+            VideoUtility.AddVideo(ip, videos);
         }
 
         public void CleanVideo(string ip)
         {
-            var videoList = new List<Video>();
-            VideoUtility.AddVideo(ip,videoList);
+            VideoUtility.AddVideo(ip, new List<Video>());
         }
 
         public IEnumerable<Video> GetVideoListByIp(string ip)
         {
-            return _userVideos.ContainsKey(ip) ?
-                _userVideos[ip] :
-                new List<Video>();
+            return VideoUtility.GetClientVideo(ip);
         }
 
         public string GetVideoByCode(string code, string rootPath, string ip)
         {
-            if (_userVideos[ip].Any(v => v.Code == code))
-                return _userVideos[ip]
-                    .First(v => v.Code == code)
-                    .Url
-                    .Replace(rootPath, "~/Videos");
-
-            return string.Empty;
+            return VideoUtility.GetClientVideo(ip)
+                .FirstOrDefault(v => v.Code == code)?
+                .Url
+                .Replace(rootPath, "~/Videos");
         }
 
         public IEnumerable<Category> GetCategories()
@@ -128,7 +97,7 @@ namespace VideoService.Service
 
         public IEnumerable<ClientIdentity> GetClientIdentities()
         {
-            return _clientIdentities;
+            return VideoUtility.GetAllClientInfo();
         }
 
         private void InitVideos()

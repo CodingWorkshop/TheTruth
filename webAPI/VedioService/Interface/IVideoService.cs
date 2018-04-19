@@ -21,8 +21,6 @@ namespace VideoService.Interface
 
         void Init(string rootPath, IEnumerable<Category> categories, IEnumerable<ClientIdentity> clientIdentities);
 
-        void AddClientIdentity(int id, string ip, bool isActive);
-
         void CleanVideo(string ip);
     }
 }

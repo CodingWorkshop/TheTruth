@@ -16,7 +16,7 @@ namespace TruthAPI.Hubs
         public static event EventHandler NotifyEvent;
         public ManagementHub(IHttpContextAccessor accessor)
         {
-            this._accessor = accessor;
+            _accessor = accessor;
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace TruthAPI.Hubs
         [HubMethodName("getonlineusers")]
         public Task GetOnlineUsers()
         {
-            return Clients.All.GetOnlineUsers( Utility.VideoUtility.GetClientInfo().Select(r=> new ClientIdentityViewModel{
+            return Clients.All.GetOnlineUsers(VideoUtility.GetAllClientInfo().Select(r=> new ClientIdentityViewModel{
                 Id = r.Id,
                 IsActive = r.IsActive,
                 IsOnline = r.IsOnline,
@@ -39,20 +39,8 @@ namespace TruthAPI.Hubs
         /// <returns></returns>
         public override Task OnConnectedAsync()
         {
-            Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} 管端 Login");
+            DoNotifyEvent();
             return base.OnConnectedAsync();
-
-        }
-
-        /// <summary>
-        /// 離線
-        /// </summary>
-        /// <param name="exception"></param>
-        /// <returns></returns>
-        public override Task OnDisconnectedAsync(Exception exception)
-        {
-            Console.WriteLine($"{GetRemoteIpAddress()} {Context.ConnectionId} 管端 Log Out");
-            return base.OnDisconnectedAsync(exception);
         }
 
         public static void AddNotifyEvent(

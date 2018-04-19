@@ -1,14 +1,12 @@
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using DataAccess;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using Newtonsoft.Json;
 using Repository.Interface;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using TruthAPI.Hubs;
 using TruthAPI.ViewModels;
 using Utility;
@@ -73,7 +71,7 @@ namespace TruthAPI.Controllers
             _videoService.Init(_videoPath, categories, clientIdentities);
             ManagementHub.AddNotifyEvent((sender, args) =>
             {
-                _managementHub.Clients.All.GetOnlineUsers(Utility.VideoUtility.GetClientInfo().Select(r => new ClientIdentityViewModel
+                _managementHub.Clients.All.GetOnlineUsers(Utility.VideoUtility.GetAllClientInfo().Select(r => new ClientIdentityViewModel
                 {
                     Id = r.Id,
                     IsActive = r.IsActive,
@@ -82,15 +80,11 @@ namespace TruthAPI.Controllers
             });
             VideoHub.AddConnectedEvent((senger, args) =>
             {
-                _videoService.AddClientIdentity(
-                    args.Id, args.Ip, true);
                 ManagementHub.DoNotifyEvent();
             });
 
             VideoHub.AddDisconnectedEvent((senger, args) =>
             {
-                _videoService.AddClientIdentity(
-                    args.Id, args.Ip, false);
                 ManagementHub.DoNotifyEvent();
             });
         }
@@ -99,8 +93,8 @@ namespace TruthAPI.Controllers
         public IActionResult SearchVideos(
             List<int> categoryIds, DateTime? startDate, DateTime? endDate)
         {
-            return new JsonResult(_videoService.SearchVideos(
-                    categoryIds, startDate, endDate, _videoPath)
+            return new JsonResult(_videoService
+                .SearchVideos(categoryIds, startDate, endDate, _videoPath)
                 .Select(VideoToViewModel));
         }
 
@@ -117,6 +111,8 @@ namespace TruthAPI.Controllers
             _videoService.SetVideos(setVideoParams.Codes, ip, _videoPath);
 
             var connectionId = VideoUtility.GetConnectionIdByIp(ip);
+            VideoUtility.UpdateActiveStatus(ip, true);
+
             if (string.IsNullOrWhiteSpace(connectionId))
                 return new JsonResult("No online client.");
 
@@ -138,6 +134,7 @@ namespace TruthAPI.Controllers
             _videoService.CleanVideo(ip);
 
             var connectionId = VideoUtility.GetConnectionIdByIp(ip);
+            VideoUtility.UpdateActiveStatus(ip, false);
 
             await SetClientVideo(connectionId, ip);
 
@@ -147,11 +144,9 @@ namespace TruthAPI.Controllers
         [HttpGet("GetVideoList")]
         public IActionResult GetVideoList()
         {
-            var videos = _videoService.GetVideoListByIp(GetCallerIp());
-            var result = videos
-                .Select(VideoToViewModel);
-
-            return new JsonResult(result);
+            return new JsonResult(_videoService
+                .GetVideoListByIp(GetCallerIp())
+                .Select(VideoToViewModel));
         }
 
         [HttpGet("PlayVideo")]
@@ -167,7 +162,7 @@ namespace TruthAPI.Controllers
                 .Select(s => new CategoryViewModel
                 {
                     Id = s.Id,
-                        DisplayName = s.DisplayName
+                    DisplayName = s.DisplayName
                 }));
         }
 
@@ -179,7 +174,8 @@ namespace TruthAPI.Controllers
                 .Select(s => new ClientIdentityViewModel
                 {
                     Id = s.Id,
-                        IsActive = s.IsActive,
+                    IsActive = s.IsActive,
+                    IsOnline = s.IsOnline,
                 }));
         }
 
@@ -197,9 +193,8 @@ namespace TruthAPI.Controllers
 
         private ClientIdentity GetIpInfo(string id)
         {
-            var ipInfo = _videoService.GetClientIdentities()
+            return _videoService.GetClientIdentities()
                 .FirstOrDefault(i => i.Id.ToString() == id);
-            return ipInfo;
         }
 
         private VideoViewModel VideoToViewModel(Video video)
@@ -207,10 +202,10 @@ namespace TruthAPI.Controllers
             return new VideoViewModel
             {
                 Id = video.CategoryId,
-                    Name = video.Name,
-                    Date = video.Date,
-                    CategoryName = video.CategoryName,
-                    Code = video.Code
+                Name = video.Name,
+                Date = video.Date,
+                CategoryName = video.CategoryName,
+                Code = video.Code
             };
         }
     }

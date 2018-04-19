@@ -8,54 +8,54 @@ namespace Utility
 {
     public static class VideoUtility
     {
-        private static ConcurrentDictionary<string, string> ConnetionIdDic = new ConcurrentDictionary<string, string>();
-        private static ConcurrentDictionary<string, IEnumerable<Video>> VideoDic = new ConcurrentDictionary<string, IEnumerable<Video>>();
-        private static ConcurrentDictionary<string, ClientIdentity> ClientIdentityDic = new ConcurrentDictionary<string, ClientIdentity>();
-        public static event EventHandler NotifyEvent;
+        private static ConcurrentDictionary<string, string> _connetionIdDic = new ConcurrentDictionary<string, string>();
+        private static ConcurrentDictionary<string, IEnumerable<Video>> _videoDic = new ConcurrentDictionary<string, IEnumerable<Video>>();
+        private static ConcurrentDictionary<string, ClientIdentity> _clientIdentityDic = new ConcurrentDictionary<string, ClientIdentity>();
+        private static event EventHandler NotifyEvent;
 
-        public static IEnumerable<ClientIdentity> GetClientConnetionIdDic()
+        public static IEnumerable<Video> GetClientVideo(string ip)
         {
-            return ClientIdentityDic.Values;
+            return _videoDic.TryGetValue(ip, out var videos) ? videos : new List<Video>();
         }
 
-        public static IEnumerable<ClientIdentity> GetClientInfo()
+        public static IEnumerable<ClientIdentity> GetAllClientInfo()
         {
-            throw new NotImplementedException();
+            return _clientIdentityDic.Values;
         }
 
         public static string GetConnectionIdByIp(string ip)
         {
-            return ConnetionIdDic.TryGetValue(ip, out var connectionId) ? connectionId : null;
+            return _connetionIdDic.TryGetValue(ip, out var connectionId) ? connectionId : string.Empty;
         }
      
 
         public static void AddConnetionId(string ip, string connectionId)
         {
-            ConnetionIdDic.TryAdd(ip, connectionId);
+            _connetionIdDic.TryAdd(ip, connectionId);
         }
         public static void AddVideo(string ip, IEnumerable<Video> videos)
         {
-            VideoDic.TryAdd(ip, videos);
+            _videoDic.TryAdd(ip, videos);
         }
 
-        public static void AddClientIdentity(string ip, ClientIdentity clientIdentity)
+        public static void AddClientIdentity(ClientIdentity clientIdentity)
         {
-            ClientIdentityDic.TryAdd(ip, clientIdentity);
+            _clientIdentityDic.TryAdd(clientIdentity.Ip, clientIdentity);
         }
 
         public static void RemoveVideo(string ip)
         {
-            VideoDic.TryRemove(ip, out var newdic);
+            _videoDic.TryRemove(ip, out var newdic);
         }
 
          public static void RemoveClientIdentity(string ip)
         {
-            ClientIdentityDic.TryRemove(ip, out var newdic);
+            _clientIdentityDic.TryRemove(ip, out var newdic);
         }
 
          public static void RemoveConnetionId(string ip)
         {
-            ConnetionIdDic.TryRemove(ip, out var newdic);
+            _connetionIdDic.TryRemove(ip, out var newdic);
         }
 
         public static void SetNotifyEvent(EventHandler e)
@@ -69,6 +69,32 @@ namespace Utility
         public static void DoNotifyEvent()
         {
             NotifyEvent?.Invoke(null, EventArgs.Empty);
+        }
+
+        public static void UpdateOnlineStatus(string ip, bool isOnline)
+        {
+            var identity = GetClientIdentityByIp(ip);
+
+            if (identity == null)
+                return;
+
+            identity.IsOnline = isOnline;
+        }
+
+        public static void UpdateActiveStatus(string ip, bool isActive)
+        {
+            var identity = GetClientIdentityByIp(ip);
+
+            if (identity == null)
+                return;
+
+            identity.IsActive = isActive;
+        }
+
+        private static ClientIdentity GetClientIdentityByIp(string ip)
+        {
+            _clientIdentityDic.TryGetValue(ip, out var identity);
+            return identity;
         }
     }
 }
