@@ -21,6 +21,8 @@ export class WrapperComponent implements OnInit {
   }
 
   onConditionsChanged(params) {
+    this.videoSelected = [];
+
     this.videoService
       .getVideoList(params)
       .subscribe(data => {
