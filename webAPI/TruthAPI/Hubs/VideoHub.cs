@@ -63,6 +63,7 @@ namespace TruthAPI.Hubs
         {
             var ip = GetRemoteIpAddress();
 
+            Console.WriteLine($"ip : {ip}");
             _videoService.RemoveConnetionId(ip);
             _videoService.UpdateOnlineStatus(ip, false);
 
@@ -80,8 +81,8 @@ namespace TruthAPI.Hubs
                 new SignalRConnectionEventArgs
                 {
                     Id = int.Parse(ip.Split('.').Last()),
-                        Ip = ip,
-                        IsActive = true
+                    Ip = ip,
+                    
                 });
         }
 

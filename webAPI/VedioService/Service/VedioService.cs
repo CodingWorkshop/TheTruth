@@ -69,14 +69,14 @@ namespace VideoService.Service
                     videos.Add(video.First());
             }
 
-            VideoUtility.AddVideo(ip, videos);
+            VideoUtility.UpdateVideo(ip, videos);
             VideoUtility.UpdateActiveStatus(ip, true);
             return VideoUtility.GetConnectionIdByIp(ip);
         }
 
         public string CleanVideo(string ip)
         {
-            VideoUtility.AddVideo(ip, new List<Video>());
+            VideoUtility.UpdateVideo(ip, new List<Video>());
             VideoUtility.UpdateActiveStatus(ip, false);
             return VideoUtility.GetConnectionIdByIp(ip);
         }
@@ -88,7 +88,7 @@ namespace VideoService.Service
 
         public void UpdateOnlineStatus(string ip, bool isOnline)
         {
-            VideoUtility.UpdateOnlineStatus(ip, true);
+            VideoUtility.UpdateOnlineStatus(ip, isOnline);
         }
 
         public void RemoveConnetionId(string ip)

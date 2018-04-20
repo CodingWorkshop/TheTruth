@@ -70,13 +70,9 @@ namespace TruthAPI.Controllers
             _videoService.Init(_videoPath, categories, clientIdentities);
             ManagementHub.AddNotifyEvent((sender, args) =>
             {
-                _managementHub.Clients.All.GetOnlineUsers(Utility.VideoUtility.GetAllClientInfo().Select(r => new ClientIdentityViewModel
-                {
-                    Id = r.Id,
-                    IsActive = r.IsActive,
-                    IsOnline = r.IsOnline,
-                }));
+                GetOnlineUser();
             });
+
             VideoHub.AddConnectedEvent((senger, args) =>
             {
                 ManagementHub.DoNotifyEvent();
@@ -108,11 +104,13 @@ namespace TruthAPI.Controllers
             var ip = ipInfo.Ip;
 
             var connectionId = _videoService.SetVideos(setVideoParams.Codes, ip, _videoPath);
-            
+            //_managementHub.Clients.All.GetOnlineUsers();
             if (string.IsNullOrWhiteSpace(connectionId))
                 return new JsonResult("No online client.");
 
             await SetClientVideo(connectionId, ip);
+
+            GetOnlineUser();
 
             return new JsonResult("Ok");
         }
@@ -128,6 +126,8 @@ namespace TruthAPI.Controllers
             var ip = ipInfo.Ip;
 
             await SetClientVideo(_videoService.CleanVideo(ip), ip);
+            
+            GetOnlineUser();
 
             return new JsonResult("Ok");
         }
@@ -198,6 +198,17 @@ namespace TruthAPI.Controllers
                 CategoryName = video.CategoryName,
                 Code = video.Code
             };
+        }
+
+        private void GetOnlineUser()
+        {
+            _managementHub.Clients.All.GetOnlineUsers(_videoService.GetClientIdentities().Select(r =>
+                new ClientIdentityViewModel
+                {
+                    Id = r.Id,
+                    IsActive = r.IsActive,
+                    IsOnline = r.IsOnline,
+                }));
         }
     }
 }

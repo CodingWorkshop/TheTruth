@@ -11,7 +11,6 @@ namespace Utility
         private static ConcurrentDictionary<string, string> _connetionIdDic = new ConcurrentDictionary<string, string>();
         private static ConcurrentDictionary<string, IEnumerable<Video>> _videoDic = new ConcurrentDictionary<string, IEnumerable<Video>>();
         private static ConcurrentDictionary<string, ClientIdentity> _clientIdentityDic = new ConcurrentDictionary<string, ClientIdentity>();
-        private static event EventHandler NotifyEvent;
 
         public static IEnumerable<Video> GetClientVideo(string ip)
         {
@@ -57,6 +56,11 @@ namespace Utility
         {
             _connetionIdDic.TryRemove(ip, out var newdic);
         }
+        public static void UpdateVideo(string ip, IEnumerable<Video> videos)
+        {
+            _videoDic.AddOrUpdate(ip, videos, (s, enumerable) => videos);
+        }
+
 
         public static void UpdateOnlineStatus(string ip, bool isOnline)
         {
@@ -65,6 +69,7 @@ namespace Utility
             if (identity == null)
                 return;
 
+            Console.WriteLine($"UpdateOnlineStatus : {ip}, {isOnline}");
             identity.IsOnline = isOnline;
         }
 
