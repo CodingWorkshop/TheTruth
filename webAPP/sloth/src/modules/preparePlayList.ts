@@ -2,6 +2,8 @@ import { sloth, player } from '../index';
 import convertor from './convertor';
 import loadingMask from './loadingMask';
 export default (data: any[]) => {
+    player.cancelFullScreen();
+    player.pause();
     player.playlist([]);
     player.playlist.autoadvance();
 
