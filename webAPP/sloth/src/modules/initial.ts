@@ -24,7 +24,8 @@ export default function initail(sloth: sloth.Instance) {
                     });
 
                 connection.on('playVideo', function playVideoFunc(data: any) {
-                    preparePlayList(data);
+                    // preparePlayList(data);
+                    window.location.reload();
                 });
 
                 connection.on('loginOk', function loginOkFunc(data: any) {
