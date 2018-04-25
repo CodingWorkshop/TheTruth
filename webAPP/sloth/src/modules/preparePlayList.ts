@@ -2,7 +2,7 @@ import { sloth, player } from '../index';
 import convertor from './convertor';
 import loadingMask from './loadingMask';
 export default (data: any[]) => {
-    player.cancelFullScreen();
+    cancelFullscreen();
     player.pause();
     player.playlist([]);
     player.playlist.autoadvance();
@@ -22,3 +22,9 @@ export default (data: any[]) => {
     loadingMask.hideLoading();
     loadingMask.hideLogo();
 };
+
+function cancelFullscreen() {
+    if (document.exitFullscreen) {
+        document.exitFullscreen();
+    }
+}
