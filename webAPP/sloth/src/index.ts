@@ -17,7 +17,12 @@ videojs.addLanguage('zh-tw', langPackage);
 
 export var sloth: sloth.Instance = {};
 export var player = videojs('video-learning-player', {
-    language: 'zh-tw'
+    language: 'zh-tw',
+    speed: [
+        { text: 'x0.5', rate: 0.5 },
+        { text: 'x1', rate: 1, selected: true },
+        { text: 'x2', rate: 2 }
+    ]
 }) as sloth.Player;
 
 player.playlist([]);

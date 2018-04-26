@@ -11,13 +11,13 @@
     "author": "",
     "license": "MIT",
     "dependencies": {
-        "@aspnet/signalr": "^1.0.0-preview1-update1",
+        "@aspnet/signalr": "^1.0.0-preview2-final",
         "express": "^4.16.3",
         "fs-extra": "^5.0.0",
         "normalize.css": "^8.0.0",
-        "video.js": "^6.7.3",
+        "video.js": "^6.9.0",
         "videojs-playlist": "^4.2.0",
-        "videojs-playlist-ui": "^3.3.0"
+        "videojs-playlist-ui": "^3.4.0"
     },
     "devDependencies": {
         "@types/es6-promise": "^3.3.0",
