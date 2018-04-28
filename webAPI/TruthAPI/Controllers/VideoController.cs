@@ -6,7 +6,9 @@ using Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using TruthAPI.Hubs;
 using TruthAPI.ViewModels;
 using VideoService.Interface;
@@ -48,49 +50,18 @@ namespace TruthAPI.Controllers
             InitVideoService(videoService, categories, clientIdentities);
         }
 
-        private IEnumerable<Category> InitCategoryRepository(IRepository<Category> categoryRepository)
-        {
-            _categoryRepository = categoryRepository;
-            _categoryRepository.Init(_rootPath);
-            var categories = _categoryRepository.GetAll();
-            return categories;
-        }
-
-        private IEnumerable<ClientIdentity> InitClientIdentities(IRepository<ClientIdentity> clientIdentityRepository)
-        {
-            _clientIdentityRepository = clientIdentityRepository;
-            _clientIdentityRepository.Init(_rootPath);
-            var identities = _clientIdentityRepository.GetAll();
-            return identities;
-        }
-
-        private void InitVideoService(IVideoService videoService, IEnumerable<Category> categories, IEnumerable<ClientIdentity> clientIdentities)
-        {
-            _videoService = videoService;
-            _videoService.Init(_videoPath, categories, clientIdentities);
-            ManagementHub.AddNotifyEvent((sender, args) =>
-            {
-                GetOnlineUser();
-            });
-
-            VideoHub.AddConnectedEvent((senger, args) =>
-            {
-                ManagementHub.DoNotifyEvent();
-            });
-
-            VideoHub.AddDisconnectedEvent((senger, args) =>
-            {
-                ManagementHub.DoNotifyEvent();
-            });
-        }
-
         [HttpGet("SearchVideos")]
         public IActionResult SearchVideos(
             List<int> categoryIds, DateTime? startDate, DateTime? endDate)
         {
-            return new JsonResult(_videoService
+            var videos = _videoService
                 .SearchVideos(categoryIds, startDate, endDate, _videoPath)
-                .Select(VideoToViewModel));
+                .Select(VideoToViewModel)
+                .ToList();
+            
+            return videos.Any()
+                ? Ok(NewCollectionViewModel<VideoViewModel>().SetContent(videos))
+                : NotFound(NewCollectionViewModel<VideoViewModel>().SetMessage("No videos.")) as IActionResult;
         }
 
         [HttpPost("SetVideo")]
@@ -99,20 +70,23 @@ namespace TruthAPI.Controllers
             var ipInfo = GetIpInfo(setVideoParams.Id);
 
             if (ipInfo == null)
-                return new JsonResult("No client.");
+                return NotFound(NewViewModel<VideoViewModel>()
+                    .SetMessage($"Id {setVideoParams.Id} is not found."));
 
             var ip = ipInfo.Ip;
 
             var connectionId = _videoService.SetVideos(setVideoParams.Codes, ip, _videoPath);
-            //_managementHub.Clients.All.GetOnlineUsers();
-            if (string.IsNullOrWhiteSpace(connectionId))
-                return new JsonResult("No online client.");
-
-            await SetClientVideo(connectionId, ip);
 
             GetOnlineUser();
+            
+            if (string.IsNullOrWhiteSpace(connectionId))
+                return Ok(NewViewModel<VideoViewModel>()
+                    .SetMessage($"Set videos to id {setVideoParams.Id} success. client is offline."));
 
-            return new JsonResult("Ok");
+            await SetClientVideo(connectionId, ip);
+            
+            return Ok(NewViewModel<VideoViewModel>()
+                .SetMessage($"Set videos to id {setVideoParams.Id} success. client is online."));
         }
 
         [HttpPost("CleanVideo")]
@@ -121,7 +95,8 @@ namespace TruthAPI.Controllers
             var ipInfo = GetIpInfo(cleanVideoParams.Id);
 
             if (ipInfo == null)
-                return new JsonResult("No client.");
+                return NotFound(NewViewModel<VideoViewModel>()
+                    .SetMessage($"Id {cleanVideoParams.Id} is not found."));
 
             var ip = ipInfo.Ip;
 
@@ -129,45 +104,69 @@ namespace TruthAPI.Controllers
             
             GetOnlineUser();
 
-            return new JsonResult("Ok");
+            return Ok(NewViewModel<VideoViewModel>()
+                .SetMessage($"Id {cleanVideoParams.Id} video is clean."));
         }
 
         [HttpGet("GetVideoList")]
         public IActionResult GetVideoList()
         {
-            return new JsonResult(_videoService
+            var videos = _videoService
                 .GetVideoListByIp(GetCallerIp())
-                .Select(VideoToViewModel));
+                .Select(VideoToViewModel);
+
+            return videos.Any()
+                ? Ok(NewCollectionViewModel<VideoViewModel>().SetContent(videos))
+                : NotFound(NewCollectionViewModel<VideoViewModel>()
+                    .SetMessage("Not set videos on this client."))
+                    as IActionResult;
         }
 
         [HttpGet("PlayVideo")]
         public IActionResult PlayVideo(string code)
         {
-            return Redirect(_videoService.GetVideoByCode(code, _videoPath, GetCallerIp()));
+            var path = _videoService.GetVideoByCode(code, _videoPath, GetCallerIp());
+            
+            return !string.IsNullOrWhiteSpace(path)
+                ? Redirect(path)
+                : StatusCode((int)HttpStatusCode.NotModified, NewViewModel<string>()
+                    .SetMessage($"code {code} not set video.")) 
+                    as IActionResult;
         }
 
         [HttpGet("GetCategories")]
         public IActionResult GetCategories()
         {
-            return new JsonResult(_videoService.GetCategories()
+            var categories = _videoService
+                .GetCategories()
                 .Select(s => new CategoryViewModel
                 {
                     Id = s.Id,
                     DisplayName = s.DisplayName
-                }));
+                });
+
+            return categories.Any()
+                ? Ok(NewCollectionViewModel<CategoryViewModel>().SetContent(categories))
+                : NotFound(NewCollectionViewModel<VideoViewModel>().SetMessage("Not set categories."))
+                    as IActionResult;
         }
 
         [HttpGet("GetClientIdentities")]
         public IActionResult GetClientIdentities()
         {
-            return new JsonResult(_videoService
+            var identities = _videoService
                 .GetClientIdentities()
                 .Select(s => new ClientIdentityViewModel
                 {
                     Id = s.Id,
                     IsActive = s.IsActive,
                     IsOnline = s.IsOnline,
-                }));
+                });
+
+            return identities.Any()
+                ? Ok(NewCollectionViewModel<ClientIdentityViewModel>().SetContent(identities))
+                : NotFound(NewCollectionViewModel<VideoViewModel>().SetMessage("Not set clientIdentities."))
+                    as IActionResult;
         }
 
         protected virtual string GetCallerIp()
@@ -209,6 +208,52 @@ namespace TruthAPI.Controllers
                     IsActive = r.IsActive,
                     IsOnline = r.IsOnline,
                 }));
+        }
+
+        private IEnumerable<Category> InitCategoryRepository(IRepository<Category> categoryRepository)
+        {
+            _categoryRepository = categoryRepository;
+            _categoryRepository.Init(_rootPath);
+            var categories = _categoryRepository.GetAll();
+            return categories;
+        }
+
+        private IEnumerable<ClientIdentity> InitClientIdentities(IRepository<ClientIdentity> clientIdentityRepository)
+        {
+            _clientIdentityRepository = clientIdentityRepository;
+            _clientIdentityRepository.Init(_rootPath);
+            var identities = _clientIdentityRepository.GetAll();
+            return identities;
+        }
+
+        private void InitVideoService(IVideoService videoService, IEnumerable<Category> categories, IEnumerable<ClientIdentity> clientIdentities)
+        {
+            _videoService = videoService;
+            _videoService.Init(_videoPath, categories, clientIdentities);
+            ManagementHub.AddNotifyEvent((sender, args) =>
+            {
+                GetOnlineUser();
+            });
+
+            VideoHub.AddConnectedEvent((senger, args) =>
+            {
+                ManagementHub.DoNotifyEvent();
+            });
+
+            VideoHub.AddDisconnectedEvent((senger, args) =>
+            {
+                ManagementHub.DoNotifyEvent();
+            });
+        }
+        
+        private GenericViewModel<T> NewViewModel<T>()
+        {
+            return GenericViewModel<T>.New();
+        }
+
+        private GenericViewModel<IEnumerable<T>> NewCollectionViewModel<T>()
+        {
+            return GenericViewModel<IEnumerable<T>>.New();
         }
     }
 }
