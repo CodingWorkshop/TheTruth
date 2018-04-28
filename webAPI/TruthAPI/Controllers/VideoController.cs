@@ -1,14 +1,14 @@
-using DataAccess;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using Repository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using DataAccess;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Repository.Interface;
 using TruthAPI.Hubs;
 using TruthAPI.ViewModels;
 using VideoService.Interface;
@@ -26,6 +26,7 @@ namespace TruthAPI.Controllers
         private readonly IHubContext<ManagementHub, IManagementHub> _managementHub;
         private IRepository<Category> _categoryRepository;
         private IRepository<ClientIdentity> _clientIdentityRepository;
+        private IRepository<Reservation> _reservationRepository;
 
         private string _rootPath;
 
@@ -34,6 +35,7 @@ namespace TruthAPI.Controllers
             IVideoService videoService,
             IRepository<Category> categoryRepository,
             IRepository<ClientIdentity> clientIdentityRepository,
+            IRepository<Reservation> reservationRepository,
             IHubContext<VideoHub, IVideoHub> videoHub,
             IHubContext<ManagementHub, IManagementHub> managementHub)
         {
@@ -46,8 +48,8 @@ namespace TruthAPI.Controllers
             var categories = InitCategoryRepository(categoryRepository);
 
             var clientIdentities = InitClientIdentities(clientIdentityRepository);
-
-            InitVideoService(videoService, categories, clientIdentities);
+            var reservation = InitReservationRepository(reservationRepository);
+            InitVideoService(videoService, categories, clientIdentities, reservation);
         }
 
         [HttpGet("SearchVideos")]
@@ -58,33 +60,41 @@ namespace TruthAPI.Controllers
                 .SearchVideos(categoryIds, startDate, endDate, _videoPath)
                 .Select(VideoToViewModel)
                 .ToList();
-            
-            return videos.Any()
-                ? Ok(NewCollectionViewModel<VideoViewModel>().SetContent(videos))
-                : NotFound(NewCollectionViewModel<VideoViewModel>().SetMessage("No videos.")) as IActionResult;
+
+            return videos.Any() ?
+                Ok(NewCollectionViewModel<VideoViewModel>().SetContent(videos)) :
+                NotFound(NewCollectionViewModel<VideoViewModel>().SetMessage("No videos.")) as IActionResult;
         }
 
         [HttpPost("SetVideo")]
         public async Task<IActionResult> SetVideo([FromBody] SetVideoViewModel setVideoParams)
         {
+
             var ipInfo = GetIpInfo(setVideoParams.Id);
 
-            if (ipInfo == null)
+            if(ipInfo == null)
                 return NotFound(NewViewModel<VideoViewModel>()
                     .SetMessage($"Id {setVideoParams.Id} is not found."));
 
-            var ip = ipInfo.Ip;
+            // TODO 預備將所有傳入IP改成Id
+            //var ip = ipInfo.Ip;
+            var ip = ipInfo.Id;
 
-            var connectionId = _videoService.SetVideos(setVideoParams.Codes, ip, _videoPath);
+            var connectionId = _videoService.SetVideos(setVideoParams.Codes, ip, _videoPath, setVideoParams.StartTime, setVideoParams.EndTime);
 
-            GetOnlineUser();
+            if(setVideoParams.StartTime > DateTime.Now){
+                 return Ok(NewViewModel<VideoViewModel>()
+                    .SetMessage($"{setVideoParams.Id} Reservation success."));
+            }
             
-            if (string.IsNullOrWhiteSpace(connectionId))
+            GetOnlineUser();
+
+            if(string.IsNullOrWhiteSpace(connectionId))
                 return Ok(NewViewModel<VideoViewModel>()
                     .SetMessage($"Set videos to id {setVideoParams.Id} success. client is offline."));
 
             await SetClientVideo(connectionId, ip);
-            
+
             return Ok(NewViewModel<VideoViewModel>()
                 .SetMessage($"Set videos to id {setVideoParams.Id} success. client is online."));
         }
@@ -94,14 +104,14 @@ namespace TruthAPI.Controllers
         {
             var ipInfo = GetIpInfo(cleanVideoParams.Id);
 
-            if (ipInfo == null)
+            if(ipInfo == null)
                 return NotFound(NewViewModel<VideoViewModel>()
                     .SetMessage($"Id {cleanVideoParams.Id} is not found."));
 
             var ip = ipInfo.Ip;
 
             await SetClientVideo(_videoService.CleanVideo(ip), ip);
-            
+
             GetOnlineUser();
 
             return Ok(NewViewModel<VideoViewModel>()
@@ -115,23 +125,23 @@ namespace TruthAPI.Controllers
                 .GetVideoListByIp(GetCallerIp())
                 .Select(VideoToViewModel);
 
-            return videos.Any()
-                ? Ok(NewCollectionViewModel<VideoViewModel>().SetContent(videos))
-                : NotFound(NewCollectionViewModel<VideoViewModel>()
+            return videos.Any() ?
+                Ok(NewCollectionViewModel<VideoViewModel>().SetContent(videos)) :
+                NotFound(NewCollectionViewModel<VideoViewModel>()
                     .SetMessage("Not set videos on this client."))
-                    as IActionResult;
+            as IActionResult;
         }
 
         [HttpGet("PlayVideo")]
         public IActionResult PlayVideo(string code)
         {
             var path = _videoService.GetVideoByCode(code, _videoPath, GetCallerIp());
-            
-            return !string.IsNullOrWhiteSpace(path)
-                ? Redirect(path)
-                : StatusCode((int)HttpStatusCode.NotModified, NewViewModel<string>()
-                    .SetMessage($"code {code} not set video.")) 
-                    as IActionResult;
+
+            return !string.IsNullOrWhiteSpace(path) ?
+                Redirect(path) :
+                StatusCode((int) HttpStatusCode.NotModified, NewViewModel<string>()
+                    .SetMessage($"code {code} not set video."))
+            as IActionResult;
         }
 
         [HttpGet("GetCategories")]
@@ -142,13 +152,13 @@ namespace TruthAPI.Controllers
                 .Select(s => new CategoryViewModel
                 {
                     Id = s.Id,
-                    DisplayName = s.DisplayName
+                        DisplayName = s.DisplayName
                 });
 
-            return categories.Any()
-                ? Ok(NewCollectionViewModel<CategoryViewModel>().SetContent(categories))
-                : NotFound(NewCollectionViewModel<VideoViewModel>().SetMessage("Not set categories."))
-                    as IActionResult;
+            return categories.Any() ?
+                Ok(NewCollectionViewModel<CategoryViewModel>().SetContent(categories)) :
+                NotFound(NewCollectionViewModel<VideoViewModel>().SetMessage("Not set categories."))
+            as IActionResult;
         }
 
         [HttpGet("GetClientIdentities")]
@@ -159,14 +169,14 @@ namespace TruthAPI.Controllers
                 .Select(s => new ClientIdentityViewModel
                 {
                     Id = s.Id,
-                    IsActive = s.IsActive,
-                    IsOnline = s.IsOnline,
+                        IsActive = s.IsActive,
+                        IsOnline = s.IsOnline,
                 });
 
-            return identities.Any()
-                ? Ok(NewCollectionViewModel<ClientIdentityViewModel>().SetContent(identities))
-                : NotFound(NewCollectionViewModel<VideoViewModel>().SetMessage("Not set clientIdentities."))
-                    as IActionResult;
+            return identities.Any() ?
+                Ok(NewCollectionViewModel<ClientIdentityViewModel>().SetContent(identities)) :
+                NotFound(NewCollectionViewModel<VideoViewModel>().SetMessage("Not set clientIdentities."))
+            as IActionResult;
         }
 
         protected virtual string GetCallerIp()
@@ -192,10 +202,10 @@ namespace TruthAPI.Controllers
             return new VideoViewModel
             {
                 Id = video.CategoryId,
-                Name = video.Name,
-                Date = video.Date,
-                CategoryName = video.CategoryName,
-                Code = video.Code
+                    Name = video.Name,
+                    Date = video.Date,
+                    CategoryName = video.CategoryName,
+                    Code = video.Code
             };
         }
 
@@ -205,8 +215,8 @@ namespace TruthAPI.Controllers
                 new ClientIdentityViewModel
                 {
                     Id = r.Id,
-                    IsActive = r.IsActive,
-                    IsOnline = r.IsOnline,
+                        IsActive = r.IsActive,
+                        IsOnline = r.IsOnline,
                 }));
         }
 
@@ -225,11 +235,19 @@ namespace TruthAPI.Controllers
             var identities = _clientIdentityRepository.GetAll();
             return identities;
         }
+        private IEnumerable<Reservation> InitReservationRepository(IRepository<Reservation> reservationRepository)
+        {
+            _reservationRepository = reservationRepository;
+            _reservationRepository.Init(_rootPath);
+            var reservation = _reservationRepository.GetAll();
+            return reservation;
+        }
 
-        private void InitVideoService(IVideoService videoService, IEnumerable<Category> categories, IEnumerable<ClientIdentity> clientIdentities)
+        private void InitVideoService(IVideoService videoService, IEnumerable<Category> categories,
+            IEnumerable<ClientIdentity> clientIdentities, IEnumerable<Reservation> reservation)
         {
             _videoService = videoService;
-            _videoService.Init(_videoPath, categories, clientIdentities);
+            _videoService.Init(_videoPath, categories, clientIdentities, reservation);
             ManagementHub.AddNotifyEvent((sender, args) =>
             {
                 GetOnlineUser();
@@ -245,7 +263,7 @@ namespace TruthAPI.Controllers
                 ManagementHub.DoNotifyEvent();
             });
         }
-        
+
         private GenericViewModel<T> NewViewModel<T>()
         {
             return GenericViewModel<T>.New();

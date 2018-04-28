@@ -48,22 +48,23 @@ namespace TruthAPI
             services.AddOptions();
             services.AddSingleton<VideoService.Interface.IVideoService, VideoService.Service.VideoService>();
             services.AddSingleton<IRepository<Category>, CategoryRepository>()
-                .AddSingleton<IRepository<ClientIdentity>, ClientIdentityRepository>();
+                .AddSingleton<IRepository<ClientIdentity>, ClientIdentityRepository>()
+                .AddSingleton<IRepository<Reservation>, ReservationRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            if (env.IsDevelopment())
+            if(env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
-            app.Use(async (context, next) =>
+            app.Use(async(context, next) =>
             {
                 await next();
 
-                if (context.Response.StatusCode == 404 &&
+                if(context.Response.StatusCode == 404 &&
                     !System.IO.Path.HasExtension(context.Request.Path.Value) &&
                     !context.Request.Path.Value.StartsWith("/api"))
                 {

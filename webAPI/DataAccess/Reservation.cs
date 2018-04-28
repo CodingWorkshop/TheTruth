@@ -5,7 +5,7 @@ namespace DataAccess
 {
     public class Reservation
     {
-        public int ClientId { get; set; }
+        public string ClientId { get; set; }
         
         public List<ReservationTime> Reservations { get; set; }
         public Reservation()
@@ -18,6 +18,7 @@ namespace DataAccess
         public long Tick { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+        public IEnumerable<string> Codes { get; set; }
     }
 
 }

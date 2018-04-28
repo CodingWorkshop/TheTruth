@@ -2,7 +2,7 @@
 {
     public class ClientIdentity
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Ip { get; set; }
         /// <summary>
         /// Is Set Videos

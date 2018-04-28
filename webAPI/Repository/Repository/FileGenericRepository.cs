@@ -91,35 +91,38 @@ namespace Repository.Repository
     public class ClientIdentityRepository : FileGenericRepository<ClientIdentity> { }
     public class ReservationRepository : FileGenericRepository<Reservation>
     {
-        public static ConcurrentDictionary<int, Reservation> ReservationList;
+        public static ConcurrentDictionary<string, Reservation> ReservationList;
         public ReservationRepository()
         {
-            ReservationList = new ConcurrentDictionary<int, Reservation>();
+            ReservationList = new ConcurrentDictionary<string, Reservation>();
         }
-        public Reservation GetClientAll(int clientId)
+        public Reservation GetClientAll(string clientId)
         {
             return ReservationList.TryGetValue(clientId, out var reservations) ? reservations : null;
         }
 
-        public List<ReservationTime> GetClientReservations(int clientId)
+        public List<ReservationTime> GetClientReservations(string clientId)
         {
             ReservationList.TryGetValue(clientId, out var reservations);
             return reservations.Reservations;
         }
 
-        public bool RemoveClientReservation(int clientId, long tick)
+        public bool RemoveClientReservation(string clientId, long tick)
         {
             var reservation = GetClientReservations(clientId).FirstOrDefault(r => r.Tick == tick);
             if(reservation != null)
                 GetClientReservations(clientId).Remove(reservation);
             return true;
         }
-        public bool UpdateClientReservation(int clientId, long tick, DateTime startTime, DateTime endTime)
+        public bool UpdateClientReservation(string clientId, long tick, DateTime startTime, DateTime endTime, List<string> codes)
         {
             if(HasReservationTime(GetClientReservations(clientId).Where(r => r.Tick != tick), startTime, endTime))
             {
-                RemoveClientReservation(clientId, tick);
-                return AddClientReservation(clientId, startTime, endTime, tick);
+                var reservation = GetClientReservations(clientId).Where(r => r.Tick == tick).First();
+                reservation.StartTime = startTime;
+                reservation.EndTime = endTime;
+                reservation.Codes = codes.Any() ? codes : reservation.Codes;
+                return true;
             }
             else
             {
@@ -127,7 +130,8 @@ namespace Repository.Repository
             }
         }
 
-        public bool AddClientReservation(int clientId, DateTime startTime, DateTime endTime, long? tick = null)
+        public bool AddClientReservation(string clientId, DateTime startTime, DateTime endTime,
+            IEnumerable<string> codes, long? tick = null)
         {
             var allReservation = GetClientReservations(clientId);
             if(HasReservationTime(allReservation, startTime, endTime))
@@ -137,6 +141,7 @@ namespace Repository.Repository
                     Tick = tick ?? DateTime.Now.Ticks,
                         StartTime = startTime,
                         EndTime = endTime,
+                        Codes = codes,
                 });
             }
             else
