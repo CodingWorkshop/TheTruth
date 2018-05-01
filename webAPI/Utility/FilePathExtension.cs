@@ -41,18 +41,14 @@ namespace Utility
                 hierarchy = new Dictionary<int, string>();
 
             if (files.Any())
-            {
                 foreach (var pathInfo in GetFileInfos(path, hierarchy, files))
                     yield return pathInfo;
-            }
             else
-            {
                 foreach (var directory in directories)
                     foreach (var pathInfo in GetChildPaths(
                         path.CombinePath(directory),
                         hierarchy.AddHierarchy(directory)))
                         yield return pathInfo;
-            }
         }
 
         private static IEnumerable<string> GetDirectories(this string path)

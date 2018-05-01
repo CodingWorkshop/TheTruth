@@ -28,7 +28,7 @@ namespace TruthAPI.Hubs
         [HubMethodName("getonlineusers")]
         public Task GetOnlineUsers()
         {
-            return Clients.All.GetOnlineUsers(
+            return Clients.All.GetOnlineUser(
                 _videoService
                     .GetClientIdentities()
                     .Select(r=> new ClientIdentityViewModel
@@ -74,7 +74,7 @@ namespace TruthAPI.Hubs
 
     public interface IManagementHub
     {
-        Task GetOnlineUsers(IEnumerable<ClientIdentityViewModel> clientIdentities);
+        Task GetOnlineUser(IEnumerable<ClientIdentityViewModel> clientIdentities);
     }
 
 }

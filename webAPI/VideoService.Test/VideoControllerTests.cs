@@ -46,7 +46,7 @@ namespace BLL.VideoService.Test
             };
 
             var videoService = Substitute.For<IVideoService>();
-            videoService.GetVideoListByIp(ip)
+            videoService.GetVideoListById(ip)
                 .Returns(videos);
 
             var expected = videos.Select(s => new VideoViewModel
@@ -58,7 +58,7 @@ namespace BLL.VideoService.Test
             });
 
             var videoController = new MockVideoController(hostEnvironment, videoService, ip);
-            var actual = ((JsonResult)videoController.GetVideoList()).Value;
+            var actual = ((OkObjectResult)videoController.GetVideoList()).Value;
 
             actual.Should().IsSameOrEqualTo(expected);
         }
@@ -68,14 +68,14 @@ namespace BLL.VideoService.Test
             private readonly string _ip;
 
             public MockVideoController(IHostingEnvironment hostingEnvironment, IVideoService videoService, string ip)
-                : base(hostingEnvironment, videoService, null, null, null, null,null)
+                : base(videoService, null, null)
             {
                 _ip = ip;
             }
 
-            protected override string GetCallerIp()
+            protected override string CallerIp
             {
-                return _ip;
+                get { return _ip; }
             }
         }
     }

@@ -1,8 +1,7 @@
+using DataAccess;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using DataAccess;
 
 namespace Utility
 {
@@ -12,9 +11,9 @@ namespace Utility
         private static ConcurrentDictionary<string, IEnumerable<Video>> _videoDic = new ConcurrentDictionary<string, IEnumerable<Video>>();
         private static ConcurrentDictionary<string, ClientIdentity> _clientIdentityDic = new ConcurrentDictionary<string, ClientIdentity>();
 
-        public static IEnumerable<Video> GetClientVideo(string ip)
+        public static IEnumerable<Video> GetClientVideo(string id)
         {
-            return _videoDic.TryGetValue(ip, out var videos) ? videos : new List<Video>();
+            return _videoDic.TryGetValue(id, out var videos) ? videos : new List<Video>();
         }
 
         public static IEnumerable<ClientIdentity> GetAllClientInfo()
@@ -22,19 +21,19 @@ namespace Utility
             return _clientIdentityDic.Values;
         }
 
-        public static string GetConnectionIdByIp(string ip)
+        public static string GetConnectionIdByIp(string id)
         {
-            return _connetionIdDic.TryGetValue(ip, out var connectionId) ? connectionId : string.Empty;
+            return _connetionIdDic.TryGetValue(id, out var connectionId) ? connectionId : string.Empty;
         }
-     
 
-        public static void AddConnetionId(string ip, string connectionId)
+        public static void AddConnetionId(string id, string connectionId)
         {
-            _connetionIdDic.TryAdd(ip, connectionId);
+            _connetionIdDic.TryAdd(id, connectionId);
         }
-        public static void AddVideo(string ip, IEnumerable<Video> videos)
+
+        public static void AddVideo(string id, IEnumerable<Video> videos)
         {
-            _videoDic.TryAdd(ip, videos);
+            _videoDic.TryAdd(id, videos);
         }
 
         public static void AddClientIdentity(ClientIdentity clientIdentity)
@@ -42,40 +41,40 @@ namespace Utility
             _clientIdentityDic.TryAdd(clientIdentity.Ip, clientIdentity);
         }
 
-        public static void RemoveVideo(string ip)
+        public static void RemoveVideo(string id)
         {
-            _videoDic.TryRemove(ip, out var newdic);
+            _videoDic.TryRemove(id, out var newdic);
         }
 
-         public static void RemoveClientIdentity(string ip)
+        public static void RemoveClientIdentity(string id)
         {
-            _clientIdentityDic.TryRemove(ip, out var newdic);
+            _clientIdentityDic.TryRemove(id, out var newdic);
         }
 
-         public static void RemoveConnetionId(string ip)
+        public static void RemoveConnetionId(string id)
         {
-            _connetionIdDic.TryRemove(ip, out var newdic);
-        }
-        public static void UpdateVideo(string ip, IEnumerable<Video> videos)
-        {
-            _videoDic.AddOrUpdate(ip, videos, (s, enumerable) => videos);
+            _connetionIdDic.TryRemove(id, out var newdic);
         }
 
-
-        public static void UpdateOnlineStatus(string ip, bool isOnline)
+        public static void UpdateVideo(string id, IEnumerable<Video> videos)
         {
-            var identity = GetClientIdentityByIp(ip);
+            _videoDic.AddOrUpdate(id, videos, (s, enumerable) => videos);
+        }
+
+        public static void UpdateOnlineStatus(string id, bool isOnline)
+        {
+            var identity = GetClientIdentityById(id);
 
             if (identity == null)
                 return;
 
-            Console.WriteLine($"UpdateOnlineStatus : {ip}, {isOnline}");
+            Console.WriteLine($"UpdateOnlineStatus : {id}, {isOnline}");
             identity.IsOnline = isOnline;
         }
 
-        public static void UpdateActiveStatus(string ip, bool isActive)
+        public static void UpdateActiveStatus(string id, bool isActive)
         {
-            var identity = GetClientIdentityByIp(ip);
+            var identity = GetClientIdentityById(id);
 
             if (identity == null)
                 return;
@@ -83,9 +82,9 @@ namespace Utility
             identity.IsActive = isActive;
         }
 
-        private static ClientIdentity GetClientIdentityByIp(string ip)
+        private static ClientIdentity GetClientIdentityById(string id)
         {
-            _clientIdentityDic.TryGetValue(ip, out var identity);
+            _clientIdentityDic.TryGetValue(id, out var identity);
             return identity;
         }
     }

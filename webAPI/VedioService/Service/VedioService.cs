@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DataAccess;
+using Microsoft.AspNetCore.Hosting.Internal;
 using Repository.Interface;
 using Repository.Repository;
 using Utility;
@@ -13,42 +14,43 @@ namespace VideoService.Service
 {
     public class VideoService : IVideoService
     {
-        private IEnumerable<Video> _allVideos;
+        private readonly ReservationRepository _reservation;
+        private readonly CategoryRepository _category;
+        private readonly ClientIdentityRepository _clientIdentity;
+        private readonly string _videoPath;
 
-        private IEnumerable<Category> _categories;
-        private ReservationRepository _reservation;
+        public IEnumerable<Video> Videos => _videoPath.GetChildPaths().Select(PathInfoToVideoInfo);
 
-        public VideoService(IRepository<Reservation> reservation)
+        public IEnumerable<Category> Categories => _category.GetAll();
+
+        public VideoService(
+            HostingEnvironment hostingEnvironment,
+            IRepository<Category> category,
+            IRepository<ClientIdentity> clientIdentity,
+            IRepository<Reservation> reservation)
         {
             _reservation = reservation as ReservationRepository;
+            _category = category as CategoryRepository;
+            _clientIdentity = clientIdentity as ClientIdentityRepository;
+            _videoPath = $"{hostingEnvironment.WebRootPath ?? hostingEnvironment.ContentRootPath}\\Videos";
+
+            Init();
             CheckTime(1000);
         }
 
-        private string _rootPath;
-
-        public void Init(string rootPath,
-            IEnumerable<Category> categories,
-            IEnumerable<ClientIdentity> clientIdentities,
-            IEnumerable<Reservation> reservation)
+        private void Init()
         {
-            _rootPath = rootPath;
-            _categories = categories;
-            foreach(var identity in clientIdentities)
-            {
+            foreach(var identity in _clientIdentity.GetAll())
                 VideoUtility.AddClientIdentity(identity);
-            }
 
-            InitDirectories();
-            InitVideos();
+            foreach (var category in _category.GetAll())
+                _videoPath.InitDirectory(category.Name)
+                    .InitDirectory(DateTime.Now.ToString("yyyyMMdd"));
         }
 
-        public IEnumerable<Video> SearchVideos(
-            IEnumerable<int> categoryIds, DateTime? beginTime,
-            DateTime? endTime, string rootPath)
+        public IEnumerable<Video> SearchVideos(IEnumerable<int> categoryIds, DateTime? beginTime, DateTime? endTime)
         {
-            InitVideos();
-
-            var query = _allVideos;
+            var query = Videos;
 
             if(categoryIds.Any())
                 query = query.Where(w => categoryIds.Any(where => where == w.CategoryId));
@@ -66,69 +68,68 @@ namespace VideoService.Service
             return query.ToList();
         }
 
-        public string SetVideos(IEnumerable<string> codes,
-            string ip, string rootPath, DateTime startTime, DateTime endTime)
+        public string SetVideos(IEnumerable<string> codes, string id, DateTime startTime, DateTime endTime)
         {
             //_reservation
             if(startTime > DateTime.Now) { 
                 
-                _reservation.AddClientReservation(ip,startTime,endTime,codes);
-                return VideoUtility.GetConnectionIdByIp(ip);
+                _reservation.AddClientReservation(id,startTime,endTime,codes);
+                return VideoUtility.GetConnectionIdByIp(id);
             }
             var videos = new List<Video>();
 
             foreach(var code in codes)
             {
-                var video = _allVideos
+                var video = videos
                     .Where(w => w.Code == code);
 
                 if(video.Any())
                     videos.Add(video.First());
             }
 
-            VideoUtility.UpdateVideo(ip, videos);
-            VideoUtility.UpdateActiveStatus(ip, true);
-            return VideoUtility.GetConnectionIdByIp(ip);
+            VideoUtility.UpdateVideo(id, videos);
+            VideoUtility.UpdateActiveStatus(id, true);
+            return VideoUtility.GetConnectionIdByIp(id);
         }
 
-        public string CleanVideo(string ip)
+        public string CleanVideo(string id)
         {
-            VideoUtility.UpdateVideo(ip, new List<Video>());
-            VideoUtility.UpdateActiveStatus(ip, false);
-            return VideoUtility.GetConnectionIdByIp(ip);
+            VideoUtility.UpdateVideo(id, new List<Video>());
+            VideoUtility.UpdateActiveStatus(id, false);
+            return VideoUtility.GetConnectionIdByIp(id);
         }
 
-        public void AddConnetionId(string ip, string connectionId)
+        public void AddConnetionId(string id, string connectionId)
         {
-            VideoUtility.AddConnetionId(ip, connectionId);
+            VideoUtility.AddConnetionId(id, connectionId);
         }
 
-        public void UpdateOnlineStatus(string ip, bool isOnline)
+        public void UpdateOnlineStatus(string id, bool isOnline)
         {
-            VideoUtility.UpdateOnlineStatus(ip, isOnline);
+            VideoUtility.UpdateOnlineStatus(id, isOnline);
         }
 
-        public void RemoveConnetionId(string ip)
+        public void RemoveConnetionId(string id)
         {
-            VideoUtility.RemoveConnetionId(ip);
+            VideoUtility.RemoveConnetionId(id);
         }
 
-        public IEnumerable<Video> GetVideoListByIp(string ip)
+        public IEnumerable<Video> GetVideoListById(string id)
         {
-            return VideoUtility.GetClientVideo(ip);
+            return VideoUtility.GetClientVideo(id);
         }
 
-        public string GetVideoByCode(string code, string rootPath, string ip)
+        public string GetVideoByCode(string code, string id)
         {
-            return VideoUtility.GetClientVideo(ip)
+            return VideoUtility.GetClientVideo(id)
                 .FirstOrDefault(v => v.Code == code) ?
                 .Url
-                .Replace(rootPath, "~/Videos");
+                .Replace(_videoPath, "~/Videos");
         }
 
         public IEnumerable<Category> GetCategories()
         {
-            return _categories;
+            return Categories;
         }
 
         public IEnumerable<ClientIdentity> GetClientIdentities()
@@ -136,20 +137,12 @@ namespace VideoService.Service
             return VideoUtility.GetAllClientInfo();
         }
 
-        private void InitVideos()
-        {
-            _allVideos = _rootPath
-                .GetChildPaths()
-                .Select(PathInfoToVideoInfo);
-        }
-
         private Video PathInfoToVideoInfo(PathInfo pathInfo)
         {
             var category = pathInfo.Hierarchy[0];
             var date = pathInfo.Hierarchy[1];
 
-            var cate = _categories
-                .FirstOrDefault(c => c.Name == category);
+            var cate = Categories.FirstOrDefault(c => c.Name == category);
 
             return new Video
             {
@@ -162,18 +155,11 @@ namespace VideoService.Service
             };
         }
 
-        private void InitDirectories()
-        {
-            foreach(var category in _categories)
-                _rootPath.InitDirectory(category.Name)
-                .InitDirectory(DateTime.Now.ToString("yyyyMMdd"));
-        }
         public void CheckTime(int intervalTime)
         {
             Task.Run(() =>
             {
                 CheckTimeService(intervalTime);
-
             });
         }
 
@@ -199,7 +185,7 @@ namespace VideoService.Service
                 foreach(var setVideo in clientReservation.Reservations.Where(r => r.StartTime >= now))
                 {
                     // 新增影片
-                    SetVideos(setVideo.Codes, clientReservation.ClientId, null, setVideo.StartTime, setVideo.EndTime);
+                    SetVideos(setVideo.Codes, clientReservation.ClientId, setVideo.StartTime, setVideo.EndTime);
                 }
             }
         }
